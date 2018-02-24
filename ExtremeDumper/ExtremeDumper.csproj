@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -29,10 +30,17 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Forms\Resources\Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\Libraries\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,32 +51,96 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Forms\AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Include="AssemblyDetector.cs" />
+    <Compile Include="DumperFactory.cs" />
+    <Compile Include="DumperCore.cs" />
+    <Compile Include="Forms\Cache.cs" />
+    <Compile Include="Forms\DumperCoreWrapper.cs" />
+    <Compile Include="Forms\InjectingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\InjectingForm.Designer.cs">
+      <DependentUpon>InjectingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ListViewExtesion.cs" />
+    <Compile Include="Forms\ListViewItemSorter.cs" />
+    <Compile Include="Forms\FunctionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FunctionsForm.Designer.cs">
+      <DependentUpon>FunctionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ModulesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ModulesForm.Designer.cs">
+      <DependentUpon>ModulesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NativeMethods.cs" />
+    <Compile Include="Forms\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    <Compile Include="Forms\GlobalExceptionCatcher.cs" />
+    <Compile Include="IDumper.cs" />
+    <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MegaDumper\MegaDumpDirectoryHelper.cs" />
+    <Compile Include="MegaDumper\MegaDumper32.cs" />
+    <Compile Include="MegaDumper\MegaDumper64.cs" />
+    <Compile Include="Forms\MessageBoxStub.cs" />
+    <Compile Include="Metadata\DbgDumper.cs" />
+    <Compile Include="Metadata\MetadataDumper.cs" />
+    <Compile Include="Metadata\ProfDumper.cs" />
+    <Compile Include="Forms\Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\AboutForm.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FunctionsForm.resx">
+      <DependentUpon>FunctionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\InjectingForm.resx">
+      <DependentUpon>InjectingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ModulesForm.resx">
+      <DependentUpon>ModulesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FastWin32\FastWin32\FastWin32.csproj">
+      <Project>{0B6AC808-3A51-4072-954F-D55DE4F0209B}</Project>
+      <Name>FastWin32</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Forms\Resources\Avatar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Forms\Resources\Icon.ico" />
+  </ItemGroup>
+  <Import Project="..\..\dndbg\dndbg\dndbg.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
