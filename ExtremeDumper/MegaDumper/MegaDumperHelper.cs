@@ -1,10 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace ExtremeDumper.MegaDumper
 {
-    internal static class MegaDumpDirectoryHelper
+    internal static class MegaDumperHelper
     {
+        private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
+
         public static void CreateDirectories(string DirectoryName)
         {
             if (!Directory.Exists(Path.Combine(DirectoryName, ".Net Assemblies")))
@@ -33,7 +37,7 @@ namespace ExtremeDumper.MegaDumper
                     File.Move(fileInfo.FullName, Path.Combine(fileInfo.DirectoryName, "VDumps", fileInfo.Name));
                     continue;
                 }
-                if (AssemblyDetector.IsAssembly(fileInfo.FullName) && !fileInfo.Name.EndsWith(".mui", StringComparison.OrdinalIgnoreCase) && Path.GetExtension(fileInfo.Name) != string.Empty)
+                if (AssemblyDetector.IsAssembly(fileInfo.FullName))
                 {
                     File.Move(fileInfo.FullName, Path.Combine(fileInfo.DirectoryName, ".Net Assemblies", fileInfo.Name));
                     continue;
@@ -45,6 +49,20 @@ namespace ExtremeDumper.MegaDumper
                 }
                 File.Move(fileInfo.FullName, Path.Combine(fileInfo.DirectoryName, "Unknowns", fileInfo.Name));
             }
+        }
+
+        public static string EnsureValidFileName(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return string.Empty;
+
+            StringBuilder newFileName;
+
+            newFileName = new StringBuilder(fileName.Length);
+            foreach (char chr in fileName)
+                if (!InvalidFileNameChars.Contains(chr))
+                    newFileName.Append(chr);
+            return newFileName.ToString();
         }
     }
 }

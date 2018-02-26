@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using static ExtremeDumper.Forms.NativeMethods;
 
 namespace ExtremeDumper.Forms
 {
@@ -7,12 +8,15 @@ namespace ExtremeDumper.Forms
     {
         public static void AutoResizeColumns(this ListView listView, bool onlyLastColumn)
         {
-            int[] minWidths;
+            SCROLLBARINFO scrollBarInfo;
             int sumWidths;
+            int[] minWidths;
 
+            scrollBarInfo = SCROLLBARINFO.Default;
+            GetScrollBarInfo(listView.Handle, OBJID_VSCROLL, ref scrollBarInfo);
+            sumWidths = scrollBarInfo.dxyLineButton;
             if (onlyLastColumn)
             {
-                sumWidths = 0;
                 foreach (ColumnHeader columnHeader in listView.Columns)
                     sumWidths += columnHeader.Width;
                 listView.Columns[listView.Columns.Count - 1].Width += listView.Width - sumWidths - 4;
@@ -20,7 +24,6 @@ namespace ExtremeDumper.Forms
             else
             {
                 minWidths = new int[listView.Columns.Count];
-                sumWidths = 0;
                 using (Graphics g = listView.CreateGraphics())
                     for (int i = 0; i < minWidths.Length; i++)
                         minWidths[i] = (int)g.MeasureString(listView.Columns[i].Text, listView.Font).Width + 10;

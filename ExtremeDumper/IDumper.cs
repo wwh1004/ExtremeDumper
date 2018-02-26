@@ -11,23 +11,15 @@ namespace ExtremeDumper
         /// 转储指定Native模块
         /// </summary>
         /// <param name="moduleHandle">模块句柄</param>
-        /// <param name="path">转储的文件保存到指定文件夹下</param>
+        /// <param name="filePath">将转储文件保存到指定路径</param>
         /// <returns></returns>
-        bool DumpModule(IntPtr moduleHandle, string path);
-
-        /// <summary>
-        /// 转储指定.Net模块
-        /// </summary>
-        /// <param name="moduleId">模块ID</param>
-        /// <param name="path">转储的文件保存到指定文件夹下</param>
-        /// <returns></returns>
-        bool DumpModule(uint moduleId, string path);
+        bool DumpModule(IntPtr moduleHandle, string filePath);
 
         /// <summary>
         /// 转储指定进程，返回转储文件数
         /// </summary>
-        /// <param name="path">转储的文件保存到指定文件夹下</param>
+        /// <param name="directoryPath">转储的文件保存到指定文件夹下</param>
         /// <returns></returns>
-        int DumpProcess(string path);
+        int DumpProcess(string directoryPath);
     }
 }

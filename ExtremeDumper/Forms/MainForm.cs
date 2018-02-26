@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Security.Principal;
@@ -17,7 +17,7 @@ namespace ExtremeDumper.Forms
 
         private static readonly AboutForm _aboutForm = new AboutForm();
 
-        private DumperCoreWrapper _dumperCore = new DumperCoreWrapper { Value = DumperCore.MetadataWithDebugger };
+        private DumperCoreWrapper _dumperCore = new DumperCoreWrapper { Value = DumperCore.MegaDumper };
 
         public MainForm()
         {
@@ -76,7 +76,10 @@ namespace ExtremeDumper.Forms
             if (lvwProcesses.SelectedIndices.Count == 0)
                 return;
 
-            new ModulesForm(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), lvwProcesses.SelectedItems[0].Text, lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor, _dumperCore).Show();
+            if (Environment.Is64BitProcess && lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor && lvwProcesses.SelectedItems[0].Text.EndsWith("(32 位)", StringComparison.Ordinal))
+                MessageBoxStub.Show("要查看32位.Net进程的模块请切换到32位模式", MessageBoxIcon.Error);
+            else
+                new ModulesForm(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), lvwProcesses.SelectedItems[0].Text, lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor, _dumperCore).Show();
         }
 
         private void mnuRefreshProcessList_Click(object sender, EventArgs e) => RefreshProcessList();
@@ -89,6 +92,14 @@ namespace ExtremeDumper.Forms
                 return;
 
             new InjectingForm(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), lvwProcesses.SelectedItems[0].Text).Show();
+        }
+
+        private void mnuGotoLocation_Click(object sender, EventArgs e)
+        {
+            if (lvwProcesses.SelectedIndices.Count == 0)
+                return;
+
+            Process.Start("explorer.exe", @"/select, " + lvwProcesses.SelectedItems[0].SubItems[2].Text);
         }
         #endregion
 
@@ -116,6 +127,8 @@ namespace ExtremeDumper.Forms
 
         private void RefreshProcessList()
         {
+            SCROLLBARINFO s = new SCROLLBARINFO { cbSize = (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(SCROLLBARINFO)) };
+            GetScrollBarInfo(lvwProcesses.Handle, unchecked((int)0xFFFFFFFA), ref s);
             uint[] processIds;
             IntPtr snapshotHandle;
             MODULEENTRY32 moduleEntry32;
@@ -161,18 +174,19 @@ namespace ExtremeDumper.Forms
 
         private static bool Is64BitPE(string filePath, out bool is64)
         {
+            FileStream fileStream;
             BinaryReader binaryReader;
-            uint ntHeaderOffset;
+            uint peOffset;
             ushort machine;
 
             try
             {
-                using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     binaryReader = new BinaryReader(fileStream);
                     binaryReader.BaseStream.Position = 0x3C;
-                    ntHeaderOffset = binaryReader.ReadUInt32();
-                    binaryReader.BaseStream.Position = ntHeaderOffset + 0x4;
+                    peOffset = binaryReader.ReadUInt32();
+                    binaryReader.BaseStream.Position = peOffset + 0x4;
                     machine = binaryReader.ReadUInt16();
                     if (machine != 0x14C && machine != 0x8664)
                         throw new InvalidDataException();

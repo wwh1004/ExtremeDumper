@@ -38,6 +38,7 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuForceFalse = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuForceTrue = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuForceReturn = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuFunctionsContext.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,35 +79,43 @@
             this.mnuRefreshFunctionList,
             this.toolStripSeparator1,
             this.mnuForceFalse,
-            this.mnuForceTrue});
+            this.mnuForceTrue,
+            this.mnuForceReturn});
             this.mnuFunctionsContext.Name = "mnuModulesContext";
-            this.mnuFunctionsContext.Size = new System.Drawing.Size(181, 98);
+            this.mnuFunctionsContext.Size = new System.Drawing.Size(173, 98);
             // 
             // mnuRefreshFunctionList
             // 
             this.mnuRefreshFunctionList.Name = "mnuRefreshFunctionList";
-            this.mnuRefreshFunctionList.Size = new System.Drawing.Size(180, 22);
+            this.mnuRefreshFunctionList.Size = new System.Drawing.Size(172, 22);
             this.mnuRefreshFunctionList.Text = "刷新导出函数列表";
             this.mnuRefreshFunctionList.Click += new System.EventHandler(this.mnuRefreshFunctionList_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
             // 
             // mnuForceFalse
             // 
             this.mnuForceFalse.Name = "mnuForceFalse";
-            this.mnuForceFalse.Size = new System.Drawing.Size(180, 22);
+            this.mnuForceFalse.Size = new System.Drawing.Size(172, 22);
             this.mnuForceFalse.Text = "强制返回False";
             this.mnuForceFalse.Click += new System.EventHandler(this.mnuForceFalse_Click);
             // 
             // mnuForceTrue
             // 
             this.mnuForceTrue.Name = "mnuForceTrue";
-            this.mnuForceTrue.Size = new System.Drawing.Size(180, 22);
+            this.mnuForceTrue.Size = new System.Drawing.Size(172, 22);
             this.mnuForceTrue.Text = "强制返回True";
             this.mnuForceTrue.Click += new System.EventHandler(this.mnuForceTrue_Click);
+            // 
+            // mnuForceReturn
+            // 
+            this.mnuForceReturn.Name = "mnuForceReturn";
+            this.mnuForceReturn.Size = new System.Drawing.Size(172, 22);
+            this.mnuForceReturn.Text = "强制直接返回";
+            this.mnuForceReturn.Click += new System.EventHandler(this.mnuForceReturn_Click);
             // 
             // FunctionsForm
             // 
@@ -117,9 +126,6 @@
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = global::ExtremeDumper.Forms.Resources.Icon;
             this.Name = "FunctionsForm";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "导出函数列表";
             this.mnuFunctionsContext.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -136,5 +142,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem mnuForceFalse;
         private System.Windows.Forms.ToolStripMenuItem mnuForceTrue;
+        private System.Windows.Forms.ToolStripMenuItem mnuForceReturn;
     }
 }

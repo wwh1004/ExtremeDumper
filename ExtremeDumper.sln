@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "..\dnlib\src\dnlib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastWin32", "..\FastWin32\FastWin32\FastWin32.csproj", "{0B6AC808-3A51-4072-954F-D55DE4F0209B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Diagnostics.Runtime.v2", "Libraries\clrmd-xp\src\Microsoft.Diagnostics.Runtime\v2\Microsoft.Diagnostics.Runtime.v2.csproj", "{935D33C5-62F1-40FE-8DB0-46B6E01342FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtremeDumper-x86", "ExtremeDumper-x86\ExtremeDumper-x86.csproj", "{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\dndbg\dndbg\dndbg.projitems*{97275166-7ec7-44a9-afb1-b72349f1921e}*SharedItemsImports = 13
@@ -33,6 +37,14 @@ Global
 		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

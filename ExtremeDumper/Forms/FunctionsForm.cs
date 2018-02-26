@@ -12,12 +12,12 @@ namespace ExtremeDumper.Forms
 
         private IntPtr _moduleHandle;
 
-        public FunctionsForm(uint processId, string processName, IntPtr moduleHandle, string moduleName)
+        public FunctionsForm(uint processId, IntPtr moduleHandle, string moduleName)
         {
             InitializeComponent();
             _processId = processId;
             _moduleHandle = moduleHandle;
-            Text = $"进程{processName}(ID={processId.ToString()})中模块{moduleName}(地址=0x{moduleHandle.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8")})的导出函数列表";
+            Text = $"模块{moduleName}(地址=0x{moduleHandle.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8")})的导出函数列表";
             typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwFunctions, new object[] { true });
             lvwFunctions.ListViewItemSorter = new ListViewItemSorter(lvwFunctions, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, Cache.Is64BitOperatingSystem ? TypeCode.UInt64 : TypeCode.UInt32 }, { 2, TypeCode.Int16 } }) { AllowHexLeadingSign = true };
             RefreshFunctionList();
@@ -31,6 +31,8 @@ namespace ExtremeDumper.Forms
         private void mnuForceFalse_Click(object sender, EventArgs e) => throw new NotImplementedException();
 
         private void mnuForceTrue_Click(object sender, EventArgs e) => throw new NotImplementedException();
+
+        private void mnuForceReturn_Click(object sender, EventArgs e) => throw new NotImplementedException();
         #endregion
 
         private void RefreshFunctionList()

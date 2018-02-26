@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 
 namespace ExtremeDumper.Forms
 {
@@ -9,9 +9,6 @@ namespace ExtremeDumper.Forms
     /// </summary>
     internal static class GlobalExceptionCatcher
     {
-        [DllImport("user32.dll", BestFitMapping = false, CharSet = CharSet.Unicode, EntryPoint = "MessageBoxW", ExactSpelling = true, SetLastError = true)]
-        private static extern int MessageBox(IntPtr hWnd, string lpText, string lpCaption, uint uType);
-
         /// <summary>
         /// 指示是否使用过
         /// </summary>
@@ -25,22 +22,21 @@ namespace ExtremeDumper.Forms
             if (!_used)
             {
                 _used = true;
-                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+                Application.ThreadException += (object sender, System.Threading.ThreadExceptionEventArgs e) => ShowDetailException(e.Exception);
+                AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => ShowDetailException((Exception)e.ExceptionObject);
             }
         }
 
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void ShowDetailException(Exception ex)
         {
-            StringBuilder stringBuilder;
-            Exception ex;
+            StringBuilder message;
 
-            stringBuilder = new StringBuilder();
-            ex = (Exception)e.ExceptionObject;
-            stringBuilder.AppendLine("Message：\n" + ex.Message);
-            stringBuilder.AppendLine("Source：\n" + ex.Source);
-            stringBuilder.AppendLine("StackTrace：\n" + ex.StackTrace.Trim());
-            stringBuilder.AppendLine("TargetSite：\n" + ex.TargetSite);
-            MessageBox(IntPtr.Zero, stringBuilder.ToString(), null, 0);
+            message = new StringBuilder();
+            message.AppendLine("Message：\n" + ex.Message);
+            message.AppendLine("Source：\n" + ex.Source);
+            message.AppendLine("StackTrace：\n" + ex.StackTrace);
+            message.AppendLine("TargetSite：\n" + ex.TargetSite.ToString());
+            MessageBoxStub.Show(message.ToString(), MessageBoxIcon.Error);
         }
     }
 }

@@ -9,25 +9,11 @@ namespace ExtremeDumper.MegaDumper
     {
         private uint _processId;
 
-        public MegaDumper64(uint processId)
-        {
-            _processId = processId;
-        }
+        public MegaDumper64(uint processId) => _processId = processId;
 
-        public bool DumpModule(IntPtr moduleHandle, string path)
-        {
-            throw new NotSupportedException();
-        }
+        public bool DumpModule(IntPtr moduleHandle, string filePath) => MegaDumperPrivate.DumpModule(_processId, filePath, (long)moduleHandle);
 
-        public bool DumpModule(uint moduleId, string path)
-        {
-            throw new NotSupportedException();
-        }
-
-        public int DumpProcess(string path)
-        {
-            return MegaDumperPrivate.DumpProcess(_processId, path);
-        }
+        public int DumpProcess(string directoryPath) => MegaDumperPrivate.DumpProcess(_processId, directoryPath);
 
         private static class MegaDumperPrivate
         {
@@ -65,6 +51,259 @@ namespace ExtremeDumper.MegaDumper
                 PageSize = system_INFO.dwPageSize;
             }
 
+            private static bool BytesEqual(byte[] Array1, byte[] Array2)
+            {
+                if (Array1.Length != Array2.Length) return false;
+                for (int i = 0; i < Array1.Length; i++)
+                {
+                    if (Array1[i] != Array2[i]) return false;
+                }
+                return true;
+            }
+
+            private const uint PROCESS_VM_OPERATION = 0x0008;
+            private const uint PROCESS_VM_READ = 0x0010;
+            private const uint PROCESS_VM_WRITE = 0x0020;
+            private const uint PROCESS_QUERY_INFORMATION = 0x0400;
+
+            public static bool DumpModule(uint procid, string filePath, long ImageBase)
+            {
+                IntPtr hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, 0, procid);
+
+                if (hProcess != IntPtr.Zero)
+                {
+                    bool isok;
+
+                    byte[] bigMem = new byte[PageSize];
+                    byte[] InfoKeep = new byte[8];
+                    uint BytesRead = 0;
+
+                    int nrofsection = 0;
+                    byte[] Dump = null;
+                    byte[] Partkeep = null;
+                    int filealignment = 0;
+                    int rawaddress;
+                    int address = 0;
+                    int offset = 0;
+                    bool ShouldFixrawsize = false;
+
+                    isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + 0x03C), InfoKeep, 4, ref BytesRead);
+                    int PEOffset = BitConverter.ToInt32(InfoKeep, 0);
+
+                    try
+                    {
+                        isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + PEOffset + 0x0108 + 20), InfoKeep, 4, ref BytesRead);
+                        byte[] PeHeader = new byte[PageSize];
+
+                        rawaddress = BitConverter.ToInt32(InfoKeep, 0);
+                        int sizetocopy = rawaddress;
+                        if (sizetocopy > PageSize) sizetocopy = (int)PageSize;
+                        isok = ReadProcessMemory(hProcess, (IntPtr)ImageBase, PeHeader, (uint)sizetocopy, ref BytesRead);
+                        offset = offset + rawaddress;
+
+                        nrofsection = BitConverter.ToInt16(PeHeader, PEOffset + 0x06);
+                        int sectionalignment = BitConverter.ToInt32(PeHeader, PEOffset + 0x038);
+                        filealignment = BitConverter.ToInt32(PeHeader, PEOffset + 0x03C);
+
+                        int sizeofimage = BitConverter.ToInt32(PeHeader, PEOffset + 0x050);
+
+                        int calculatedimagesize = BitConverter.ToInt32(PeHeader, PEOffset + 0x0108 + 012);
+
+                        for (int i = 0; i < nrofsection; i++)
+                        {
+                            int virtualsize = BitConverter.ToInt32(PeHeader, PEOffset + 0x0108 + 0x28 * i + 08);
+                            int toadd = (virtualsize % sectionalignment);
+                            if (toadd != 0) toadd = sectionalignment - toadd;
+                            calculatedimagesize = calculatedimagesize + virtualsize + toadd;
+                        }
+
+                        if (calculatedimagesize > sizeofimage) sizeofimage = calculatedimagesize;
+                        Dump = new byte[sizeofimage];
+                        Array.Copy(PeHeader, Dump, sizetocopy);
+                        Partkeep = new byte[sizeofimage];
+
+                    }
+                    catch
+                    {
+
+                    }
+
+
+                    int calcrawsize = 0;
+                    for (int i = 0; i < nrofsection; i++)
+                    {
+
+                        int rawsize, virtualsize, virtualAddress;
+                        for (int l = 0; l < nrofsection; l++)
+                        {
+                            rawsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * l + 16);
+                            virtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * l + 08);
+                            virtualAddress = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * l + 012);
+
+                            // RawSize = Virtual Size rounded on FileAlligment
+                            calcrawsize = 0;
+                            calcrawsize = virtualsize % filealignment;
+                            if (calcrawsize != 0) calcrawsize = filealignment - calcrawsize;
+                            calcrawsize = virtualsize + calcrawsize;
+
+                            if (calcrawsize != 0 && rawsize != calcrawsize && rawsize != virtualsize)
+                            {
+                                ShouldFixrawsize = true;
+                                break;
+                            }
+                        }
+
+                        rawsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * i + 16);
+                        virtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * i + 08);
+                        // RawSize = Virtual Size rounded on FileAlligment
+                        virtualAddress = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * i + 012);
+
+
+                        if (ShouldFixrawsize)
+                        {
+                            rawsize = virtualsize;
+                            BinaryWriter writer = new BinaryWriter(new MemoryStream(Dump));
+                            writer.BaseStream.Position = PEOffset + 0x0108 + 0x28 * i + 16;
+                            writer.Write(virtualsize);
+                            writer.BaseStream.Position = PEOffset + 0x0108 + 0x28 * i + 20;
+                            writer.Write(virtualAddress);
+                            writer.Close();
+
+                        }
+
+
+
+                        address = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * i + 12);
+
+                        isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + address), Partkeep, (uint)rawsize, ref BytesRead);
+                        if (!isok)
+                        {
+                            byte[] onepage = new byte[512];
+                            for (int c = 0; c < virtualsize; c = c + 512)
+                            {
+                                isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + virtualAddress + c), onepage, 512, ref BytesRead);
+                                Array.Copy(onepage, 0, Partkeep, c, 512);
+                            }
+                        }
+
+
+                        if (ShouldFixrawsize)
+                        {
+                            Array.Copy(Partkeep, 0, Dump, virtualAddress, rawsize);
+                            offset = virtualAddress + rawsize;
+                        }
+                        else
+                        {
+                            Array.Copy(Partkeep, 0, Dump, offset, rawsize);
+                            offset = offset + rawsize;
+                        }
+                    }
+
+
+
+
+
+                    if (Dump != null && Dump.Length > 0 && Dump.Length >= offset)
+                    {
+                        int ImportDirectoryRva = BitConverter.ToInt32(Dump, PEOffset + 0x090);
+                        if (ImportDirectoryRva > 0 && ImportDirectoryRva < offset)
+                        {
+                            int current = 0;
+                            int ThunkToFix = 0;
+                            int ThunkData = 0;
+                            isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + ImportDirectoryRva + current + 12), Partkeep, 4, ref BytesRead);
+                            int NameOffset = BitConverter.ToInt32(Partkeep, 0);
+                            while (isok && NameOffset != 0)
+                            {
+                                byte[] mscoreeAscii = { 0x6D, 0x73, 0x63, 0x6F, 0x72, 0x65, 0x65, 0x2E, 0x64, 0x6C, 0x6C, 0x00 };
+                                byte[] NameKeeper = new byte[mscoreeAscii.Length];
+                                isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + NameOffset), NameKeeper, (uint)mscoreeAscii.Length, ref BytesRead);
+                                if (isok && BytesEqual(NameKeeper, mscoreeAscii))
+                                {
+                                    isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + ImportDirectoryRva + current), Partkeep, 4, ref BytesRead);
+                                    int OriginalFirstThunk = BitConverter.ToInt32(Partkeep, 0);  // OriginalFirstThunk;
+                                    if (OriginalFirstThunk > 0 && OriginalFirstThunk < offset)
+                                    {
+                                        isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + OriginalFirstThunk), Partkeep, 4, ref BytesRead);
+                                        ThunkData = BitConverter.ToInt32(Partkeep, 0);
+                                        if (ThunkData > 0 && ThunkData < offset)
+                                        {
+                                            byte[] CorExeMain = { 0x5F, 0x43, 0x6F, 0x72, 0x45, 0x78, 0x65, 0x4D, 0x61, 0x69, 0x6E, 0x00 };
+                                            byte[] CorDllMain = { 0x5F, 0x43, 0x6F, 0x72, 0x44, 0x6C, 0x6C, 0x4D, 0x61, 0x69, 0x6E, 0x00 };
+                                            NameKeeper = new byte[CorExeMain.Length];
+                                            isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + ThunkData + 2), NameKeeper,
+                                            (uint)CorExeMain.Length, ref BytesRead);
+                                            if (isok && (BytesEqual(NameKeeper, CorExeMain) || BytesEqual(NameKeeper, CorDllMain)))
+                                            {
+                                                isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + ImportDirectoryRva + current + 16), Partkeep, 4, ref BytesRead);
+                                                ThunkToFix = BitConverter.ToInt32(Partkeep, 0);  // FirstThunk;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                current = current + 20; // 20 size of IMAGE_IMPORT_DESCRIPTOR
+                                isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + ImportDirectoryRva + current + 12), Partkeep, 4, ref BytesRead);
+                                NameOffset = BitConverter.ToInt32(Partkeep, 0);
+                            }
+
+                            if (ThunkToFix > 0 && ThunkToFix < offset)
+                            {
+                                BinaryWriter writer = new BinaryWriter(new MemoryStream(Dump));
+                                isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + ThunkToFix), Partkeep, 4, ref BytesRead);
+                                int ThunkValue = BitConverter.ToInt32(Partkeep, 0);
+                                if (isok && (ThunkValue < 0 || ThunkValue > offset))
+                                {
+                                    int fvirtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 08);
+                                    int fvirtualAddress = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 012);
+                                    int frawAddress = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 20);
+                                    writer.BaseStream.Position = ThunkToFix - fvirtualAddress + frawAddress;
+                                    writer.Write(ThunkData);
+                                }
+
+                                int EntryPoint = BitConverter.ToInt32(Dump, PEOffset + 0x028);
+                                if (EntryPoint <= 0 || EntryPoint > offset)
+                                {
+                                    int ca = 0;
+                                    do
+                                    {
+                                        isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + ThunkData + ca), Partkeep, 1, ref BytesRead);
+                                        if (isok && Partkeep[0] == 0x0FF)
+                                        {
+                                            isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + ThunkData + ca + 1), Partkeep, 1, ref BytesRead);
+                                            if (isok && Partkeep[0] == 0x025)
+                                            {
+                                                isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + ThunkData + ca + 2), Partkeep, 4, ref BytesRead);
+                                                if (isok)
+                                                {
+                                                    int RealEntryPoint = ThunkData + ca;
+                                                    writer.BaseStream.Position = PEOffset + 0x028;
+                                                    writer.Write(RealEntryPoint);
+                                                }
+
+                                            }
+                                        }
+                                        ca++;
+                                    }
+                                    while (isok);
+                                }
+                                writer.Close();
+                            }
+
+                        }
+                    }
+                    if (Dump != null && Dump.Length > 0 && Dump.Length >= offset)
+                        using (var fout = new FileStream(filePath, FileMode.Create))
+                            fout.Write(Dump, 0, offset);
+                    else
+                        return false;
+                }
+                else
+                    return false;
+                return true;
+            }
+
             public static unsafe int DumpProcess(uint processId, string DirectoryName)
             {
                 IntPtr processHandle;
@@ -74,7 +313,7 @@ namespace ExtremeDumper.MegaDumper
                     return 0;
                 try
                 {
-                    MegaDumpDirectoryHelper.CreateDirectories(DirectoryName);
+                    MegaDumperHelper.CreateDirectories(DirectoryName);
                     int num2 = 1;
                     MEMORY_BASIC_INFORMATION memory_BASIC_INFORMATION;
                     for (ulong num3 = minAddress; num3 < maxAddress; num3 = memory_BASIC_INFORMATION.BaseAddress + memory_BASIC_INFORMATION.RegionSize)
@@ -296,9 +535,10 @@ namespace ExtremeDumper.MegaDumper
                     foreach (FileInfo fileInfo in new DirectoryInfo(DirectoryName).GetFiles())
                     {
                         FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(fileInfo.FullName);
-                        if (versionInfo.OriginalFilename != null && versionInfo.OriginalFilename != "")
+                        string validOriginalFilename = MegaDumperHelper.EnsureValidFileName(versionInfo.OriginalFilename);
+                        if (validOriginalFilename != "")
                         {
-                            string filePath3 = Path.Combine(DirectoryName, versionInfo.OriginalFilename);
+                            string filePath3 = Path.Combine(DirectoryName, validOriginalFilename);
                             int repetition = 2;
                             if (File.Exists(filePath3))
                             {
@@ -307,7 +547,7 @@ namespace ExtremeDumper.MegaDumper
                                     extension = ".dll";
                                 do
                                 {
-                                    filePath3 = Path.Combine(DirectoryName, Path.GetFileNameWithoutExtension(versionInfo.OriginalFilename) + "(" + repetition.ToString() + ")" + extension);
+                                    filePath3 = Path.Combine(DirectoryName, Path.GetFileNameWithoutExtension(validOriginalFilename) + "(" + repetition.ToString() + ")" + extension);
                                     repetition++;
                                 }
                                 while (File.Exists(filePath3));
@@ -315,7 +555,7 @@ namespace ExtremeDumper.MegaDumper
                             File.Move(fileInfo.FullName, filePath3);
                         }
                     }
-                    MegaDumpDirectoryHelper.Classify(DirectoryName);
+                    MegaDumperHelper.Classify(DirectoryName);
                     #endregion
                     num2--;
                     return num2;

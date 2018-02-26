@@ -41,6 +41,8 @@
             this.mnuOnlyDotNetProcess = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuInjectDll = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.mnuGotoLocation = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuMain = new System.Windows.Forms.MenuStrip();
             this.mnuOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRequireAdministrator = new System.Windows.Forms.ToolStripMenuItem();
@@ -97,35 +99,37 @@
             this.toolStripSeparator2,
             this.mnuOnlyDotNetProcess,
             this.toolStripSeparator3,
-            this.mnuInjectDll});
+            this.mnuInjectDll,
+            this.toolStripSeparator4,
+            this.mnuGotoLocation});
             this.mnuProcessContext.Name = "contextMenuStrip1";
-            this.mnuProcessContext.Size = new System.Drawing.Size(161, 126);
+            this.mnuProcessContext.Size = new System.Drawing.Size(185, 154);
             // 
             // mnuDumpProcess
             // 
             this.mnuDumpProcess.Name = "mnuDumpProcess";
-            this.mnuDumpProcess.Size = new System.Drawing.Size(160, 22);
+            this.mnuDumpProcess.Size = new System.Drawing.Size(184, 22);
             this.mnuDumpProcess.Text = "转储进程";
             this.mnuDumpProcess.Click += new System.EventHandler(this.mnuDumpProcess_Click);
             // 
             // mnuRefreshProcessList
             // 
             this.mnuRefreshProcessList.Name = "mnuRefreshProcessList";
-            this.mnuRefreshProcessList.Size = new System.Drawing.Size(160, 22);
+            this.mnuRefreshProcessList.Size = new System.Drawing.Size(184, 22);
             this.mnuRefreshProcessList.Text = "刷新进程列表";
             this.mnuRefreshProcessList.Click += new System.EventHandler(this.mnuRefreshProcessList_Click);
             // 
             // mnuViewModules
             // 
             this.mnuViewModules.Name = "mnuViewModules";
-            this.mnuViewModules.Size = new System.Drawing.Size(160, 22);
+            this.mnuViewModules.Size = new System.Drawing.Size(184, 22);
             this.mnuViewModules.Text = "查看模块列表";
             this.mnuViewModules.Click += new System.EventHandler(this.mnuViewModules_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(181, 6);
             // 
             // mnuOnlyDotNetProcess
             // 
@@ -133,21 +137,33 @@
             this.mnuOnlyDotNetProcess.CheckOnClick = true;
             this.mnuOnlyDotNetProcess.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuOnlyDotNetProcess.Name = "mnuOnlyDotNetProcess";
-            this.mnuOnlyDotNetProcess.Size = new System.Drawing.Size(160, 22);
+            this.mnuOnlyDotNetProcess.Size = new System.Drawing.Size(184, 22);
             this.mnuOnlyDotNetProcess.Text = "仅显示.Net进程";
             this.mnuOnlyDotNetProcess.Click += new System.EventHandler(this.mnuOnlyDotNetProcess_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(181, 6);
             // 
             // mnuInjectDll
             // 
             this.mnuInjectDll.Name = "mnuInjectDll";
-            this.mnuInjectDll.Size = new System.Drawing.Size(160, 22);
+            this.mnuInjectDll.Size = new System.Drawing.Size(184, 22);
             this.mnuInjectDll.Text = "注入DLL";
             this.mnuInjectDll.Click += new System.EventHandler(this.mnuInjectDll_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(181, 6);
+            // 
+            // mnuGotoLocation
+            // 
+            this.mnuGotoLocation.Name = "mnuGotoLocation";
+            this.mnuGotoLocation.Size = new System.Drawing.Size(184, 22);
+            this.mnuGotoLocation.Text = "打开文件所在的位置";
+            this.mnuGotoLocation.Click += new System.EventHandler(this.mnuGotoLocation_Click);
             // 
             // mnuMain
             // 
@@ -174,21 +190,21 @@
             // mnuRequireAdministrator
             // 
             this.mnuRequireAdministrator.Name = "mnuRequireAdministrator";
-            this.mnuRequireAdministrator.Size = new System.Drawing.Size(163, 22);
+            this.mnuRequireAdministrator.Size = new System.Drawing.Size(181, 22);
             this.mnuRequireAdministrator.Text = "提升管理员权限";
             this.mnuRequireAdministrator.Click += new System.EventHandler(this.mnuRequireAdministrator_Click);
             // 
             // mnuDebugPrivilege
             // 
             this.mnuDebugPrivilege.Name = "mnuDebugPrivilege";
-            this.mnuDebugPrivilege.Size = new System.Drawing.Size(163, 22);
+            this.mnuDebugPrivilege.Size = new System.Drawing.Size(181, 22);
             this.mnuDebugPrivilege.Text = "提升Debug权限";
             this.mnuDebugPrivilege.Click += new System.EventHandler(this.mnuDebugPrivilege_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(160, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
             // 
             // mnuDumperCore
             // 
@@ -197,11 +213,13 @@
             this.mnuUsingDebugger,
             this.mnuUsingProfiler});
             this.mnuDumperCore.Name = "mnuDumperCore";
-            this.mnuDumperCore.Size = new System.Drawing.Size(163, 22);
+            this.mnuDumperCore.Size = new System.Drawing.Size(181, 22);
             this.mnuDumperCore.Text = "转储方式";
             // 
             // mnuUsingMegaDumper
             // 
+            this.mnuUsingMegaDumper.Checked = true;
+            this.mnuUsingMegaDumper.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuUsingMegaDumper.Name = "mnuUsingMegaDumper";
             this.mnuUsingMegaDumper.Size = new System.Drawing.Size(249, 22);
             this.mnuUsingMegaDumper.Text = "MegaDumper";
@@ -209,8 +227,6 @@
             // 
             // mnuUsingDebugger
             // 
-            this.mnuUsingDebugger.Checked = true;
-            this.mnuUsingDebugger.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuUsingDebugger.Name = "mnuUsingDebugger";
             this.mnuUsingDebugger.Size = new System.Drawing.Size(249, 22);
             this.mnuUsingDebugger.Text = "IMetaDataImport - Debugger";
@@ -288,6 +304,8 @@
         private System.Windows.Forms.FolderBrowserDialog fbdlgDumped;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem mnuInjectDll;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem mnuGotoLocation;
     }
 }
 

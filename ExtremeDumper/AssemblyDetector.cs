@@ -1,4 +1,5 @@
-﻿using dnlib.DotNet;
+﻿using System.IO;
+using dnlib.DotNet;
 
 namespace ExtremeDumper
 {
@@ -11,6 +12,11 @@ namespace ExtremeDumper
         /// <returns></returns>
         public static bool IsAssembly(string path)
         {
+            string extension;
+
+            extension = Path.GetExtension(path).ToUpperInvariant();
+            if (extension == ".MUI" || extension == string.Empty)
+                return false;
             try
             {
                 ModuleDefMD.Load(path);

@@ -2,7 +2,7 @@
 
 namespace ExtremeDumper.Forms
 {
-    public partial class InjectingForm : Form
+    internal partial class InjectingForm : Form
     {
         private uint _processId;
 
