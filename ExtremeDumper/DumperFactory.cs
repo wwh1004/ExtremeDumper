@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using ExtremeDumper.MegaDumper;
+using ExtremeDumper.Metadata;
 using FastWin32.Diagnostics;
 
 namespace ExtremeDumper
@@ -21,7 +22,8 @@ namespace ExtremeDumper
                     else
                         return new MegaDumper32(processId);
                 case DumperCore.MetadataWithDebugger:
-                    throw new NotImplementedException();
+                    return new TestDumper(processId);
+                    //throw new NotImplementedException();
                 case DumperCore.MetadataWithProfiler:
                     throw new NotImplementedException();
                 default:

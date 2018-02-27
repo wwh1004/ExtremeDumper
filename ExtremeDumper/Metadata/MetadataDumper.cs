@@ -4,14 +4,8 @@ namespace ExtremeDumper.Metadata
 {
     public abstract class MetadataDumper : IDumper
     {
-        public bool DumpModule(IntPtr moduleHandle, string filePath)
-        {
-            throw new NotSupportedException();
-        }
+        public abstract bool DumpModule(IntPtr moduleHandle, string filePath);
 
-        public int DumpProcess(string directoryPath)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract int DumpProcess(string directoryPath);
     }
 }

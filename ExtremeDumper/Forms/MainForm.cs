@@ -28,6 +28,10 @@ namespace ExtremeDumper.Forms
             typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwProcesses, new object[] { true });
             lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, TypeCode.Int32 }, { 2, TypeCode.String } });
             RefreshProcessList();
+#if DEBUG
+            MessageBox.Show("DEBUG TestDumper");
+            _dumperCore = new DumperCoreWrapper { Value = DumperCore.MetadataWithDebugger };
+#endif
         }
 
         #region Events

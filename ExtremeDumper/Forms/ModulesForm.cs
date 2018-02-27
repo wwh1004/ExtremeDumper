@@ -113,10 +113,10 @@ namespace ExtremeDumper.Forms
                     foreach (ClrInfo clrVersion in dataTarget.ClrVersions)
                         foreach (ClrModule clrModule in clrVersion.CreateRuntime().Modules)
                         {
-                            listViewItem = new ListViewItem(Path.GetFileName(clrModule.Name));
+                            listViewItem = new ListViewItem(clrModule.IsDynamic ? clrModule.Name.Split(',')[0] : Path.GetFileName(clrModule.Name));
                             listViewItem.SubItems.Add("0x" + clrModule.ImageBase.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8"));
                             listViewItem.SubItems.Add("0x" + clrModule.Size.ToString("X8"));
-                            listViewItem.SubItems.Add(clrModule.IsFile ? clrModule.FileName : "模块仅在内存中");
+                            listViewItem.SubItems.Add(clrModule.IsDynamic ? "模块仅在内存中" : clrModule.FileName);
                             listViewItem.BackColor = Cache.DotNetColor;
                             lvwModules.Items.Add(listViewItem);
                         }

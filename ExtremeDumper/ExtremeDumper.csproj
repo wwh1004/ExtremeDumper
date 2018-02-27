@@ -93,10 +93,12 @@
     <Compile Include="MegaDumper\MegaDumper32.cs" />
     <Compile Include="MegaDumper\MegaDumper64.cs" />
     <Compile Include="Forms\MessageBoxStub.cs" />
+    <Compile Include="Metadata\CorModuleDefHelper.cs" />
     <Compile Include="Metadata\DbgDumper.cs" />
     <Compile Include="Metadata\MetadataDumper.cs" />
     <Compile Include="Metadata\ProfDumper.cs" />
     <Compile Include="Forms\Program.cs" />
+    <Compile Include="Metadata\TestDumper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
