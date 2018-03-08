@@ -110,8 +110,8 @@ namespace ExtremeDumper.Forms
             }
             if (_isDotNetProcess)
                 using (dataTarget = DataTarget.AttachToProcess((int)_processId, 10000, AttachFlag.Passive))
-                    foreach (ClrInfo clrVersion in dataTarget.ClrVersions)
-                        foreach (ClrModule clrModule in clrVersion.CreateRuntime().Modules)
+                    foreach (ClrInfo clrInfo in dataTarget.ClrVersions)
+                        foreach (ClrModule clrModule in clrInfo.CreateRuntime().Modules)
                         {
                             listViewItem = new ListViewItem(clrModule.IsDynamic ? clrModule.Name.Split(',')[0] : Path.GetFileName(clrModule.Name));
                             listViewItem.SubItems.Add("0x" + clrModule.ImageBase.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8"));

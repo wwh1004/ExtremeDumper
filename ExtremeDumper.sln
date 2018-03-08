@@ -11,14 +11,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "..\dnlib\src\dnlib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastWin32", "..\FastWin32\FastWin32\FastWin32.csproj", "{0B6AC808-3A51-4072-954F-D55DE4F0209B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Diagnostics.Runtime.v2", "Libraries\clrmd-xp\src\Microsoft.Diagnostics.Runtime\v2\Microsoft.Diagnostics.Runtime.v2.csproj", "{935D33C5-62F1-40FE-8DB0-46B6E01342FB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtremeDumper-x86", "ExtremeDumper-x86\ExtremeDumper-x86.csproj", "{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Microsoft.Diagnostics.Runtime.Shared", "Libraries\clrmd-xp\src\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.shproj", "{66B12BA5-552F-492C-8E6D-8FD6DBE1EA31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InjectingDumper", "InjectingDumper\InjectingDumper.csproj", "{0CBEC107-9945-4B9B-AB56-2F38AC2435B9}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Libraries\clrmd-xp\src\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.projitems*{66b12ba5-552f-492c-8e6d-8fd6dbe1ea31}*SharedItemsImports = 13
 		..\dndbg\dndbg\dndbg.projitems*{97275166-7ec7-44a9-afb1-b72349f1921e}*SharedItemsImports = 13
 		..\dndbg\dndbg\dndbg.projitems*{ba1d5a3e-330e-4d82-bff5-58b6cf52726c}*SharedItemsImports = 4
+		Libraries\clrmd-xp\src\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.projitems*{ba1d5a3e-330e-4d82-bff5-58b6cf52726c}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,14 +41,14 @@ Global
 		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CBEC107-9945-4B9B-AB56-2F38AC2435B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CBEC107-9945-4B9B-AB56-2F38AC2435B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CBEC107-9945-4B9B-AB56-2F38AC2435B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CBEC107-9945-4B9B-AB56-2F38AC2435B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

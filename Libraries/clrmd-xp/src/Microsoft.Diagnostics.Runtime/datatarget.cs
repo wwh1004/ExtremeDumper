@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using Microsoft.Diagnostics.Runtime.ICorDebug;
+using FastWin32.Memory;
 
 namespace Microsoft.Diagnostics.Runtime
 {
@@ -1381,40 +1382,42 @@ namespace Microsoft.Diagnostics.Runtime
 
         public int GetMetadata(string filename, uint imageTimestamp, uint imageSize, IntPtr mvid, uint mdRva, uint flags, uint bufferSize, byte[] buffer, IntPtr dataSize)
         {
-            string filePath = _dataTarget.SymbolLocator.FindBinary(filename, imageTimestamp, imageSize, true);
-            if (filePath == null)
-                return -1;
-
-            // We do not put a using statement here to prevent needing to load/unload the binary over and over.
-            PEFile file = _dataTarget.FileLoader.LoadPEFile(filePath);
-            if (file == null)
-                return -1;
-
-            var comDescriptor = file.Header.ComDescriptorDirectory;
-            if (comDescriptor.VirtualAddress == 0)
-                return -1;
-
-            PEBuffer peBuffer = file.AllocBuff();
-            if (mdRva == 0)
-            {
-                IntPtr hdr = file.SafeFetchRVA((int)comDescriptor.VirtualAddress, (int)comDescriptor.Size, peBuffer);
-
-                IMAGE_COR20_HEADER corhdr = (IMAGE_COR20_HEADER)Marshal.PtrToStructure(hdr, typeof(IMAGE_COR20_HEADER));
-                if (bufferSize < corhdr.MetaData.Size)
-                {
-                    file.FreeBuff(peBuffer);
-                    return -1;
-                }
-
-                mdRva = corhdr.MetaData.VirtualAddress;
-                bufferSize = corhdr.MetaData.Size;
-            }
-
-            IntPtr ptr = file.SafeFetchRVA((int)mdRva, (int)bufferSize, peBuffer);
-            Marshal.Copy(ptr, buffer, 0, (int)bufferSize);
-
-            file.FreeBuff(peBuffer);
+            //MemoryIO.EnumPages(processId,)
             return 0;
+            //string filePath = _dataTarget.SymbolLocator.FindBinary(filename, imageTimestamp, imageSize, true);
+            //if (filePath == null)
+            //    return -1;
+
+            //// We do not put a using statement here to prevent needing to load/unload the binary over and over.
+            //PEFile file = _dataTarget.FileLoader.LoadPEFile(filePath);
+            //if (file == null)
+            //    return -1;
+
+            //var comDescriptor = file.Header.ComDescriptorDirectory;
+            //if (comDescriptor.VirtualAddress == 0)
+            //    return -1;
+
+            //PEBuffer peBuffer = file.AllocBuff();
+            //if (mdRva == 0)
+            //{
+            //    IntPtr hdr = file.SafeFetchRVA((int)comDescriptor.VirtualAddress, (int)comDescriptor.Size, peBuffer);
+
+            //    IMAGE_COR20_HEADER corhdr = (IMAGE_COR20_HEADER)Marshal.PtrToStructure(hdr, typeof(IMAGE_COR20_HEADER));
+            //    if (bufferSize < corhdr.MetaData.Size)
+            //    {
+            //        file.FreeBuff(peBuffer);
+            //        return -1;
+            //    }
+
+            //    mdRva = corhdr.MetaData.VirtualAddress;
+            //    bufferSize = corhdr.MetaData.Size;
+            //}
+
+            //IntPtr ptr = file.SafeFetchRVA((int)mdRva, (int)bufferSize, peBuffer);
+            //Marshal.Copy(ptr, buffer, 0, (int)bufferSize);
+
+            //file.FreeBuff(peBuffer);
+            //return 0;
         }
     }
 

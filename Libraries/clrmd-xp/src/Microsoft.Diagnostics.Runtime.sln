@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Diagnostics.Runtime", "Microsoft.Diagnostics.Runtime\Microsoft.Diagnostics.Runtime.csproj", "{A82126CA-23AA-41F1-8586-A5938D44D0A7}"
 EndProject
@@ -15,7 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindbgExtension", "Samples\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileAndLineNumbers", "FileAndLineNumbers\FileAndLineNumbers.csproj", "{EA92F1E6-3F34-48F8-8B0A-F2BBC19220EF}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Microsoft.Diagnostics.Runtime.Shared", "Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.shproj", "{66B12BA5-552F-492C-8E6D-8FD6DBE1EA31}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.projitems*{66b12ba5-552f-492c-8e6d-8fd6dbe1ea31}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -132,5 +137,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{3FCA8012-3BAD-41E4-91F4-534AA9A44F96} = {FB574D76-776A-4E41-A203-317A2AA35607}
 		{EA92F1E6-3F34-48F8-8B0A-F2BBC19220EF} = {FB574D76-776A-4E41-A203-317A2AA35607}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2441818F-7881-4850-95F9-7653A35054B8}
 	EndGlobalSection
 EndGlobal

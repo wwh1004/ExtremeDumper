@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;V2_SUPPORT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -27,7 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;V2_SUPPORT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -93,12 +93,14 @@
     <Compile Include="MegaDumper\MegaDumper32.cs" />
     <Compile Include="MegaDumper\MegaDumper64.cs" />
     <Compile Include="Forms\MessageBoxStub.cs" />
-    <Compile Include="Metadata\CorModuleDefHelper.cs" />
-    <Compile Include="Metadata\DbgDumper.cs" />
-    <Compile Include="Metadata\MetadataDumper.cs" />
-    <Compile Include="Metadata\ProfDumper.cs" />
+    <Compile Include="MetadataDumper\EmptyDebugMessageDispatcher.cs" />
+    <Compile Include="MetadataDumper\MiniCorFunction.cs" />
+    <Compile Include="MetadataDumper\NativeProcessReader.cs" />
+    <Compile Include="MetadataDumper\MiniCorModuleDefHelper.cs" />
+    <Compile Include="MetadataDumper\DbgDumper.cs" />
+    <Compile Include="MetadataDumper\ProfDumper.cs" />
     <Compile Include="Forms\Program.cs" />
-    <Compile Include="Metadata\TestDumper.cs" />
+    <Compile Include="MetadataDumper\PassiveDumper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
@@ -129,10 +131,6 @@
       <Project>{0B6AC808-3A51-4072-954F-D55DE4F0209B}</Project>
       <Name>FastWin32</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Libraries\clrmd-xp\src\Microsoft.Diagnostics.Runtime\v2\Microsoft.Diagnostics.Runtime.v2.csproj">
-      <Project>{935d33c5-62f1-40fe-8db0-46b6e01342fb}</Project>
-      <Name>Microsoft.Diagnostics.Runtime.v2</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Forms\Resources\Avatar.png" />
@@ -141,5 +139,6 @@
     <None Include="Forms\Resources\Icon.ico" />
   </ItemGroup>
   <Import Project="..\..\dndbg\dndbg\dndbg.projitems" Label="Shared" />
+  <Import Project="..\Libraries\clrmd-xp\src\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

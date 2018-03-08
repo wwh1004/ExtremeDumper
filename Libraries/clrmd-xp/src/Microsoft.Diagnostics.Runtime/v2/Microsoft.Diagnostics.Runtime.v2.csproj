@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Diagnostics.Runtime</RootNamespace>
     <AssemblyName>Microsoft.Diagnostics.Runtime</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -159,7 +159,12 @@
     <Compile Include="..\ICorDebug\IMetaHostWrappers.cs" />
     <Compile Include="..\ICorDebug\IMetadataImport.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\FastWin32\FastWin32\FastWin32.csproj">
+      <Project>{0b6ac808-3a51-4072-954f-d55de4f0209b}</Project>
+      <Name>FastWin32</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

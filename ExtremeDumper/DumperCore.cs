@@ -4,8 +4,10 @@
     {
         MegaDumper,
 
-        MetadataWithDebugger,
+        PassiveDumper,
 
-        MetadataWithProfiler
+        DbgDumper,
+
+        ProfDumper
     }
 }

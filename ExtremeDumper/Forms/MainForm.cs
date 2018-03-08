@@ -7,6 +7,7 @@ using System.Security.Principal;
 using System.Windows.Forms;
 using FastWin32;
 using FastWin32.Diagnostics;
+using FastWin32.Memory;
 using static ExtremeDumper.Forms.NativeMethods;
 
 namespace ExtremeDumper.Forms
@@ -28,10 +29,10 @@ namespace ExtremeDumper.Forms
             typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwProcesses, new object[] { true });
             lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, TypeCode.Int32 }, { 2, TypeCode.String } });
             RefreshProcessList();
-#if DEBUG
-            MessageBox.Show("DEBUG TestDumper");
-            _dumperCore = new DumperCoreWrapper { Value = DumperCore.MetadataWithDebugger };
-#endif
+            //#if DEBUG
+            //            MessageBox.Show("DEBUG TestDumper");
+            //            _dumperCore = new DumperCoreWrapper { Value = DumperCore.DbgDumper };
+            //#endif
         }
 
         #region Events
@@ -57,9 +58,9 @@ namespace ExtremeDumper.Forms
 
         private void mnuUsingMegaDumper_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.MegaDumper);
 
-        private void mnuUsingDebugger_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.MetadataWithDebugger);
+        private void mnuUsingDebugger_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.DbgDumper);
 
-        private void mnuUsingProfiler_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.MetadataWithProfiler);
+        private void mnuUsingProfiler_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.ProfDumper);
 
         private void mnuAbout_Click(object sender, EventArgs e) => _aboutForm.ShowDialog();
 
@@ -118,12 +119,12 @@ namespace ExtremeDumper.Forms
                     _dumperCore.Value = DumperCore.MegaDumper;
                     mnuUsingMegaDumper.Checked = true;
                     break;
-                case DumperCore.MetadataWithDebugger:
-                    _dumperCore.Value = DumperCore.MetadataWithDebugger;
+                case DumperCore.DbgDumper:
+                    _dumperCore.Value = DumperCore.DbgDumper;
                     mnuUsingDebugger.Checked = true;
                     break;
-                case DumperCore.MetadataWithProfiler:
-                    _dumperCore.Value = DumperCore.MetadataWithProfiler;
+                case DumperCore.ProfDumper:
+                    _dumperCore.Value = DumperCore.ProfDumper;
                     mnuUsingProfiler.Checked = true;
                     break;
             }

@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>66b12ba5-552f-492c-8e6d-8fd6dbe1ea31</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Microsoft.Diagnostics.Runtime.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ClrAppDomain.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ClrException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ClrHeap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ClrModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ClrRuntime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ClrThread.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ClrType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DacInterfaces.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\Enums.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugAdvanced.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugAdvanced2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugAdvanced3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugBreakpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugBreakpoint2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugBreakpoint3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugClient2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugClient3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugClient4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugClient5.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugClient6.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugControl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugControl2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugControl3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugControl4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugControl5.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugControl6.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugDataSpaces.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugDataSpaces2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugDataSpaces3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugDataSpaces4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugEventCallbacks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugEventCallbacksWide.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugEventContextCallbacks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugInputCallbacks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugOutputCallbacks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugOutputCallbacks2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugOutputCallbacksWide.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugRegisters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugRegisters2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugSymbolGroup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugSymbolGroup2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugSymbols.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugSymbols2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugSymbols3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugSymbols4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugSymbols5.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugSystemObjects.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugSystemObjects2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\IDebugSystemObjects3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Debugger\Structs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\com.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\domains.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\fields.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\heap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\helpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\legacyruntime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\lockinspection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\methods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\modules.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\runtimebase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\threadpool.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\threads.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\types.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Desktop\v45runtime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DumpDataReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ICorDebug\ICorDebugHelpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ICorDebug\ICorDebugWrappers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ICorDebug\IMetadataImport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ICorDebug\IMetaHostWrappers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ISymbolResolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Native\NativeDac.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Native\NativeException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Native\NativeHeap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Native\NativeModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Native\NativeRoots.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Native\NativeRuntime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Native\NativeThread.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Native\NativeTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\command.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\DumpReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\BitAccess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\BitSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\CvInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\DataStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\DbiDbgHdr.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\DbiHeader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\DbiModuleInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\DbiSecCon.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\MsfDirectory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbConstant.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbDebugException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbFileHeader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbFunction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbScope.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbSequencePoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbSequencePointCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbSlot.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PDB\PdbStreamHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\pefile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\sigparser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\SymbolLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\SymbolPath.cs" />
+  </ItemGroup>
+</Project>
