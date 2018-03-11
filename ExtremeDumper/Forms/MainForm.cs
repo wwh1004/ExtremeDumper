@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -115,13 +116,19 @@ namespace ExtremeDumper.Forms
         private void SwitchDumperCore(DumperCore dumperCore)
         {
             mnuUsingMegaDumper.Checked = false;
+            mnuUsingPassiveDumper.Checked = false;
             mnuUsingDbgDumper.Checked = false;
             mnuUsingProfDumper.Checked = false;
+            mnuUsingInjector.Checked = false;
             switch (dumperCore)
             {
                 case DumperCore.MegaDumper:
                     _dumperCore.Value = DumperCore.MegaDumper;
                     mnuUsingMegaDumper.Checked = true;
+                    break;
+                case DumperCore.PassiveDumper:
+                    _dumperCore.Value = DumperCore.PassiveDumper;
+                    mnuUsingPassiveDumper.Checked = true;
                     break;
                 case DumperCore.DbgDumper:
                     _dumperCore.Value = DumperCore.DbgDumper;
@@ -131,6 +138,12 @@ namespace ExtremeDumper.Forms
                     _dumperCore.Value = DumperCore.ProfDumper;
                     mnuUsingProfDumper.Checked = true;
                     break;
+                case DumperCore.InjectingDumper:
+                    _dumperCore.Value = DumperCore.InjectingDumper;
+                    mnuUsingInjector.Checked = true;
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException();
             }
         }
 
