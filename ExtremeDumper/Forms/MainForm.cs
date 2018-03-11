@@ -58,9 +58,13 @@ namespace ExtremeDumper.Forms
 
         private void mnuUsingMegaDumper_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.MegaDumper);
 
+        private void mnuUsingPassiveDumper_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.PassiveDumper);
+
         private void mnuUsingDebugger_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.DbgDumper);
 
         private void mnuUsingProfiler_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.ProfDumper);
+
+        private void mnuUsingInjector_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.InjectingDumper);
 
         private void mnuAbout_Click(object sender, EventArgs e) => _aboutForm.ShowDialog();
 
@@ -111,8 +115,8 @@ namespace ExtremeDumper.Forms
         private void SwitchDumperCore(DumperCore dumperCore)
         {
             mnuUsingMegaDumper.Checked = false;
-            mnuUsingDebugger.Checked = false;
-            mnuUsingProfiler.Checked = false;
+            mnuUsingDbgDumper.Checked = false;
+            mnuUsingProfDumper.Checked = false;
             switch (dumperCore)
             {
                 case DumperCore.MegaDumper:
@@ -121,11 +125,11 @@ namespace ExtremeDumper.Forms
                     break;
                 case DumperCore.DbgDumper:
                     _dumperCore.Value = DumperCore.DbgDumper;
-                    mnuUsingDebugger.Checked = true;
+                    mnuUsingDbgDumper.Checked = true;
                     break;
                 case DumperCore.ProfDumper:
                     _dumperCore.Value = DumperCore.ProfDumper;
-                    mnuUsingProfiler.Checked = true;
+                    mnuUsingProfDumper.Checked = true;
                     break;
             }
         }
@@ -206,6 +210,6 @@ namespace ExtremeDumper.Forms
             }
         }
 
-        private void DumpProcess(uint processId, string path) => MessageBoxStub.Show($"{DumperFactory.GetDumper(processId, _dumperCore.Value).DumpProcess(path).ToString()} 个文件被转储在:{Environment.NewLine}{path}", MessageBoxIcon.Information);
+        private void DumpProcess(uint processId, string directoryPath) => MessageBoxStub.Show($"{DumperFactory.GetDumper(processId, _dumperCore.Value).DumpProcess(directoryPath).ToString()} 个文件被转储在:{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
     }
 }

@@ -21,7 +21,7 @@ namespace ExtremeDumper.MetadataDumper
             IMetaDataImport mdi;
             CorModuleDef corModuleDef;
 
-            clrModule = GetClrModule(moduleHandle);
+            clrModule = GetModule(moduleHandle);
             if (clrModule == null)
                 return false;
             mdi = (IMetaDataImport)clrModule.MetadataImport;
@@ -37,7 +37,7 @@ namespace ExtremeDumper.MetadataDumper
             return true;
         }
 
-        private ClrModule GetClrModule(IntPtr moduleHandle)
+        private ClrModule GetModule(IntPtr moduleHandle)
         {
             DataTarget dataTarget;
 
@@ -46,10 +46,10 @@ namespace ExtremeDumper.MetadataDumper
                     foreach (ClrModule clrModule in clrInfo.CreateRuntime().Modules)
                         if ((IntPtr)clrModule.ImageBase == moduleHandle)
                         {
-                            dataTarget.SelectedClrModule = clrModule;
+                            dataTarget.SelectedModule = clrModule;
                             return clrModule;
                         }
-            dataTarget.SelectedClrModule = null;
+            dataTarget.SelectedModule = null;
             return null;
         }
 

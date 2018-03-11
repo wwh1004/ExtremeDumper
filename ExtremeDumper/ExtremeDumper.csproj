@@ -42,6 +42,7 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Forms\AboutForm.cs">
@@ -89,6 +90,7 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="InjectingDumper\DumperInjector.cs" />
     <Compile Include="MegaDumper\MegaDumperHelper.cs" />
     <Compile Include="MegaDumper\MegaDumper32.cs" />
     <Compile Include="MegaDumper\MegaDumper64.cs" />
@@ -123,10 +125,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\dnlib\src\dnlib.csproj">
-      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
-      <Name>dnlib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\FastWin32\FastWin32\FastWin32.csproj">
       <Project>{0B6AC808-3A51-4072-954F-D55DE4F0209B}</Project>
       <Name>FastWin32</Name>
@@ -138,7 +136,11 @@
   <ItemGroup>
     <None Include="Forms\Resources\Icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InjectingDumper\InjectingDumper.dll" />
+  </ItemGroup>
   <Import Project="..\..\dndbg\dndbg\dndbg.projitems" Label="Shared" />
-  <Import Project="..\Libraries\clrmd-xp\src\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.projitems" Label="Shared" />
+  <Import Project="..\Libraries\clrmd-xp\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.projitems" Label="Shared" />
+  <Import Project="..\Libraries\dnlib\dnlib.Shared\dnlib.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

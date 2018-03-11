@@ -50,8 +50,10 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuDumperCore = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuUsingMegaDumper = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuUsingDebugger = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuUsingProfiler = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuUsingPassiveDumper = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuUsingDbgDumper = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuUsingProfDumper = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuUsingInjector = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.fbdlgDumped = new System.Windows.Forms.FolderBrowserDialog();
@@ -190,30 +192,32 @@
             // mnuRequireAdministrator
             // 
             this.mnuRequireAdministrator.Name = "mnuRequireAdministrator";
-            this.mnuRequireAdministrator.Size = new System.Drawing.Size(181, 22);
+            this.mnuRequireAdministrator.Size = new System.Drawing.Size(180, 22);
             this.mnuRequireAdministrator.Text = "提升管理员权限";
             this.mnuRequireAdministrator.Click += new System.EventHandler(this.mnuRequireAdministrator_Click);
             // 
             // mnuDebugPrivilege
             // 
             this.mnuDebugPrivilege.Name = "mnuDebugPrivilege";
-            this.mnuDebugPrivilege.Size = new System.Drawing.Size(181, 22);
+            this.mnuDebugPrivilege.Size = new System.Drawing.Size(180, 22);
             this.mnuDebugPrivilege.Text = "提升Debug权限";
             this.mnuDebugPrivilege.Click += new System.EventHandler(this.mnuDebugPrivilege_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // mnuDumperCore
             // 
             this.mnuDumperCore.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuUsingMegaDumper,
-            this.mnuUsingDebugger,
-            this.mnuUsingProfiler});
+            this.mnuUsingPassiveDumper,
+            this.mnuUsingDbgDumper,
+            this.mnuUsingProfDumper,
+            this.mnuUsingInjector});
             this.mnuDumperCore.Name = "mnuDumperCore";
-            this.mnuDumperCore.Size = new System.Drawing.Size(181, 22);
+            this.mnuDumperCore.Size = new System.Drawing.Size(180, 22);
             this.mnuDumperCore.Text = "转储方式";
             // 
             // mnuUsingMegaDumper
@@ -225,19 +229,34 @@
             this.mnuUsingMegaDumper.Text = "MegaDumper";
             this.mnuUsingMegaDumper.Click += new System.EventHandler(this.mnuUsingMegaDumper_Click);
             // 
-            // mnuUsingDebugger
+            // mnuUsingPassiveDumper
             // 
-            this.mnuUsingDebugger.Name = "mnuUsingDebugger";
-            this.mnuUsingDebugger.Size = new System.Drawing.Size(249, 22);
-            this.mnuUsingDebugger.Text = "IMetaDataImport - Debugger";
-            this.mnuUsingDebugger.Click += new System.EventHandler(this.mnuUsingDebugger_Click);
+            this.mnuUsingPassiveDumper.Name = "mnuUsingPassiveDumper";
+            this.mnuUsingPassiveDumper.Size = new System.Drawing.Size(249, 22);
+            this.mnuUsingPassiveDumper.Text = "IMetaDataImport - Passive";
+            this.mnuUsingPassiveDumper.Click += new System.EventHandler(this.mnuUsingPassiveDumper_Click);
             // 
-            // mnuUsingProfiler
+            // mnuUsingDbgDumper
             // 
-            this.mnuUsingProfiler.Name = "mnuUsingProfiler";
-            this.mnuUsingProfiler.Size = new System.Drawing.Size(249, 22);
-            this.mnuUsingProfiler.Text = "IMetaDataImport - Profiler";
-            this.mnuUsingProfiler.Click += new System.EventHandler(this.mnuUsingProfiler_Click);
+            this.mnuUsingDbgDumper.Name = "mnuUsingDbgDumper";
+            this.mnuUsingDbgDumper.Size = new System.Drawing.Size(249, 22);
+            this.mnuUsingDbgDumper.Text = "IMetaDataImport - Debugger";
+            this.mnuUsingDbgDumper.Click += new System.EventHandler(this.mnuUsingDebugger_Click);
+            // 
+            // mnuUsingProfDumper
+            // 
+            this.mnuUsingProfDumper.Enabled = false;
+            this.mnuUsingProfDumper.Name = "mnuUsingProfDumper";
+            this.mnuUsingProfDumper.Size = new System.Drawing.Size(249, 22);
+            this.mnuUsingProfDumper.Text = "IMetaDataImport - Profiler";
+            this.mnuUsingProfDumper.Click += new System.EventHandler(this.mnuUsingProfiler_Click);
+            // 
+            // mnuUsingInjector
+            // 
+            this.mnuUsingInjector.Name = "mnuUsingInjector";
+            this.mnuUsingInjector.Size = new System.Drawing.Size(249, 22);
+            this.mnuUsingInjector.Text = "InjectingDumper";
+            this.mnuUsingInjector.Click += new System.EventHandler(this.mnuUsingInjector_Click);
             // 
             // mnuHelp
             // 
@@ -288,8 +307,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuDebugPrivilege;
         private System.Windows.Forms.ToolStripMenuItem mnuDumperCore;
         private System.Windows.Forms.ToolStripMenuItem mnuUsingMegaDumper;
-        private System.Windows.Forms.ToolStripMenuItem mnuUsingDebugger;
-        private System.Windows.Forms.ToolStripMenuItem mnuUsingProfiler;
+        private System.Windows.Forms.ToolStripMenuItem mnuUsingDbgDumper;
+        private System.Windows.Forms.ToolStripMenuItem mnuUsingProfDumper;
         private System.Windows.Forms.ColumnHeader chProcessName;
         private System.Windows.Forms.ColumnHeader chProcessId;
         private System.Windows.Forms.ColumnHeader chProcessPath;
@@ -306,6 +325,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuInjectDll;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem mnuGotoLocation;
+        private System.Windows.Forms.ToolStripMenuItem mnuUsingInjector;
+        private System.Windows.Forms.ToolStripMenuItem mnuUsingPassiveDumper;
     }
 }
 

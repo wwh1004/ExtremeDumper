@@ -100,9 +100,9 @@
             this.lblThanks.AutoSize = true;
             this.lblThanks.Location = new System.Drawing.Point(263, 150);
             this.lblThanks.Name = "lblThanks";
-            this.lblThanks.Size = new System.Drawing.Size(178, 34);
+            this.lblThanks.Size = new System.Drawing.Size(178, 51);
             this.lblThanks.TabIndex = 6;
-            this.lblThanks.Text = "0xd4d - dnlib & dndbg\r\nCodeCracker - MegaDumper\r\n";
+            this.lblThanks.Text = "0xd4d - dnlib & dndbg\r\nCodeCracker - MegaDumper\r\nClrMD - Microsoft";
             // 
             // llblGithub
             // 
@@ -113,6 +113,7 @@
             this.llblGithub.TabIndex = 7;
             this.llblGithub.TabStop = true;
             this.llblGithub.Text = "https://github.com/23651039\r\n39/ExtremeDumper";
+            this.llblGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lkbGithub_LinkClicked);
             // 
             // AboutForm
             // 

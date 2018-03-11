@@ -19,7 +19,7 @@ namespace ExtremeDumper.MetadataDumper
             DnDebugger dnDebugger;
             CorModuleDef corModuleDef;
 
-            clrVersion = GetClrModuleCLRVersion(moduleHandle);
+            clrVersion = GetModuleCLRVersion(moduleHandle);
             if (string.IsNullOrEmpty(clrVersion))
                 return false;
             using (dnDebugger = DnDebugger.Attach(new AttachProcessOptions(new DesktopCLRTypeAttachInfo(clrVersion)) { DebugMessageDispatcher = EmptyDebugMessageDispatcher.Instance, ProcessId = (int)_processId }))
@@ -33,7 +33,7 @@ namespace ExtremeDumper.MetadataDumper
             return true;
         }
 
-        private string GetClrModuleCLRVersion(IntPtr moduleHandle)
+        private string GetModuleCLRVersion(IntPtr moduleHandle)
         {
             DataTarget dataTarget;
 

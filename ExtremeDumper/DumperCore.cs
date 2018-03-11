@@ -8,6 +8,8 @@
 
         DbgDumper,
 
-        ProfDumper
+        ProfDumper,
+
+        InjectingDumper
     }
 }
