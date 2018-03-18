@@ -13,7 +13,9 @@ namespace ExtremeDumper.InjectingDumper
     {
         private uint _processId;
 
-        private static readonly byte[] InjectingDumper = GetInjectingDumper();
+        private static readonly byte[] InjectingDumper2 = GetInjectingDumper(2);
+
+        private static readonly byte[] InjectingDumper4 = GetInjectingDumper(4);
 
         public DumperInjector(uint processId) => _processId = processId;
 
@@ -29,7 +31,7 @@ namespace ExtremeDumper.InjectingDumper
             if (clrModule == null)
                 return false;
             metadataDictionary = GetMetadataDictionary(clrModule);
-            return Injector.InjectManaged(_processId, UnpackDumper(), "InjectingDumper.Dumper", "TryDumpModule", Convert.ToBase64String(Encoding.Unicode.GetBytes($"{((ulong)moduleHandle).ToString()}|{metadataDictionary.Rva.ToString()}|{metadataDictionary.Size.ToString()}|{directoryPath}")), out ret) && ret == 1;
+            return Injector.InjectManaged(_processId, UnpackDumper(clrModule.Runtime.ClrInfo.Version.Major), "InjectingDumper.Dumper", "TryDumpModule", Convert.ToBase64String(Encoding.Unicode.GetBytes($"{((ulong)moduleHandle).ToString()}|{metadataDictionary.Rva.ToString()}|{metadataDictionary.Size.ToString()}|{directoryPath}")), out ret) && ret == 1;
         }
 
         private ClrModule GetModule(IntPtr moduleHandle)
@@ -101,20 +103,30 @@ namespace ExtremeDumper.InjectingDumper
             return count;
         }
 
-        private static byte[] GetInjectingDumper()
+        private static byte[] GetInjectingDumper(int clrVersion)
         {
             BinaryReader binaryReader;
 
-            using (binaryReader = new BinaryReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("ExtremeDumper.InjectingDumper.dll")))
+            using (binaryReader = new BinaryReader(Assembly.GetExecutingAssembly().GetManifestResourceStream($"ExtremeDumper.InjectingDumper.InjectingDumper{clrVersion.ToString()}.dll")))
                 return binaryReader.ReadBytes((int)binaryReader.BaseStream.Length);
         }
 
-        private string UnpackDumper()
+        private string UnpackDumper(int clrVersion)
         {
             string path;
 
             path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".dll");
-            File.WriteAllBytes(path, InjectingDumper);
+            switch (clrVersion)
+            {
+                case 2:
+                    File.WriteAllBytes(path, InjectingDumper2);
+                    break;
+                case 4:
+                    File.WriteAllBytes(path, InjectingDumper4);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             return path;
         }
     }

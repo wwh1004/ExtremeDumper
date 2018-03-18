@@ -37,6 +37,9 @@
   <PropertyGroup>
     <ApplicationIcon>Forms\Resources\Icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ValueTuple">
@@ -138,7 +141,8 @@
     <None Include="Forms\Resources\Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\InjectingDumper\bin\Release\InjectingDumper.dll" />
+    <EmbeddedResource Include="InjectingDumper\InjectingDumper2.dll" />
+    <EmbeddedResource Include="InjectingDumper\InjectingDumper4.dll" />
   </ItemGroup>
   <Import Project="..\Libraries\clrmd-xp\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.projitems" Label="Shared" />
   <Import Project="..\Libraries\dnlib\dnlib.Shared\dnlib.Shared.projitems" Label="Shared" />
