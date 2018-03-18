@@ -114,13 +114,13 @@ namespace dnlib.DotNet.MD {
 			return Create(peImage, true);
 		}
 
-        /// <summary>
-        /// Create a <see cref="IMetaData"/> instance
-        /// </summary>
-        /// <param name="peImage">The PE image</param>
-        /// <param name="verify"><c>true</c> if we should verify that it's a .NET PE file</param>
-        /// <returns>A new <see cref="IMetaData"/> instance</returns>
-        public static IMetaData CreateMetaData(IPEImage peImage, bool verify) {
+		/// <summary>
+		/// Create a <see cref="IMetaData"/> instance
+		/// </summary>
+		/// <param name="peImage">The PE image</param>
+		/// <param name="verify"><c>true</c> if we should verify that it's a .NET PE file</param>
+		/// <returns>A new <see cref="IMetaData"/> instance</returns>
+		public static IMetaData CreateMetaData(IPEImage peImage, bool verify) {
 			return Create(peImage, verify);
 		}
 
@@ -183,72 +183,13 @@ namespace dnlib.DotNet.MD {
 			}
 		}
 
-        internal static MetaData Create(IPEImage peImage, bool verify, RVA mdRva, uint mdSize) {
-            IImageStream cor20HeaderStream = null, mdHeaderStream = null;
-            MetaData md = null;
-            try
-            {
-                var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-                if (dotNetDir.VirtualAddress == 0)
-                    throw new BadImageFormatException(".NET data directory RVA is 0");
-                if (dotNetDir.Size < 0x48)
-                    throw new BadImageFormatException(".NET data directory size < 0x48");
-                var cor20Header = new ImageCor20Header(cor20HeaderStream = peImage.CreateStream(dotNetDir.VirtualAddress, 0x48), verify);
-                //if (cor20Header.MetaData.VirtualAddress == 0)
-                //    throw new BadImageFormatException(".NET MetaData RVA is 0");
-                //if (cor20Header.MetaData.Size < 16)
-                //    throw new BadImageFormatException(".NET MetaData size is too small");
-                cor20Header.MetaData.Size = mdSize;
-                cor20Header.MetaData.VirtualAddress = mdRva;
-                var mdHeader = new MetaDataHeader(mdHeaderStream = peImage.CreateStream(mdRva, mdSize), verify);
-                if (verify)
-                {
-                    foreach (var sh in mdHeader.StreamHeaders)
-                    {
-                        if (sh.Offset + sh.StreamSize < sh.Offset || sh.Offset + sh.StreamSize > mdSize)
-                            throw new BadImageFormatException("Invalid stream header");
-                    }
-                }
-
-                switch (GetMetaDataType(mdHeader.StreamHeaders))
-                {
-                    case MetaDataType.Compressed:
-                        md = new CompressedMetaData(peImage, cor20Header, mdHeader);
-                        break;
-
-                    case MetaDataType.ENC:
-                        md = new ENCMetaData(peImage, cor20Header, mdHeader);
-                        break;
-
-                    default:
-                        throw new BadImageFormatException("No #~ or #- stream found");
-                }
-                md.Initialize(null);
-
-                return md;
-            }
-            catch
-            {
-                if (md != null)
-                    md.Dispose();
-                throw;
-            }
-            finally
-            {
-                if (cor20HeaderStream != null)
-                    cor20HeaderStream.Dispose();
-                if (mdHeaderStream != null)
-                    mdHeaderStream.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Create a standalone portable PDB <see cref="MetaData"/> instance
-        /// </summary>
-        /// <param name="mdStream">Metadata stream</param>
-        /// <param name="verify"><c>true</c> if we should verify that it's a .NET PE file</param>
-        /// <returns>A new <see cref="MetaData"/> instance</returns>
-        internal static MetaData CreateStandalonePortablePDB(IImageStream mdStream, bool verify) {
+		/// <summary>
+		/// Create a standalone portable PDB <see cref="MetaData"/> instance
+		/// </summary>
+		/// <param name="mdStream">Metadata stream</param>
+		/// <param name="verify"><c>true</c> if we should verify that it's a .NET PE file</param>
+		/// <returns>A new <see cref="MetaData"/> instance</returns>
+		internal static MetaData CreateStandalonePortablePDB(IImageStream mdStream, bool verify) {
 			MetaData md = null;
 			try {
 				var mdHeader = new MetaDataHeader(mdStream, verify);

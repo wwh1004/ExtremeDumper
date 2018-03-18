@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.27413.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtremeDumper", "ExtremeDumper\ExtremeDumper.csproj", "{BA1D5A3E-330E-4D82-BFF5-58B6CF52726C}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "dndbg", "..\dndbg\dndbg\dndbg.shproj", "{97275166-7EC7-44A9-AFB1-B72349F1921E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastWin32", "..\FastWin32\FastWin32\FastWin32.csproj", "{0B6AC808-3A51-4072-954F-D55DE4F0209B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtremeDumper-x86", "ExtremeDumper-x86\ExtremeDumper-x86.csproj", "{478CA60E-D0C6-4FB8-BD84-7D833E249AA7}"
@@ -15,17 +13,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InjectingDumper", "Injectin
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Microsoft.Diagnostics.Runtime.Shared", "Libraries\clrmd-xp\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.shproj", "{66B12BA5-552F-492C-8E6D-8FD6DBE1EA31}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "dnlib.Shared", "Libraries\dnlib\dnlib.Shared\dnlib.Shared.shproj", "{9E1FEE5B-49A3-4C7F-B3C2-389E40108BF2}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "dnlib.Shared", "Libraries\dnlib\dnlib.Shared\dnlib.Shared.shproj", "{690E5D69-FB5D-4865-903B-2CC958C08B8A}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "dndbg.Shared", "Libraries\dndbg\dndbg.Shared\dndbg.Shared.shproj", "{DB0FE513-6687-43F1-BF97-43DBC8394888}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Libraries\dnlib\dnlib.Shared\dnlib.Shared.projitems*{0cbec107-9945-4b9b-ab56-2f38ac2435b9}*SharedItemsImports = 4
 		Libraries\clrmd-xp\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.projitems*{66b12ba5-552f-492c-8e6d-8fd6dbe1ea31}*SharedItemsImports = 13
-		..\dndbg\dndbg\dndbg.projitems*{97275166-7ec7-44a9-afb1-b72349f1921e}*SharedItemsImports = 13
-		Libraries\dnlib\dnlib.Shared\dnlib.Shared.projitems*{9e1fee5b-49a3-4c7f-b3c2-389e40108bf2}*SharedItemsImports = 13
-		..\dndbg\dndbg\dndbg.projitems*{ba1d5a3e-330e-4d82-bff5-58b6cf52726c}*SharedItemsImports = 4
+		Libraries\dnlib\dnlib.Shared\dnlib.Shared.projitems*{690e5d69-fb5d-4865-903b-2cc958c08b8a}*SharedItemsImports = 13
 		Libraries\clrmd-xp\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.projitems*{ba1d5a3e-330e-4d82-bff5-58b6cf52726c}*SharedItemsImports = 4
+		Libraries\dndbg\dndbg.Shared\dndbg.Shared.projitems*{ba1d5a3e-330e-4d82-bff5-58b6cf52726c}*SharedItemsImports = 4
 		Libraries\dnlib\dnlib.Shared\dnlib.Shared.projitems*{ba1d5a3e-330e-4d82-bff5-58b6cf52726c}*SharedItemsImports = 4
+		Libraries\dndbg\dndbg.Shared\dndbg.Shared.projitems*{db0fe513-6687-43f1-bf97-43dbc8394888}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

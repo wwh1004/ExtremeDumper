@@ -11,7 +11,7 @@ namespace dnlib.DotNet.Writer {
 	/// <summary>
 	/// Hot pool
 	/// </summary>
-	abstract class HotPool : IChunk {
+	public abstract class HotPool : IChunk {
 		internal const uint HP_ALIGNMENT = 4;
 		FileOffset offset;
 		RVA rva;

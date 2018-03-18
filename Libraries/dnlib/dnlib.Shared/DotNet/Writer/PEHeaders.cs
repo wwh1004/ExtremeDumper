@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using dnlib.IO;
 using dnlib.PE;
@@ -239,8 +238,6 @@ namespace dnlib.DotNet.Writer {
 		/// </summary>
 		public DebugDirectory DebugDirectory { get; set; }
 
-		internal IChunk ExportDirectory { get; set; }
-
 		/// <summary>
 		/// Gets the image base
 		/// </summary>
@@ -321,17 +318,6 @@ namespace dnlib.DotNet.Writer {
 				imageBase = options.ImageBase ?? 0x0000000140000000;
 		}
 
-		int SectionsCount {
-			get {
-				int count = 0;
-				foreach (var section in sections) {
-					if (section.GetVirtualSize() != 0)
-						count++;
-				}
-				return count;
-			}
-		}
-
 		/// <inheritdoc/>
 		public uint GetFileLength() {
 			return length;
@@ -343,11 +329,8 @@ namespace dnlib.DotNet.Writer {
 		}
 
 		IEnumerable<SectionSizeInfo> GetSectionSizeInfos() {
-			foreach (var section in sections) {
-				uint virtSize = section.GetVirtualSize();
-				if (virtSize != 0)
-					yield return new SectionSizeInfo(virtSize, section.Characteristics);
-			}
+			foreach (var section in PESections)
+				yield return new SectionSizeInfo(section.GetVirtualSize(), section.Characteristics);
 		}
 
 		/// <inheritdoc/>
@@ -362,8 +345,7 @@ namespace dnlib.DotNet.Writer {
 
 			// Image file header
 			writer.Write((ushort)GetMachine());
-			writer.Write((ushort)SectionsCount);
-			Debug.Assert(SectionsCount == sections.Count, "One or more sections are empty! The PE file could be bigger than it should be. Empty sections should be removed.");
+			writer.Write((ushort)sections.Count);
 			writer.Write(options.TimeDateStamp ?? PEHeadersOptions.CreateNewTimeDateStamp());
 			writer.Write(options.PointerToSymbolTable ?? 0);
 			writer.Write(options.NumberOfSymbols ?? 0);
@@ -440,7 +422,7 @@ namespace dnlib.DotNet.Writer {
 				writer.Write(options.NumberOfRvaAndSizes ?? 0x00000010);
 			}
 
-			writer.WriteDataDirectory(ExportDirectory);
+			writer.WriteDataDirectory(null);	// Export table
 			writer.WriteDataDirectory(ImportDirectory);
 			writer.WriteDataDirectory(Win32Resources);
 			writer.WriteDataDirectory(null);	// Exception table
@@ -459,15 +441,8 @@ namespace dnlib.DotNet.Writer {
 
 			// Sections
 			uint rva = Utils.AlignUp(sectionSizes.SizeOfHeaders, sectionAlignment);
-			int emptySections = 0;
-			foreach (var section in sections) {
-				if (section.GetVirtualSize() != 0)
-					rva += section.WriteHeaderTo(writer, fileAlignment, sectionAlignment, rva);
-				else
-					emptySections++;
-			}
-			if (emptySections != 0)
-				writer.BaseStream.Position += emptySections * 0x28;
+			foreach (var section in sections)
+				rva += section.WriteHeaderTo(writer, fileAlignment, sectionAlignment, rva);
 		}
 
 		/// <summary>

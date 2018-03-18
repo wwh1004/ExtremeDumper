@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using FastWin32.Diagnostics;
 using FastWin32.Memory;
 using Microsoft.Diagnostics.Runtime;
@@ -16,7 +17,7 @@ namespace ExtremeDumper.InjectingDumper
 
         public DumperInjector(uint processId) => _processId = processId;
 
-        public bool DumpModule(IntPtr moduleHandle, string filePath) =>   DumpModulePrivate(moduleHandle, Path.GetDirectoryName(filePath));
+        public bool DumpModule(IntPtr moduleHandle, string filePath) => DumpModulePrivate(moduleHandle, Path.GetDirectoryName(filePath));
 
         private bool DumpModulePrivate(IntPtr moduleHandle, string directoryPath)
         {
@@ -28,7 +29,7 @@ namespace ExtremeDumper.InjectingDumper
             if (clrModule == null)
                 return false;
             metadataDictionary = GetMetadataDictionary(clrModule);
-            return Injector.InjectManaged(_processId, UnpackDumper(), "InjectingDumper.Dumper", "TryDumpModule", $"{((ulong)moduleHandle).ToString()}|{metadataDictionary.Rva.ToString()}|{metadataDictionary.Size.ToString()}|{directoryPath}", out ret) && ret == 1;
+            return Injector.InjectManaged(_processId, UnpackDumper(), "InjectingDumper.Dumper", "TryDumpModule", Convert.ToBase64String(Encoding.Unicode.GetBytes($"{((ulong)moduleHandle).ToString()}|{metadataDictionary.Rva.ToString()}|{metadataDictionary.Size.ToString()}|{directoryPath}")), out ret) && ret == 1;
         }
 
         private ClrModule GetModule(IntPtr moduleHandle)
@@ -104,8 +105,8 @@ namespace ExtremeDumper.InjectingDumper
         {
             BinaryReader binaryReader;
 
-            using (binaryReader = new BinaryReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("ExtremeDumper.InjectingDumper.InjectingDumper.dll")))
-                return binaryReader.ReadBytes(1150976);
+            using (binaryReader = new BinaryReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("ExtremeDumper.InjectingDumper.dll")))
+                return binaryReader.ReadBytes((int)binaryReader.BaseStream.Length);
         }
 
         private string UnpackDumper()

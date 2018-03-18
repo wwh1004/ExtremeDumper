@@ -1,4 +1,5 @@
-﻿// dnlib: See LICENSE.txt for more info
+﻿#if NET20
+// dnlib: See LICENSE.txt for more info
 
 namespace dnlib {
 	/// <summary>
@@ -19,3 +20,4 @@ namespace dnlib {
 		}
 	}
 }
+#endif

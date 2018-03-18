@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.IO;
 using dnlib.DotNet.MD;
-using dnlib.PE;
 using dnlib.W32Resources;
 
 namespace dnlib.DotNet.Writer {
@@ -39,6 +38,9 @@ namespace dnlib.DotNet.Writer {
 	/// Writes a .NET PE file. See also <see cref="NativeModuleWriter"/>
 	/// </summary>
 	public sealed class ModuleWriter : ModuleWriterBase {
+		const uint DEFAULT_IAT_ALIGNMENT = 4;
+		const uint DEFAULT_IMPORTDIRECTORY_ALIGNMENT = 4;
+		const uint DEFAULT_STARTUPSTUB_ALIGNMENT = 1;
 		const uint DEFAULT_RELOC_ALIGNMENT = 4;
 
 		readonly ModuleDef module;
@@ -46,7 +48,6 @@ namespace dnlib.DotNet.Writer {
 
 		List<PESection> sections;
 		PESection textSection;
-		PESection sdataSection;
 		PESection rsrcSection;
 		PESection relocSection;
 
@@ -56,8 +57,6 @@ namespace dnlib.DotNet.Writer {
 		ImportDirectory importDirectory;
 		StartupStub startupStub;
 		RelocDirectory relocDirectory;
-		ManagedExportsWriter managedExportsWriter;
-		bool needStartupStub;
 
 		/// <inheritdoc/>
 		public override ModuleDef Module {
@@ -92,21 +91,14 @@ namespace dnlib.DotNet.Writer {
 		}
 
 		/// <summary>
-		/// Gets the <c>.sdata</c> section
-		/// </summary>
-		internal PESection SdataSection {
-			get { return sdataSection; }
-		}
-
-		/// <summary>
-		/// Gets the <c>.rsrc</c> section or null if none
+		/// Gets the <c>.rsrc</c> section or <c>null</c> if there's none
 		/// </summary>
 		public override PESection RsrcSection {
 			get { return rsrcSection; }
 		}
 
 		/// <summary>
-		/// Gets the <c>.reloc</c> section
+		/// Gets the <c>.reloc</c> section or <c>null</c> if there's none
 		/// </summary>
 		public PESection RelocSection {
 			get { return relocSection; }
@@ -198,65 +190,53 @@ namespace dnlib.DotNet.Writer {
 		void CreateSections() {
 			sections = new List<PESection>();
 			sections.Add(textSection = new PESection(".text", 0x60000020));
-			sections.Add(sdataSection = new PESection(".sdata", 0xC0000040));
 			if (GetWin32Resources() != null)
 				sections.Add(rsrcSection = new PESection(".rsrc", 0x40000040));
-			// Should be last so any data in a previous section can add relocations
-			sections.Add(relocSection = new PESection(".reloc", 0x42000040));
+			if (!Options.Is64Bit)
+				sections.Add(relocSection = new PESection(".reloc", 0x42000040));
 		}
 
 		void CreateChunks() {
 			peHeaders = new PEHeaders(Options.PEHeadersOptions);
 
-			var machine = Options.PEHeadersOptions.Machine ?? Machine.I386;
-			bool is64bit = machine == Machine.AMD64 || machine == Machine.IA64 || machine == Machine.ARM64;
-			relocDirectory = new RelocDirectory(machine);
-			if (machine == Machine.I386)
-				needStartupStub = true;
-
-			importAddressTable = new ImportAddressTable(is64bit);
-			importDirectory = new ImportDirectory(is64bit);
-			startupStub = new StartupStub(relocDirectory, machine, (format, args) => Error(format, args));
+			if (!Options.Is64Bit) {
+				importAddressTable = new ImportAddressTable();
+				importDirectory = new ImportDirectory();
+				startupStub = new StartupStub();
+				relocDirectory = new RelocDirectory();
+			}
 
 			CreateStrongNameSignature();
 
 			imageCor20Header = new ImageCor20Header(Options.Cor20HeaderOptions);
 			CreateMetaDataChunks(module);
-			managedExportsWriter = new ManagedExportsWriter(UTF8String.ToSystemStringOrEmpty(module.Name), machine, relocDirectory, metaData, peHeaders, (format, args) => Error(format, args));
 
 			CreateDebugDirectory();
 
-			importDirectory.IsExeFile = Options.IsExeFile;
+			if (importDirectory != null)
+				importDirectory.IsExeFile = Options.IsExeFile;
+
 			peHeaders.IsExeFile = Options.IsExeFile;
 		}
 
 		void AddChunksToSections() {
-			var machine = Options.PEHeadersOptions.Machine ?? Machine.I386;
-			bool is64bit = machine == Machine.AMD64 || machine == Machine.IA64 || machine == Machine.ARM64;
-			uint pointerAlignment = is64bit ? 8U : 4;
-
-			textSection.Add(importAddressTable, pointerAlignment);
+			textSection.Add(importAddressTable, DEFAULT_IAT_ALIGNMENT);
 			textSection.Add(imageCor20Header, DEFAULT_COR20HEADER_ALIGNMENT);
 			textSection.Add(strongNameSignature, DEFAULT_STRONGNAMESIG_ALIGNMENT);
-			managedExportsWriter.AddTextChunks(textSection);
 			textSection.Add(constants, DEFAULT_CONSTANTS_ALIGNMENT);
 			textSection.Add(methodBodies, DEFAULT_METHODBODIES_ALIGNMENT);
 			textSection.Add(netResources, DEFAULT_NETRESOURCES_ALIGNMENT);
 			textSection.Add(metaData, DEFAULT_METADATA_ALIGNMENT);
 			textSection.Add(debugDirectory, DebugDirectory.DEFAULT_DEBUGDIRECTORY_ALIGNMENT);
-			textSection.Add(importDirectory, pointerAlignment);
-			textSection.Add(startupStub, startupStub.Alignment);
-			managedExportsWriter.AddSdataChunks(sdataSection);
-			if (GetWin32Resources() != null)
+			textSection.Add(importDirectory, DEFAULT_IMPORTDIRECTORY_ALIGNMENT);
+			textSection.Add(startupStub, DEFAULT_STARTUPSTUB_ALIGNMENT);
+			if (rsrcSection != null)
 				rsrcSection.Add(win32Resources, DEFAULT_WIN32_RESOURCES_ALIGNMENT);
-			relocSection.Add(relocDirectory, DEFAULT_RELOC_ALIGNMENT);
+			if (relocSection != null)
+				relocSection.Add(relocDirectory, DEFAULT_RELOC_ALIGNMENT);
 		}
 
 		long WriteFile() {
-			managedExportsWriter.AddExportedMethods(metaData.ExportedMethods, GetTimeDateStamp());
-			if (managedExportsWriter.HasExports)
-				needStartupStub = true;
-
 			Listener.OnWriterEvent(this, ModuleWriterEvent.BeginWritePdb);
 			WritePdbFile();
 			Listener.OnWriterEvent(this, ModuleWriterEvent.EndWritePdb);
@@ -264,15 +244,6 @@ namespace dnlib.DotNet.Writer {
 			Listener.OnWriterEvent(this, ModuleWriterEvent.BeginCalculateRvasAndFileOffsets);
 			var chunks = new List<IChunk>();
 			chunks.Add(peHeaders);
-			if (!managedExportsWriter.HasExports)
-				sections.Remove(sdataSection);
-			if (!(relocDirectory.NeedsRelocSection || managedExportsWriter.HasExports || needStartupStub))
-				sections.Remove(relocSection);
-
-			importAddressTable.Enable = needStartupStub;
-			importDirectory.Enable = needStartupStub;
-			startupStub.Enable = needStartupStub;
-
 			foreach (var section in sections)
 				chunks.Add(section);
 			peHeaders.PESections = sections;
@@ -303,10 +274,13 @@ namespace dnlib.DotNet.Writer {
 		void InitializeChunkProperties() {
 			Options.Cor20HeaderOptions.EntryPoint = GetEntryPoint();
 
-			importAddressTable.ImportDirectory = importDirectory;
-			importDirectory.ImportAddressTable = importAddressTable;
-			startupStub.ImportDirectory = importDirectory;
-			startupStub.PEHeaders = peHeaders;
+			if (importAddressTable != null) {
+				importAddressTable.ImportDirectory = importDirectory;
+				importDirectory.ImportAddressTable = importAddressTable;
+				startupStub.ImportDirectory = importDirectory;
+				startupStub.PEHeaders = peHeaders;
+				relocDirectory.StartupStub = startupStub;
+			}
 			peHeaders.StartupStub = startupStub;
 			peHeaders.ImageCor20Header = imageCor20Header;
 			peHeaders.ImportAddressTable = importAddressTable;
@@ -317,7 +291,6 @@ namespace dnlib.DotNet.Writer {
 			imageCor20Header.MetaData = metaData;
 			imageCor20Header.NetResources = netResources;
 			imageCor20Header.StrongNameSignature = strongNameSignature;
-			managedExportsWriter.InitializeChunkProperties();
 		}
 
 		uint GetEntryPoint() {

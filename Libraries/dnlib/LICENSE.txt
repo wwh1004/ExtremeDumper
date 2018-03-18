@@ -1,14 +1,13 @@
 dnlib: .NET assembly library
 https://github.com/0xd4d/dnlib
 
-Copyright (C) 2012-2018 de4dot@gmail.com
+Copyright (C) 2012-2017 de4dot@gmail.com
 
 Contributors
 ------------
 
 Ki, "yck1509 <confuser.net@gmail.com>", https://github.com/yck1509
 kiootic, "kiootic <kiootic@gmail.com>", https://github.com/kiootic
-SlowLogicBoy, https://github.com/SlowLogicBoy
 
 MIT LICENSE
 -----------

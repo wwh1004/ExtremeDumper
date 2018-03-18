@@ -3,7 +3,7 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>9e1fee5b-49a3-4c7f-b3c2-389e40108bf2</SharedGUID>
+    <SharedGUID>690e5d69-fb5d-4865-903b-2cc958c08b8a</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <Import_RootNamespace>dnlib.Shared</Import_RootNamespace>
@@ -23,7 +23,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\ClassLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\Constant.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorLibTypes.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CpuArch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\CustomAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\CustomAttributeCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\CustomAttributeReader.cs" />
@@ -125,8 +124,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\MemberRef.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\MethodAttributes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\MethodDef.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DotNet\MethodExportInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DotNet\MethodExportInfoProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\MethodImplAttributes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\MethodOverride.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\MethodSemanticsAttributes.cs" />
@@ -291,7 +288,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\Writer\ImportDirectory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\Writer\IOffsetHeap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\Writer\IWriterError.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DotNet\Writer\ManagedExportsWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\Writer\MarshalBlobWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\Writer\MaxStackCalculator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\Writer\MDTable.cs" />
@@ -325,6 +321,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\Writer\USHeap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\Writer\Win32ResourcesChunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNet\Writer\WriterUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExtensionAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HandleProcessCorruptedStateExceptionsAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\BinaryReaderStream.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileOffset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileSection.cs" />

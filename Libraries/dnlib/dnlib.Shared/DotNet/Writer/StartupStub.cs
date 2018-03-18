@@ -1,6 +1,6 @@
 // dnlib: See LICENSE.txt for more info
 
-using System.IO;
+﻿using System.IO;
 using dnlib.IO;
 using dnlib.PE;
 
@@ -9,13 +9,10 @@ namespace dnlib.DotNet.Writer {
 	/// Stores the instruction that jumps to _CorExeMain/_CorDllMain
 	/// </summary>
 	public sealed class StartupStub : IChunk {
-		const StubType stubType = StubType.EntryPoint;
-		readonly RelocDirectory relocDirectory;
-		readonly Machine machine;
-		readonly CpuArch cpuArch;
-		readonly LogError logError;
 		FileOffset offset;
 		RVA rva;
+		uint length;
+		uint padding;
 
 		/// <summary>
 		/// Gets/sets the <see cref="ImportDirectory"/>
@@ -41,28 +38,14 @@ namespace dnlib.DotNet.Writer {
 		/// Gets the address of the JMP instruction
 		/// </summary>
 		public RVA EntryPointRVA {
-			get { return rva + (cpuArch == null ? 0 : cpuArch.GetStubCodeOffset(stubType)); }
+			get { return rva + padding; }
 		}
-
-		internal bool Enable { get; set; }
-
-		internal uint Alignment {
-			get { return cpuArch == null ? 1 : cpuArch.GetStubAlignment(stubType); }
-		}
-
-		internal delegate void LogError(string format, params object[] args);
 
 		/// <summary>
-		/// Constructor
+		/// Gets the address of the operand of the JMP instruction
 		/// </summary>
-		/// <param name="relocDirectory">Reloc directory</param>
-		/// <param name="machine">Machine</param>
-		/// <param name="logError">Error logger</param>
-		internal StartupStub(RelocDirectory relocDirectory, Machine machine, LogError logError) {
-			this.relocDirectory = relocDirectory;
-			this.machine = machine;
-			this.logError = logError;
-			CpuArch.TryGetCpuArch(machine, out cpuArch);
+		public RVA RelocRVA {
+			get { return EntryPointRVA + 2; }
 		}
 
 		/// <inheritdoc/>
@@ -70,24 +53,13 @@ namespace dnlib.DotNet.Writer {
 			this.offset = offset;
 			this.rva = rva;
 
-			if (!Enable)
-				return;
-
-			if (cpuArch == null) {
-				logError("The module needs an unmanaged entry point but the CPU architecture isn't supported: {0} (0x{1:X4})", machine, (ushort)machine);
-				return;
-			}
-
-			cpuArch.WriteStubRelocs(stubType, relocDirectory, this, 0);
+			padding = rva.AlignUp(4) - rva + 2;
+			length = padding + 6;
 		}
 
 		/// <inheritdoc/>
 		public uint GetFileLength() {
-			if (!Enable)
-				return 0;
-			if (cpuArch == null)
-				return 0;
-			return cpuArch.GetStubSize(stubType);
+			return length;
 		}
 
 		/// <inheritdoc/>
@@ -97,11 +69,10 @@ namespace dnlib.DotNet.Writer {
 
 		/// <inheritdoc/>
 		public void WriteTo(BinaryWriter writer) {
-			if (!Enable)
-				return;
-			if (cpuArch == null)
-				return;
-			cpuArch.WriteStub(stubType, writer, PEHeaders.ImageBase, (uint)rva, (uint)ImportDirectory.IatCorXxxMainRVA);
+			writer.WriteZeros((int)padding);
+			writer.Write((byte)0xFF);
+			writer.Write((byte)0x25);
+			writer.Write((uint)PEHeaders.ImageBase + (uint)ImportDirectory.IatCorXxxMainRVA);
 		}
 	}
 }

@@ -89,18 +89,12 @@ namespace dnlib.DotNet.Writer {
 				offset += paddingF;
 				rva += paddingV;
 				elem.chunk.SetOffset(offset, rva);
-				if (elem.chunk.GetVirtualSize() == 0) {
-					offset -= paddingF;
-					rva -= paddingV;
-				}
-				else {
-					uint chunkLenF = elem.chunk.GetFileLength();
-					uint chunkLenV = elem.chunk.GetVirtualSize();
-					offset += chunkLenF;
-					rva += chunkLenV;
-					length += paddingF + chunkLenF;
-					virtualSize += paddingV + chunkLenV;
-				}
+				uint chunkLenF = elem.chunk.GetFileLength();
+				uint chunkLenV = elem.chunk.GetVirtualSize();
+				offset += chunkLenF;
+				rva += chunkLenV;
+				length += paddingF + chunkLenF;
+				virtualSize += paddingV + chunkLenV;
 			}
 		}
 
@@ -118,8 +112,6 @@ namespace dnlib.DotNet.Writer {
 		public void WriteTo(BinaryWriter writer) {
 			FileOffset offset2 = offset;
 			foreach (var elem in chunks) {
-				if (elem.chunk.GetVirtualSize() == 0)
-					continue;
 				int paddingF = (int)offset2.AlignUp(elem.alignment) - (int)offset2;
 				writer.WriteZeros(paddingF);
 				elem.chunk.VerifyWriteTo(writer);

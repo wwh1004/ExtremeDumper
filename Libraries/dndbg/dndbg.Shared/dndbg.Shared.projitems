@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>db0fe513-6687-43f1-bf97-43dbc8394888</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>dndbg.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ArrayAddIn.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)COM\CorDebug.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)COM\MetaData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)COM\MetaHost.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorAssemblyDef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorAssemblyRef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorDeclSecurity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorEventDef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorExportedType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorFieldDef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorFileDef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorGenericParam.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorGenericParamConstraint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorInterfaceImpl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorManifestResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorMemberRef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorMethodDef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorMethodSpec.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorModuleDef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorModuleRef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorParamDef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorPropertyDef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorStandAloneSig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorTypeDef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorTypeRef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\CorTypeSpec.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\ICorMDTokenProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\ICorModuleDefHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\IProcessReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\ProcessBinaryReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\TypeUpdatedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNet\Utils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EmptyArrayAddIn.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\AttachProcessOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\BreakpointList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\BreakProcessHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\BreakProcessKind.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\COMObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorAppDomain.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorAssembly.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorChain.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorClass.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorCode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CordbgErrors.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorDebugExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorDebugManagedCallback.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CoreCLRHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorEval.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorFrame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorFunction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorFunctionBreakpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorMDA.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorModuleDefHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorProcessReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorStepper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorThread.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\CorValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DebugCallbackEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DebugEventBreakpointList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DebuggeeVersionDetector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DebuggerCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DebuggerEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DebuggerPauseState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DebuggerProcessState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DebuggerState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DebugOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DebugProcessOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DisableSystemDebuggerDetection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnAnyDebugEventBreakpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnAppDomain.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnAssembly.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnBreakpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnCodeBreakpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnDebugEventBreakpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnDebugger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnEval.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnILCodeBreakpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnModuleId.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnNativeCodeBreakpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\DnThread.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\ECallManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\IDebugMessageDispatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\IdentifierEscaper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\ILFrameIP.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\MDAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\NativeMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\ProcessCreationFlags.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\StepRange.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Win32EnvironmentStringBuilder.cs" />
+  </ItemGroup>
+</Project>

@@ -27,13 +27,15 @@ namespace ExtremeDumper.MetadataDumper
             mdi = (IMetaDataImport)clrModule.MetadataImport;
             if (mdi == null)
                 return false;
-            //corModuleDef = new CorModuleDef((IMetaDataImport)clrModule.MetadataImport, new PassiveCorModuleDefHelper(_processId, mdi, clrModule) { IsManifestModule = true });
-            //corModuleDef.Initialize();
-            //corModuleDef.Write(".[IsManifestModule=True].dll");
-            corModuleDef = new CorModuleDef(mdi, new MiniCorModuleDefHelper(_processId, mdi, clrModule));
+            corModuleDef = new CorModuleDef((IMetaDataImport)clrModule.MetadataImport, new MiniCorModuleDefHelper(_processId, mdi, clrModule) { IsManifestModule = true });
             corModuleDef.Initialize();
-            corModuleDef.Write(".[IsManifestModule=False].dll", new ModuleWriterOptions(corModuleDef) { MetaDataOptions = new MetaDataOptions(MetaDataFlags.KeepOldMaxStack) });
+            corModuleDef.Write(".[IsManifestModule=True].dll", new ModuleWriterOptions(corModuleDef) { MetaDataOptions = new MetaDataOptions(MetaDataFlags.KeepOldMaxStack) });
+            //corModuleDef = new CorModuleDef(mdi, new MiniCorModuleDefHelper(_processId, mdi, clrModule));
+            //corModuleDef.Initialize();
+            //corModuleDef.Write(".[IsManifestModule=False].dll");
             //corModuleDef.Write(filePath);
+            CorAssemblyDef corAssemblyDef = new CorAssemblyDef(corModuleDef, 1);
+            corAssemblyDef.Write("xxx.dll");
             return true;
         }
 

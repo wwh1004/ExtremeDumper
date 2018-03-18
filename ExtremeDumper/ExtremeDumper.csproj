@@ -21,6 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Forms\Resources\Icon.ico</ApplicationIcon>
@@ -96,7 +98,6 @@
     <Compile Include="MegaDumper\MegaDumper64.cs" />
     <Compile Include="Forms\MessageBoxStub.cs" />
     <Compile Include="MetadataDumper\EmptyDebugMessageDispatcher.cs" />
-    <Compile Include="MetadataDumper\MiniCorFunction.cs" />
     <Compile Include="MetadataDumper\NativeProcessReader.cs" />
     <Compile Include="MetadataDumper\MiniCorModuleDefHelper.cs" />
     <Compile Include="MetadataDumper\DbgDumper.cs" />
@@ -137,10 +138,10 @@
     <None Include="Forms\Resources\Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="InjectingDumper\InjectingDumper.dll" />
+    <EmbeddedResource Include="..\InjectingDumper\bin\Release\InjectingDumper.dll" />
   </ItemGroup>
-  <Import Project="..\..\dndbg\dndbg\dndbg.projitems" Label="Shared" />
   <Import Project="..\Libraries\clrmd-xp\Microsoft.Diagnostics.Runtime.Shared\Microsoft.Diagnostics.Runtime.Shared.projitems" Label="Shared" />
   <Import Project="..\Libraries\dnlib\dnlib.Shared\dnlib.Shared.projitems" Label="Shared" />
+  <Import Project="..\Libraries\dndbg\dndbg.Shared\dndbg.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

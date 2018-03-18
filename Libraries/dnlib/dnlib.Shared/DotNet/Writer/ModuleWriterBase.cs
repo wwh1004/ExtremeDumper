@@ -272,13 +272,6 @@ namespace dnlib.DotNet.Writer {
 				PEHeadersOptions.MajorLinkerVersion = ntHeaders.OptionalHeader.MajorLinkerVersion;
 				PEHeadersOptions.MinorLinkerVersion = ntHeaders.OptionalHeader.MinorLinkerVersion;
 				PEHeadersOptions.ImageBase = ntHeaders.OptionalHeader.ImageBase;
-				PEHeadersOptions.MajorOperatingSystemVersion = ntHeaders.OptionalHeader.MajorOperatingSystemVersion;
-				PEHeadersOptions.MinorOperatingSystemVersion = ntHeaders.OptionalHeader.MinorOperatingSystemVersion;
-				PEHeadersOptions.MajorImageVersion = ntHeaders.OptionalHeader.MajorImageVersion;
-				PEHeadersOptions.MinorImageVersion = ntHeaders.OptionalHeader.MinorImageVersion;
-				PEHeadersOptions.MajorSubsystemVersion = ntHeaders.OptionalHeader.MajorSubsystemVersion;
-				PEHeadersOptions.MinorSubsystemVersion = ntHeaders.OptionalHeader.MinorSubsystemVersion;
-				PEHeadersOptions.Win32VersionValue = ntHeaders.OptionalHeader.Win32VersionValue;
 				AddCheckSum = ntHeaders.OptionalHeader.CheckSum != 0;
 			}
 
@@ -286,7 +279,7 @@ namespace dnlib.DotNet.Writer {
 				PEHeadersOptions.Characteristics &= ~Characteristics._32BitMachine;
 				PEHeadersOptions.Characteristics |= Characteristics.LargeAddressAware;
 			}
-			else if (modDefMD == null)
+			else
 				PEHeadersOptions.Characteristics |= Characteristics._32BitMachine;
 		}
 
@@ -607,13 +600,10 @@ namespace dnlib.DotNet.Writer {
 		protected void CalculateRvasAndFileOffsets(List<IChunk> chunks, FileOffset offset, RVA rva, uint fileAlignment, uint sectionAlignment) {
 			foreach (var chunk in chunks) {
 				chunk.SetOffset(offset, rva);
-				// If it has zero size, it's not present in the file (eg. a section that wasn't needed)
-				if (chunk.GetVirtualSize() != 0) {
-					offset += chunk.GetFileLength();
-					rva += chunk.GetVirtualSize();
-					offset = offset.AlignUp(fileAlignment);
-					rva = rva.AlignUp(sectionAlignment);
-				}
+				offset += chunk.GetFileLength();
+				rva += chunk.GetVirtualSize();
+				offset = offset.AlignUp(fileAlignment);
+				rva = rva.AlignUp(sectionAlignment);
 			}
 		}
 
@@ -627,13 +617,10 @@ namespace dnlib.DotNet.Writer {
 		protected void WriteChunks(BinaryWriter writer, List<IChunk> chunks, FileOffset offset, uint fileAlignment) {
 			foreach (var chunk in chunks) {
 				chunk.VerifyWriteTo(writer);
-				// If it has zero size, it's not present in the file (eg. a section that wasn't needed)
-				if (chunk.GetVirtualSize() != 0) {
-					offset += chunk.GetFileLength();
-					var newOffset = offset.AlignUp(fileAlignment);
-					writer.WriteZeros((int)(newOffset - offset));
-					offset = newOffset;
-				}
+				offset += chunk.GetFileLength();
+				var newOffset = offset.AlignUp(fileAlignment);
+				writer.WriteZeros((int)(newOffset - offset));
+				offset = newOffset;
 			}
 		}
 
@@ -717,11 +704,7 @@ namespace dnlib.DotNet.Writer {
 			}
 		}
 
-		/// <summary>
-		/// Gets the timestamp stored in the PE header
-		/// </summary>
-		/// <returns></returns>
-		protected uint GetTimeDateStamp() {
+		uint GetTimeDateStamp() {
 			var td = TheOptions.PEHeadersOptions.TimeDateStamp;
 			if (td.HasValue)
 				return (uint)td;

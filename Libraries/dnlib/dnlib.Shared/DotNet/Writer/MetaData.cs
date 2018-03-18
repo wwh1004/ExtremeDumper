@@ -155,12 +155,6 @@ namespace dnlib.DotNet.Writer {
 		/// Always create the #Blob heap even if it's empty
 		/// </summary>
 		AlwaysCreateBlobHeap = 0x80000,
-
-		/// <summary>
-		/// Sort the InterfaceImpl table the same way Roslyn sorts it. Roslyn doesn't sort it
-		/// according to the ECMA spec, see https://github.com/dotnet/roslyn/issues/3905
-		/// </summary>
-		RoslynSortInterfaceImpl = 0x100000,
 	}
 
 	/// <summary>
@@ -343,7 +337,6 @@ namespace dnlib.DotNet.Writer {
 		readonly SortedRows<PdbCustomDebugInfo, RawCustomDebugInformationRow> customDebugInfos = new SortedRows<PdbCustomDebugInfo, RawCustomDebugInformationRow>();
 		readonly List<BinaryWriterContext> binaryWriterContexts = new List<BinaryWriterContext>();
 		readonly List<SerializerMethodContext> serializerMethodContexts = new List<SerializerMethodContext>();
-		readonly List<MethodDef> exportedMethods = new List<MethodDef>();
 
 		/// <summary>
 		/// Gets/sets the listener
@@ -399,7 +392,7 @@ namespace dnlib.DotNet.Writer {
 		/// <summary>
 		/// Gets/sets the hot heap (<c>#!</c>)
 		/// </summary>
-		HotHeap HotHeap {
+		public HotHeap HotHeap {
 			get { return hotHeap; }
 			set { hotHeap = value; }
 		}
@@ -452,13 +445,6 @@ namespace dnlib.DotNet.Writer {
 		}
 
 		/// <summary>
-		/// Gets all exported methods
-		/// </summary>
-		public List<MethodDef> ExportedMethods {
-			get { return exportedMethods; }
-		}
-
-		/// <summary>
 		/// The public key that should be used instead of the one in <see cref="AssemblyDef"/>.
 		/// </summary>
 		internal byte[] AssemblyPublicKey { get; set; }
@@ -484,22 +470,12 @@ namespace dnlib.DotNet.Writer {
 				toRid[data] = (uint)toRid.Count + 1;
 			}
 
-			public void Sort(Comparison<Info> comparison) {
-				infos.Sort(CreateComparison(comparison));
+			public void Sort(Comparison<SortedRows<T, TRow>.Info> comparison) {
+				infos.Sort(comparison);
 				toRid.Clear();
 				for (int i = 0; i < infos.Count; i++)
 					toRid[infos[i].data] = (uint)i + 1;
 				isSorted = true;
-			}
-
-			Comparison<Info> CreateComparison(Comparison<Info> comparison) {
-				return (a, b) => {
-					int c = comparison(a, b);
-					if (c != 0)
-						return c;
-					// Make sure it's a stable sort
-					return toRid[a.data].CompareTo(toRid[b.data]);
-				};
 			}
 
 			public uint Rid(T data) {
@@ -770,19 +746,6 @@ namespace dnlib.DotNet.Writer {
 		}
 
 		/// <summary>
-		/// Gets/sets the <see cref="MetaDataFlags.RoslynSortInterfaceImpl"/> bit
-		/// </summary>
-		public bool RoslynSortInterfaceImpl {
-			get { return (options.Flags & MetaDataFlags.RoslynSortInterfaceImpl) != 0; }
-			set {
-				if (value)
-					options.Flags |= MetaDataFlags.RoslynSortInterfaceImpl;
-				else
-					options.Flags &= ~MetaDataFlags.RoslynSortInterfaceImpl;
-			}
-		}
-
-		/// <summary>
 		/// If <c>true</c>, use the original Field RVAs. If it has no RVA, assume it's a new
 		/// field value and create a new Field RVA.
 		/// </summary>
@@ -800,7 +763,7 @@ namespace dnlib.DotNet.Writer {
 			this.netResources = netResources;
 			this.options = options ?? new MetaDataOptions();
 			this.metaDataHeader = new MetaDataHeader(isStandaloneDebugMetadata ? this.options.DebugMetaDataHeaderOptions : this.options.MetaDataHeaderOptions);
-			this.tablesHeap = new TablesHeap(this, isStandaloneDebugMetadata ? this.options.DebugTablesHeapOptions : this.options.TablesHeapOptions);
+			this.tablesHeap = new TablesHeap(isStandaloneDebugMetadata ? this.options.DebugTablesHeapOptions : this.options.TablesHeapOptions);
 			this.stringsHeap = new StringsHeap();
 			this.usHeap = new USHeap();
 			this.guidHeap = new GuidHeap();
@@ -1476,8 +1439,6 @@ namespace dnlib.DotNet.Writer {
 						Error("Method is null. TypeDef {0} ({1:X8})", type, type.MDToken.Raw);
 						continue;
 					}
-					if (method.ExportInfo != null)
-						ExportedMethods.Add(method);
 					uint rid = GetRid(method);
 					var row = tablesHeap.MethodTable[rid];
 					row.ImplFlags = (ushort)method.ImplAttributes;
@@ -1616,8 +1577,10 @@ namespace dnlib.DotNet.Writer {
 					continue;
 				}
 				foreach (var method in vtable) {
-					if (method == null)
+					if (method == null) {
+						Error("VTable method is null");
 						continue;
+					}
 					AddMDTokenProvider(method);
 				}
 			}
@@ -1657,15 +1620,11 @@ namespace dnlib.DotNet.Writer {
 					return a.row.Owner.CompareTo(b.row.Owner);
 				return a.row.Number.CompareTo(b.row.Number);
 			});
-			if (RoslynSortInterfaceImpl)
-				interfaceImplInfos.Sort((a, b) => a.row.Class.CompareTo(b.row.Class));
-			else {
-				interfaceImplInfos.Sort((a, b) => {
-					if (a.row.Class != b.row.Class)
-						return a.row.Class.CompareTo(b.row.Class);
-					return a.row.Interface.CompareTo(b.row.Interface);
-				});
-			}
+			interfaceImplInfos.Sort((a, b) => {
+				if (a.row.Class != b.row.Class)
+					return a.row.Class.CompareTo(b.row.Class);
+				return a.row.Interface.CompareTo(b.row.Interface);
+			});
 
 			tablesHeap.ClassLayoutTable.IsSorted = true;
 			tablesHeap.ConstantTable.IsSorted = true;
@@ -1833,23 +1792,20 @@ namespace dnlib.DotNet.Writer {
 						if (cilBody != null) {
 							var pdbMethod = cilBody.PdbMethod;
 							if (pdbMethod != null) {
-								// We don't need to write empty scopes
-								if (!IsEmptyRootScope(cilBody, pdbMethod.Scope)) {
-									serializerMethodContext.SetBody(method);
-									scopeStack.Add(pdbMethod.Scope);
-									while (scopeStack.Count > 0) {
-										var scope = scopeStack[scopeStack.Count - 1];
-										scopeStack.RemoveAt(scopeStack.Count - 1);
-										scopeStack.AddRange(scope.Scopes);
-										uint scopeStart = serializerMethodContext.GetOffset(scope.Start);
-										uint scopeEnd = serializerMethodContext.GetOffset(scope.End);
-										methodScopeDebugInfos.Add(new MethodScopeDebugInfo() {
-											MethodRid = rid,
-											Scope = scope,
-											ScopeStart = scopeStart,
-											ScopeLength = scopeEnd - scopeStart,
-										});
-									}
+								serializerMethodContext.SetBody(method);
+								scopeStack.Add(pdbMethod.Scope);
+								while (scopeStack.Count > 0) {
+									var scope = scopeStack[scopeStack.Count - 1];
+									scopeStack.RemoveAt(scopeStack.Count - 1);
+									scopeStack.AddRange(scope.Scopes);
+									uint scopeStart = serializerMethodContext.GetOffset(scope.Start);
+									uint scopeEnd = serializerMethodContext.GetOffset(scope.End);
+									methodScopeDebugInfos.Add(new MethodScopeDebugInfo() {
+										MethodRid = rid,
+										Scope = scope,
+										ScopeStart = scopeStart,
+										ScopeLength = scopeEnd - scopeStart,
+									});
 								}
 							}
 						}
@@ -1893,27 +1849,6 @@ namespace dnlib.DotNet.Writer {
 				Free(ref serializerMethodContext);
 			while (notifyNum < numNotifyEvents)
 				Listener.OnMetaDataEvent(this, MetaDataEvent.WriteMethodBodies0 + notifyNum++);
-		}
-
-		static bool IsEmptyRootScope(CilBody cilBody, PdbScope scope) {
-			if (scope.Variables.Count != 0)
-				return false;
-			if (scope.Constants.Count != 0)
-				return false;
-			if (scope.Namespaces.Count != 0)
-				return false;
-			if (scope.ImportScope != null)
-				return false;
-			if (scope.Scopes.Count != 0)
-				return false;
-			if (scope.CustomDebugInfos.Count != 0)
-				return false;
-			if (scope.End != null)
-				return false;
-			if (cilBody.Instructions.Count != 0 && cilBody.Instructions[0] != scope.Start)
-				return false;
-
-			return true;
 		}
 
 		/// <summary>
@@ -3476,7 +3411,6 @@ namespace dnlib.DotNet.Writer {
 			this.offset = offset;
 			this.rva = rva;
 
-			stringsHeap.AddOptimizedStrings();
 			stringsHeap.SetReadOnly();
 			blobHeap.SetReadOnly();
 			guidHeap.SetReadOnly();

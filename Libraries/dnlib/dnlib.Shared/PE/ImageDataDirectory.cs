@@ -10,20 +10,27 @@ namespace dnlib.PE {
 	/// </summary>
 	[DebuggerDisplay("{virtualAddress} {dataSize}")]
 	public sealed class ImageDataDirectory : FileSection {
-        /// <summary>
-        /// Returns the IMAGE_DATA_DIRECTORY.VirtualAddress field
-        /// </summary>
-        public RVA VirtualAddress { get; internal set; }
+		readonly RVA virtualAddress;
+		readonly uint dataSize;
 
-        /// <summary>
-        /// Returns the IMAGE_DATA_DIRECTORY.Size field
-        /// </summary>
-        public uint Size { get; internal set; }
+		/// <summary>
+		/// Returns the IMAGE_DATA_DIRECTORY.VirtualAddress field
+		/// </summary>
+		public RVA VirtualAddress {
+			get { return virtualAddress; }
+		}
 
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public ImageDataDirectory() {
+		/// <summary>
+		/// Returns the IMAGE_DATA_DIRECTORY.Size field
+		/// </summary>
+		public uint Size {
+			get { return dataSize; }
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ImageDataDirectory() {
 		}
 
 		/// <summary>
@@ -34,8 +41,8 @@ namespace dnlib.PE {
 		/// <exception cref="BadImageFormatException">Thrown if verification fails</exception>
 		public ImageDataDirectory(IImageStream reader, bool verify) {
 			SetStartOffset(reader);
-			this.VirtualAddress = (RVA)reader.ReadUInt32();
-			this.Size = reader.ReadUInt32();
+			this.virtualAddress = (RVA)reader.ReadUInt32();
+			this.dataSize = reader.ReadUInt32();
 			SetEndoffset(reader);
 		}
 	}

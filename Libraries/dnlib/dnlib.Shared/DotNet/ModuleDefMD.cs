@@ -235,22 +235,6 @@ namespace dnlib.DotNet {
 			return Load(mod, new ModuleCreationOptions(context), imageLayout);
 		}
 
-		static IntPtr GetModuleHandle(System.Reflection.Module mod) {
-#if NETSTANDARD2_0
-			var GetHINSTANCE = typeof(Marshal).GetMethod("GetHINSTANCE", new[] { typeof(System.Reflection.Module) });
-			if (GetHINSTANCE == null)
-				throw new NotSupportedException("System.Reflection.Module loading is not supported on current platform");
-
-			var addr = (IntPtr)GetHINSTANCE.Invoke(null, new[] { mod });
-#else
-			var addr = Marshal.GetHINSTANCE(mod);
-#endif
-			if (addr == IntPtr.Zero || addr == new IntPtr(-1))
-				throw new ArgumentException("It is not possible to get address of module");
-
-			return addr;
-		}
-
 		/// <summary>
 		/// Creates a <see cref="ModuleDefMD"/> instance from a reflection module
 		/// </summary>
@@ -259,7 +243,7 @@ namespace dnlib.DotNet {
 		/// <param name="imageLayout">Image layout of the module in memory</param>
 		/// <returns>A new <see cref="ModuleDefMD"/> instance</returns>
 		public static ModuleDefMD Load(System.Reflection.Module mod, ModuleCreationOptions options, ImageLayout imageLayout) {
-			IntPtr addr = GetModuleHandle(mod);
+			IntPtr addr = Marshal.GetHINSTANCE(mod);
 			if (addr == new IntPtr(-1))
 				throw new InvalidOperationException(string.Format("Module {0} has no HINSTANCE", mod));
 			return Load(addr, options, imageLayout);
@@ -654,16 +638,6 @@ namespace dnlib.DotNet {
 					currentPriority = priority;
 					corLibAsmRef = asmRef;
 				}
-			}
-			if (corLibAsmRef != null)
-				return corLibAsmRef;
-
-			for (uint i = 1; i <= numAsmRefs; i++) {
-				var asmRef = ResolveAssemblyRef(i);
-				if (!UTF8String.ToSystemStringOrEmpty(asmRef.Name).Equals("netstandard", StringComparison.OrdinalIgnoreCase))
-					continue;
-				if (IsGreaterAssemblyRefVersion(corLibAsmRef, asmRef))
-					corLibAsmRef = asmRef;
 			}
 			if (corLibAsmRef != null)
 				return corLibAsmRef;
@@ -1939,17 +1913,6 @@ namespace dnlib.DotNet {
 			}
 			return USStream.ReadNoNull(token & 0x00FFFFFF);
 		}
-
-		internal MethodExportInfo GetExportInfo(uint methodRid) {
-			if (methodExportInfoProvider == null)
-				InitializeMethodExportInfoProvider();
-			return methodExportInfoProvider.GetMethodExportInfo(0x06000000 + methodRid);
-		}
-
-		void InitializeMethodExportInfoProvider() {
-			Interlocked.CompareExchange(ref methodExportInfoProvider, new MethodExportInfoProvider(this), null);
-		}
-		MethodExportInfoProvider methodExportInfoProvider;
 
 		/// <summary>
 		/// Writes the mixed-mode module to a file on disk. If the file exists, it will be overwritten.
