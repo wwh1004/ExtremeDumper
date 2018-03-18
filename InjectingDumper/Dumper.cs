@@ -93,7 +93,7 @@ namespace InjectingDumper
                         break;
                     case 16:
                         //Flags
-                        memory.WriteUInt32(1);
+                        memory.WriteUInt32(0);
                         break;
                     case 20:
                         //EntryPointTokenOrRVA
