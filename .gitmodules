@@ -1,7 +1,6 @@
 [submodule "Libraries/dnlib"]
 	path = Libraries/dnlib
 	url = https://github.com/0xd4d/dnlib.git
-	branch = v3.0
 [submodule "Libraries/clrmd"]
 	path = Libraries/clrmd
 	url = https://github.com/Microsoft/clrmd.git
