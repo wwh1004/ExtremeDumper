@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.lvwProcesses = new System.Windows.Forms.ListView();
             this.chProcessName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chProcessId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -50,10 +51,10 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuDumperCore = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuUseMegaDumper = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuUseMetaDumper = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.fbdlgDumped = new System.Windows.Forms.FolderBrowserDialog();
-            this.mnuUseMetaDumper = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuProcessContext.SuspendLayout();
             this.mnuMain.SuspendLayout();
             this.SuspendLayout();
@@ -66,28 +67,25 @@
             this.chProcessId,
             this.chProcessPath});
             this.lvwProcesses.ContextMenuStrip = this.mnuProcessContext;
-            this.lvwProcesses.Dock = System.Windows.Forms.DockStyle.Fill;
+            resources.ApplyResources(this.lvwProcesses, "lvwProcesses");
             this.lvwProcesses.FullRowSelect = true;
-            this.lvwProcesses.Location = new System.Drawing.Point(0, 27);
             this.lvwProcesses.Name = "lvwProcesses";
-            this.lvwProcesses.Size = new System.Drawing.Size(933, 610);
             this.lvwProcesses.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lvwProcesses.TabIndex = 0;
             this.lvwProcesses.UseCompatibleStateImageBehavior = false;
             this.lvwProcesses.View = System.Windows.Forms.View.Details;
             this.lvwProcesses.Resize += new System.EventHandler(this.lvwProcesses_Resize);
             // 
             // chProcessName
             // 
-            this.chProcessName.Text = "名称";
+            resources.ApplyResources(this.chProcessName, "chProcessName");
             // 
             // chProcessId
             // 
-            this.chProcessId.Text = "PID";
+            resources.ApplyResources(this.chProcessId, "chProcessId");
             // 
             // chProcessPath
             // 
-            this.chProcessPath.Text = "路径";
+            resources.ApplyResources(this.chProcessPath, "chProcessPath");
             // 
             // mnuProcessContext
             // 
@@ -102,33 +100,30 @@
             this.toolStripSeparator4,
             this.mnuGotoLocation});
             this.mnuProcessContext.Name = "contextMenuStrip1";
-            this.mnuProcessContext.Size = new System.Drawing.Size(185, 154);
+            resources.ApplyResources(this.mnuProcessContext, "mnuProcessContext");
             // 
             // mnuDumpProcess
             // 
             this.mnuDumpProcess.Name = "mnuDumpProcess";
-            this.mnuDumpProcess.Size = new System.Drawing.Size(184, 22);
-            this.mnuDumpProcess.Text = "转储进程";
+            resources.ApplyResources(this.mnuDumpProcess, "mnuDumpProcess");
             this.mnuDumpProcess.Click += new System.EventHandler(this.mnuDumpProcess_Click);
             // 
             // mnuRefreshProcessList
             // 
             this.mnuRefreshProcessList.Name = "mnuRefreshProcessList";
-            this.mnuRefreshProcessList.Size = new System.Drawing.Size(184, 22);
-            this.mnuRefreshProcessList.Text = "刷新进程列表";
+            resources.ApplyResources(this.mnuRefreshProcessList, "mnuRefreshProcessList");
             this.mnuRefreshProcessList.Click += new System.EventHandler(this.mnuRefreshProcessList_Click);
             // 
             // mnuViewModules
             // 
             this.mnuViewModules.Name = "mnuViewModules";
-            this.mnuViewModules.Size = new System.Drawing.Size(184, 22);
-            this.mnuViewModules.Text = "查看模块列表";
+            resources.ApplyResources(this.mnuViewModules, "mnuViewModules");
             this.mnuViewModules.Click += new System.EventHandler(this.mnuViewModules_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(181, 6);
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             // 
             // mnuOnlyDotNetProcess
             // 
@@ -136,32 +131,29 @@
             this.mnuOnlyDotNetProcess.CheckOnClick = true;
             this.mnuOnlyDotNetProcess.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuOnlyDotNetProcess.Name = "mnuOnlyDotNetProcess";
-            this.mnuOnlyDotNetProcess.Size = new System.Drawing.Size(184, 22);
-            this.mnuOnlyDotNetProcess.Text = "仅显示.Net进程";
+            resources.ApplyResources(this.mnuOnlyDotNetProcess, "mnuOnlyDotNetProcess");
             this.mnuOnlyDotNetProcess.Click += new System.EventHandler(this.mnuOnlyDotNetProcess_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(181, 6);
+            resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
             // 
             // mnuInjectDll
             // 
             this.mnuInjectDll.Name = "mnuInjectDll";
-            this.mnuInjectDll.Size = new System.Drawing.Size(184, 22);
-            this.mnuInjectDll.Text = "注入DLL";
+            resources.ApplyResources(this.mnuInjectDll, "mnuInjectDll");
             this.mnuInjectDll.Click += new System.EventHandler(this.mnuInjectDll_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(181, 6);
+            resources.ApplyResources(this.toolStripSeparator4, "toolStripSeparator4");
             // 
             // mnuGotoLocation
             // 
             this.mnuGotoLocation.Name = "mnuGotoLocation";
-            this.mnuGotoLocation.Size = new System.Drawing.Size(184, 22);
-            this.mnuGotoLocation.Text = "打开文件所在的位置";
+            resources.ApplyResources(this.mnuGotoLocation, "mnuGotoLocation");
             this.mnuGotoLocation.Click += new System.EventHandler(this.mnuGotoLocation_Click);
             // 
             // mnuMain
@@ -169,11 +161,8 @@
             this.mnuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuOptions,
             this.mnuHelp});
-            this.mnuMain.Location = new System.Drawing.Point(0, 0);
+            resources.ApplyResources(this.mnuMain, "mnuMain");
             this.mnuMain.Name = "mnuMain";
-            this.mnuMain.Padding = new System.Windows.Forms.Padding(7, 3, 0, 3);
-            this.mnuMain.Size = new System.Drawing.Size(933, 27);
-            this.mnuMain.TabIndex = 1;
             // 
             // mnuOptions
             // 
@@ -183,27 +172,24 @@
             this.toolStripSeparator1,
             this.mnuDumperCore});
             this.mnuOptions.Name = "mnuOptions";
-            this.mnuOptions.Size = new System.Drawing.Size(44, 21);
-            this.mnuOptions.Text = "选项";
+            resources.ApplyResources(this.mnuOptions, "mnuOptions");
             // 
             // mnuRequireAdministrator
             // 
             this.mnuRequireAdministrator.Name = "mnuRequireAdministrator";
-            this.mnuRequireAdministrator.Size = new System.Drawing.Size(180, 22);
-            this.mnuRequireAdministrator.Text = "提升管理员权限";
+            resources.ApplyResources(this.mnuRequireAdministrator, "mnuRequireAdministrator");
             this.mnuRequireAdministrator.Click += new System.EventHandler(this.mnuRequireAdministrator_Click);
             // 
             // mnuDebugPrivilege
             // 
             this.mnuDebugPrivilege.Name = "mnuDebugPrivilege";
-            this.mnuDebugPrivilege.Size = new System.Drawing.Size(180, 22);
-            this.mnuDebugPrivilege.Text = "提升Debug权限";
+            resources.ApplyResources(this.mnuDebugPrivilege, "mnuDebugPrivilege");
             this.mnuDebugPrivilege.Click += new System.EventHandler(this.mnuDebugPrivilege_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // mnuDumperCore
             // 
@@ -211,56 +197,48 @@
             this.mnuUseMegaDumper,
             this.mnuUseMetaDumper});
             this.mnuDumperCore.Name = "mnuDumperCore";
-            this.mnuDumperCore.Size = new System.Drawing.Size(180, 22);
-            this.mnuDumperCore.Text = "转储方式";
+            resources.ApplyResources(this.mnuDumperCore, "mnuDumperCore");
             // 
             // mnuUseMegaDumper
             // 
             this.mnuUseMegaDumper.Checked = true;
             this.mnuUseMegaDumper.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuUseMegaDumper.Name = "mnuUseMegaDumper";
-            this.mnuUseMegaDumper.Size = new System.Drawing.Size(180, 22);
-            this.mnuUseMegaDumper.Text = "MegaDumper";
+            resources.ApplyResources(this.mnuUseMegaDumper, "mnuUseMegaDumper");
             this.mnuUseMegaDumper.Click += new System.EventHandler(this.mnuUseMegaDumper_Click);
+            // 
+            // mnuUseMetaDumper
+            // 
+            this.mnuUseMetaDumper.Name = "mnuUseMetaDumper";
+            resources.ApplyResources(this.mnuUseMetaDumper, "mnuUseMetaDumper");
+            this.mnuUseMetaDumper.Click += new System.EventHandler(this.mnuUseMetaDumper_Click);
             // 
             // mnuHelp
             // 
             this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuAbout});
             this.mnuHelp.Name = "mnuHelp";
-            this.mnuHelp.Size = new System.Drawing.Size(44, 21);
-            this.mnuHelp.Text = "帮助";
+            resources.ApplyResources(this.mnuHelp, "mnuHelp");
             // 
             // mnuAbout
             // 
             this.mnuAbout.Name = "mnuAbout";
-            this.mnuAbout.Size = new System.Drawing.Size(100, 22);
-            this.mnuAbout.Text = "关于";
+            resources.ApplyResources(this.mnuAbout, "mnuAbout");
             this.mnuAbout.Click += new System.EventHandler(this.mnuAbout_Click);
             // 
             // fbdlgDumped
             // 
-            this.fbdlgDumped.Description = "选择转储文件保存位置";
-            // 
-            // mnuUseMetaDumper
-            // 
-            this.mnuUseMetaDumper.Name = "mnuUseMetaDumper";
-            this.mnuUseMetaDumper.Size = new System.Drawing.Size(180, 22);
-            this.mnuUseMetaDumper.Text = "MetaDumper";
-            this.mnuUseMetaDumper.Click += new System.EventHandler(this.mnuUseMetaDumper_Click);
+            resources.ApplyResources(this.fbdlgDumped, "fbdlgDumped");
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(933, 637);
             this.Controls.Add(this.lvwProcesses);
             this.Controls.Add(this.mnuMain);
-            this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = global::ExtremeDumper.Forms.Resources.Icon;
             this.MainMenuStrip = this.mnuMain;
             this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.mnuProcessContext.ResumeLayout(false);
             this.mnuMain.ResumeLayout(false);
             this.mnuMain.PerformLayout();

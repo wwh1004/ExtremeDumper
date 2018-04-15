@@ -8,7 +8,7 @@ namespace ExtremeDumper.Forms
         public AboutForm()
         {
             InitializeComponent();
-            Text = $"关于 {Application.ProductName}";
+            Text = $"About {Application.ProductName}";
             lblTextProductName.Text = Application.ProductName;
             lblVersion.Text += $" {Application.ProductVersion}";
         }

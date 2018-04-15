@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Resources;
 using System.Windows.Forms;
 using FastWin32.Diagnostics;
 
@@ -12,12 +13,14 @@ namespace ExtremeDumper.Forms
 
         private IntPtr _moduleHandle;
 
+        private ResourceManager _resources = new ResourceManager(typeof(FunctionsForm));
+
         public FunctionsForm(uint processId, IntPtr moduleHandle, string moduleName)
         {
             InitializeComponent();
             _processId = processId;
             _moduleHandle = moduleHandle;
-            Text = $"模块{moduleName}(地址=0x{moduleHandle.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8")})的导出函数列表";
+            Text = $"{_resources.GetString("StrExportFunctions")} {moduleName}(0x{moduleHandle.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8")})";
             typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwFunctions, new object[] { true });
             lvwFunctions.ListViewItemSorter = new ListViewItemSorter(lvwFunctions, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, Cache.Is64BitOperatingSystem ? TypeCode.UInt64 : TypeCode.UInt32 }, { 2, TypeCode.Int16 } }) { AllowHexLeadingSign = true };
             RefreshFunctionList();

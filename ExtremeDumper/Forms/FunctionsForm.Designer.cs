@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FunctionsForm));
             this.lvwFunctions = new System.Windows.Forms.ListView();
             this.chFunctionName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chFunctionAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -50,28 +51,25 @@
             this.chFunctionAddress,
             this.chOrdinal});
             this.lvwFunctions.ContextMenuStrip = this.mnuFunctionsContext;
-            this.lvwFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
+            resources.ApplyResources(this.lvwFunctions, "lvwFunctions");
             this.lvwFunctions.FullRowSelect = true;
-            this.lvwFunctions.Location = new System.Drawing.Point(0, 0);
             this.lvwFunctions.Name = "lvwFunctions";
-            this.lvwFunctions.Size = new System.Drawing.Size(933, 637);
             this.lvwFunctions.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lvwFunctions.TabIndex = 0;
             this.lvwFunctions.UseCompatibleStateImageBehavior = false;
             this.lvwFunctions.View = System.Windows.Forms.View.Details;
             this.lvwFunctions.Resize += new System.EventHandler(this.lvwFunctions_Resize);
             // 
             // chFunctionName
             // 
-            this.chFunctionName.Text = "导出函数名";
+            resources.ApplyResources(this.chFunctionName, "chFunctionName");
             // 
             // chFunctionAddress
             // 
-            this.chFunctionAddress.Text = "导出函数地址";
+            resources.ApplyResources(this.chFunctionAddress, "chFunctionAddress");
             // 
             // chOrdinal
             // 
-            this.chOrdinal.Text = "导出函数序号";
+            resources.ApplyResources(this.chOrdinal, "chOrdinal");
             // 
             // mnuFunctionsContext
             // 
@@ -82,48 +80,42 @@
             this.mnuForceTrue,
             this.mnuForceReturn});
             this.mnuFunctionsContext.Name = "mnuModulesContext";
-            this.mnuFunctionsContext.Size = new System.Drawing.Size(173, 98);
+            resources.ApplyResources(this.mnuFunctionsContext, "mnuFunctionsContext");
             // 
             // mnuRefreshFunctionList
             // 
             this.mnuRefreshFunctionList.Name = "mnuRefreshFunctionList";
-            this.mnuRefreshFunctionList.Size = new System.Drawing.Size(172, 22);
-            this.mnuRefreshFunctionList.Text = "刷新导出函数列表";
+            resources.ApplyResources(this.mnuRefreshFunctionList, "mnuRefreshFunctionList");
             this.mnuRefreshFunctionList.Click += new System.EventHandler(this.mnuRefreshFunctionList_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // mnuForceFalse
             // 
             this.mnuForceFalse.Name = "mnuForceFalse";
-            this.mnuForceFalse.Size = new System.Drawing.Size(172, 22);
-            this.mnuForceFalse.Text = "强制返回False";
+            resources.ApplyResources(this.mnuForceFalse, "mnuForceFalse");
             this.mnuForceFalse.Click += new System.EventHandler(this.mnuForceFalse_Click);
             // 
             // mnuForceTrue
             // 
             this.mnuForceTrue.Name = "mnuForceTrue";
-            this.mnuForceTrue.Size = new System.Drawing.Size(172, 22);
-            this.mnuForceTrue.Text = "强制返回True";
+            resources.ApplyResources(this.mnuForceTrue, "mnuForceTrue");
             this.mnuForceTrue.Click += new System.EventHandler(this.mnuForceTrue_Click);
             // 
             // mnuForceReturn
             // 
             this.mnuForceReturn.Name = "mnuForceReturn";
-            this.mnuForceReturn.Size = new System.Drawing.Size(172, 22);
-            this.mnuForceReturn.Text = "强制直接返回";
+            resources.ApplyResources(this.mnuForceReturn, "mnuForceReturn");
             this.mnuForceReturn.Click += new System.EventHandler(this.mnuForceReturn_Click);
             // 
             // FunctionsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(933, 637);
             this.Controls.Add(this.lvwFunctions);
-            this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = global::ExtremeDumper.Forms.Resources.Icon;
             this.Name = "FunctionsForm";
             this.mnuFunctionsContext.ResumeLayout(false);

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Resources;
 using System.Security.Principal;
 using System.Windows.Forms;
 using ExtremeDumper.Dumper;
@@ -15,18 +16,20 @@ namespace ExtremeDumper.Forms
 {
     internal partial class MainForm : Form
     {
+        private DumperCoreWrapper _dumperCore = new DumperCoreWrapper { Value = DumperCore.MegaDumper };
+
+        private ResourceManager _resources = new ResourceManager(typeof(MainForm));
+
         private static readonly bool _isAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
         private static readonly AboutForm _aboutForm = new AboutForm();
-
-        private DumperCoreWrapper _dumperCore = new DumperCoreWrapper { Value = DumperCore.MegaDumper };
 
         public MainForm()
         {
             InitializeComponent();
             mnuRequireAdministrator.Checked = _isAdministrator;
             mnuRequireAdministrator.Enabled = !_isAdministrator;
-            Text = $"{Application.ProductName} v{Application.ProductVersion} ({(Environment.Is64BitProcess ? "x64" : "x86")}{(_isAdministrator ? ", 管理员" : string.Empty)})";
+            Text = $"{Application.ProductName} v{Application.ProductVersion} ({(Environment.Is64BitProcess ? "x64" : "x86")}{(_isAdministrator ? _resources.GetString("StrAdministrator") : string.Empty)})";
             typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwProcesses, new object[] { true });
             lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, TypeCode.Int32 }, { 2, TypeCode.String } });
             RefreshProcessList();
@@ -39,7 +42,7 @@ namespace ExtremeDumper.Forms
         {
             if (!_isAdministrator)
             {
-                MessageBoxStub.Show("请以管理员模式启动" + Application.ProductName, MessageBoxIcon.Error);
+                MessageBoxStub.Show(_resources.GetString("StrRunAsAdmin") + Application.ProductName, MessageBoxIcon.Error);
                 return;
             }
             if (FastWin32Settings.EnableDebugPrivilege())
@@ -47,10 +50,10 @@ namespace ExtremeDumper.Forms
                 mnuDebugPrivilege.Checked = true;
                 mnuDebugPrivilege.Enabled = false;
                 Text = Text.Substring(0, Text.Length - 1) + ", SeDebugPrivilege)";
-                MessageBoxStub.Show("成功", MessageBoxIcon.Information);
+                MessageBoxStub.Show(_resources.GetString("StrSuccess"), MessageBoxIcon.Information);
             }
             else
-                MessageBoxStub.Show("失败，请关闭杀软后重试", MessageBoxIcon.Error);
+                MessageBoxStub.Show(_resources.GetString("StrFailed"), MessageBoxIcon.Error);
         }
 
         private void mnuUseMegaDumper_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.MegaDumper);
@@ -76,8 +79,8 @@ namespace ExtremeDumper.Forms
             if (lvwProcesses.SelectedIndices.Count == 0)
                 return;
 
-            if (Environment.Is64BitProcess && lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor && lvwProcesses.SelectedItems[0].Text.EndsWith("(32 位)", StringComparison.Ordinal))
-                MessageBoxStub.Show("要查看32位.Net进程的模块请切换到32位模式", MessageBoxIcon.Error);
+            if (Environment.Is64BitProcess && lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor && lvwProcesses.SelectedItems[0].Text.EndsWith(_resources.GetString("Str32Bit"), StringComparison.Ordinal))
+                MessageBoxStub.Show(_resources.GetString("StrViewModulesSwitchTo32Bit"), MessageBoxIcon.Error);
             else
                 new ModulesForm(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), lvwProcesses.SelectedItems[0].Text, lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor, _dumperCore).Show();
         }
@@ -156,11 +159,11 @@ namespace ExtremeDumper.Forms
                         listViewItem.BackColor = Cache.DotNetColor;
                         isDotNetProcess = true;
                         if (Cache.Is64BitOperatingSystem && Is64BitPE(moduleEntry32.szExePath, out is64) && !is64)
-                            listViewItem.Text += " (32 位)";
+                            listViewItem.Text += _resources.GetString("Str32Bit");
                         break;
                     }
                 if (Cache.Is64BitOperatingSystem && !isDotNetProcess && Is64BitPE(listViewItem.SubItems[2].Text, out is64) && !is64)
-                    listViewItem.Text += " (32 位)";
+                    listViewItem.Text += _resources.GetString("Str32Bit");
                 if (!mnuOnlyDotNetProcess.Checked || isDotNetProcess)
                     lvwProcesses.Items.Add(listViewItem);
             }
@@ -196,6 +199,6 @@ namespace ExtremeDumper.Forms
             }
         }
 
-        private void DumpProcess(uint processId, string directoryPath) => MessageBoxStub.Show($"{DumperFactory.GetDumper(processId, _dumperCore.Value).DumpProcess(directoryPath).ToString()} 个文件被转储在:{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
+        private void DumpProcess(uint processId, string directoryPath) => MessageBoxStub.Show($"{DumperFactory.GetDumper(processId, _dumperCore.Value).DumpProcess(directoryPath).ToString()} {_resources.GetString("StrDumpFilesSuccess")}{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
     }
 }

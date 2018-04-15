@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Resources;
 using System.Threading;
 using System.Windows.Forms;
 using dnlib.DotNet;
@@ -19,10 +20,12 @@ namespace ExtremeDumper.Forms
 
         private string _argument;
 
+        private ResourceManager _resources = new ResourceManager(typeof(InjectingForm));
+
         public InjectingForm(uint processId, string processName)
         {
             InitializeComponent();
-            Text = $"将DLL注入到进程{processName}(ID={processId.ToString()})";
+            Text = $"Injector - {processName}(ID={processId.ToString()})";
             _processId = processId;
         }
 
@@ -61,7 +64,7 @@ namespace ExtremeDumper.Forms
             if (chkWaitReturn.Checked)
             {
                 btInject.Enabled = false;
-                Text += "等待中...";
+                Text += _resources.GetString("StrWaiting");
                 new Thread(() =>
                 {
                     int ret;
@@ -69,9 +72,9 @@ namespace ExtremeDumper.Forms
                     typeName = _entryPoint.FullName.Substring(_entryPoint.FullName.IndexOf(' ') + 1);
                     typeName = typeName.Substring(0, typeName.IndexOf(':'));
                     if (Injector.InjectManaged(_processId, _assemblyPath, typeName, _entryPoint.Name, _argument, out ret))
-                        Invoke((Action)(() => MessageBoxStub.Show($"注入成功\n返回值: {ret.ToString()}", MessageBoxIcon.Information)));
+                        Invoke((Action)(() => MessageBoxStub.Show($"{_resources.GetString("StrInjectSuccessfully")}\n{_resources.GetString("StrReturnValue")} {ret.ToString()}", MessageBoxIcon.Information)));
                     else
-                        Invoke((Action)(() => MessageBoxStub.Show("注入失败", MessageBoxIcon.Error)));
+                        Invoke((Action)(() => MessageBoxStub.Show(_resources.GetString("StrFailToInject"), MessageBoxIcon.Error)));
                     Invoke((Action)(() =>
                     {
                         btInject.Enabled = true;
@@ -86,10 +89,10 @@ namespace ExtremeDumper.Forms
             {
                 typeName = _entryPoint.FullName.Substring(_entryPoint.FullName.IndexOf(' '));
                 typeName = typeName.Substring(0, typeName.IndexOf(':'));
-                if (Injector.InjectManaged(_processId, _assemblyPath,typeName, _entryPoint.Name, _argument))
-                    MessageBoxStub.Show($"注入成功", MessageBoxIcon.Information);
+                if (Injector.InjectManaged(_processId, _assemblyPath, typeName, _entryPoint.Name, _argument))
+                    MessageBoxStub.Show(_resources.GetString("StrInjectSuccessfully"), MessageBoxIcon.Information);
                 else
-                    MessageBoxStub.Show("注入失败", MessageBoxIcon.Error);
+                    MessageBoxStub.Show(_resources.GetString("StrFailToInject"), MessageBoxIcon.Error);
             }
         }
         #endregion
@@ -104,7 +107,7 @@ namespace ExtremeDumper.Forms
             }
             catch
             {
-                MessageBoxStub.Show("无效程序集，请重新选定路径", MessageBoxIcon.Error);
+                MessageBoxStub.Show(_resources.GetString("StrInvalidAssembly"), MessageBoxIcon.Error);
                 _manifestModule = null;
                 return;
             }

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Resources;
+using System.Text;
 using System.Windows.Forms;
 using Microsoft.Diagnostics.Runtime;
 using static ExtremeDumper.Forms.NativeMethods;
@@ -12,11 +15,15 @@ namespace ExtremeDumper.Forms
 {
     internal partial class ModulesForm : Form
     {
+        private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
+
         private uint _processId;
 
         private bool _isDotNetProcess;
 
         private DumperCoreWrapper _dumperCore;
+
+        private ResourceManager _resources = new ResourceManager(typeof(ModulesForm));
 
         public ModulesForm(uint processId, string processName, bool isDotNetProcess, DumperCoreWrapper dumperCore)
         {
@@ -24,7 +31,7 @@ namespace ExtremeDumper.Forms
             _processId = processId;
             _isDotNetProcess = isDotNetProcess;
             _dumperCore = dumperCore;
-            Text = $"进程{processName}(ID={processId.ToString()})的模块列表";
+            Text = $"{_resources.GetString("StrModules")} {processName}(ID={processId.ToString()})";
             mnuOnlyDotNetModule.Checked = isDotNetProcess;
             typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwModules, new object[] { true });
             lvwModules.ListViewItemSorter = new ListViewItemSorter(lvwModules, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, Cache.Is64BitOperatingSystem ? TypeCode.UInt64 : TypeCode.UInt32 }, { 2, TypeCode.Int32 }, { 3, Cache.Is64BitOperatingSystem ? TypeCode.UInt64 : TypeCode.UInt32 }, { 4, TypeCode.String } }) { AllowHexLeadingSign = true };
@@ -39,9 +46,12 @@ namespace ExtremeDumper.Forms
             if (lvwModules.SelectedIndices.Count == 0)
                 return;
 
+            IntPtr moduleHandle;
+
             if (fbdlgDumped.ShowDialog() != DialogResult.OK)
                 return;
-            DumpModule((IntPtr)(Cache.Is64BitOperatingSystem ? ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null) : uint.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null)), Path.Combine(fbdlgDumped.SelectedPath, lvwModules.SelectedItems[0].Text));
+            moduleHandle = (IntPtr)(Cache.Is64BitOperatingSystem ? ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null) : uint.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null));
+            DumpModule(moduleHandle, Path.Combine(fbdlgDumped.SelectedPath, EnsureValidFileName(lvwModules.SelectedItems[0].Text)));
         }
 
         private void mnuRefreshModuleList_Click(object sender, EventArgs e) => RefreshModuleList();
@@ -63,14 +73,8 @@ namespace ExtremeDumper.Forms
 
             string filePath = lvwModules.SelectedItems[0].SubItems[3].Text;
 
-            if (filePath == "模块仅在内存中")
-                MessageBoxStub.Show("模块仅在内存中,可以在转储之后查看", MessageBoxIcon.Error);
-            else
-            {
-                if (!Environment.Is64BitProcess && Cache.Is64BitOperatingSystem)
-                    MessageBoxStub.Show("文件位置被重定向,资源管理器中显示的不一定是真实位置", MessageBoxIcon.Information);
+            if (filePath != "InMemory")
                 Process.Start("explorer.exe", @"/select, " + filePath);
-            }
         }
         #endregion
 
@@ -115,16 +119,30 @@ namespace ExtremeDumper.Forms
                         {
                             string moduleName;
 
-                            moduleName = clrModule.Name ?? "<<EmptyName>>";
+                            moduleName = clrModule.Name ?? "EmptyName";
                             moduleName = clrModule.IsDynamic ? moduleName.Split(',')[0] : Path.GetFileName(moduleName);
                             listViewItem = new ListViewItem(moduleName);
                             listViewItem.SubItems.Add("0x" + clrModule.ImageBase.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8"));
                             listViewItem.SubItems.Add("0x" + clrModule.Size.ToString("X8"));
-                            listViewItem.SubItems.Add(clrModule.IsDynamic ? "模块仅在内存中" : clrModule.FileName);
+                            listViewItem.SubItems.Add(clrModule.IsDynamic ? "InMemory" : clrModule.FileName);
                             listViewItem.BackColor = Cache.DotNetColor;
                             lvwModules.Items.Add(listViewItem);
                         }
             lvwModules.AutoResizeColumns(false);
+        }
+
+        private static string EnsureValidFileName(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return string.Empty;
+
+            StringBuilder newFileName;
+
+            newFileName = new StringBuilder(fileName.Length);
+            foreach (char chr in fileName)
+                if (!InvalidFileNameChars.Contains(chr))
+                    newFileName.Append(chr);
+            return newFileName.ToString();
         }
 
         private void DumpModule(IntPtr moduleHandle, string filePath)
@@ -132,7 +150,7 @@ namespace ExtremeDumper.Forms
             bool result;
 
             result = DumperFactory.GetDumper(_processId, _dumperCore.Value).DumpModule(moduleHandle, filePath);
-            MessageBoxStub.Show(result ? $"成功！文件被转储在:{Environment.NewLine}{filePath}" : "失败！", result ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+            MessageBoxStub.Show(result ? $"{_resources.GetString("StrDumpModuleSuccessfully")}{Environment.NewLine}{filePath}" : _resources.GetString("StrFailToDumpModule"), result ? MessageBoxIcon.Information : MessageBoxIcon.Error);
         }
     }
 }

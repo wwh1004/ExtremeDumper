@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using dnlib.DotNet;
+using dnlib.DotNet.Writer;
 using FastWin32.Memory;
 using Microsoft.Diagnostics.Runtime;
 using static ExtremeDumper.Dumper.NativeMethods;
@@ -41,13 +42,15 @@ namespace ExtremeDumper.Dumper
         {
             byte[] assembly;
             ClrModule clrModule;
+            ModuleDef moduleDef;
 
             assembly = RemotePEImageCopyer.Copy(_processId, _processHandle, moduleHandle, _is64);
             clrModule = GetClrModule(moduleHandle);
             fixed (byte* p = assembly)
             {
                 FixMDD(p, (uint)(clrModule.MetadataAddress - (ulong)moduleHandle), (uint)clrModule.MetadataLength);
-                ModuleDefMD.Load((IntPtr)p).Write(filePath);
+                moduleDef = ModuleDefMD.Load((IntPtr)p);
+                moduleDef.Write(filePath, new ModuleWriterOptions(moduleDef) { MetadataOptions = new MetadataOptions(MetadataFlags.KeepOldMaxStack) });
             }
             return true;
         }
@@ -119,7 +122,7 @@ namespace ExtremeDumper.Dumper
                         {
                             string moduleName;
 
-                            moduleName = clrModule.Name ?? "<<EmptyName>>";
+                            moduleName = clrModule.Name ?? "EmptyName";
                             moduleName = clrModule.IsDynamic ? moduleName.Split(',')[0] : Path.GetFileName(moduleName);
                             if (DumpModule((IntPtr)clrModule.ImageBase, Path.Combine(directoryPath, moduleName)))
                                 result++;

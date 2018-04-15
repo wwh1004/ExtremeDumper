@@ -97,12 +97,13 @@ namespace ExtremeDumper.Dumper
             {
                 minaddress = 0;
                 maxaddress = int.MaxValue;
-                pagesize = 0x1000;
                 SYSTEM_INFO pSI = new SYSTEM_INFO();
                 GetSystemInfo(ref pSI);
-                minaddress = pSI.lpMinimumApplicationAddress;
-                maxaddress = pSI.lpMaximumApplicationAddress;
+                //minaddress = pSI.lpMinimumApplicationAddress;
+                //maxaddress = pSI.lpMaximumApplicationAddress;
                 pagesize = pSI.dwPageSize;
+                if (pagesize == 0)
+                    pagesize = 0x1000;
             }
 
             private static int RVA2Offset(byte[] input, int rva)

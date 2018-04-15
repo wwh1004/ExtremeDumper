@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModulesForm));
             this.lvwModules = new System.Windows.Forms.ListView();
             this.chModuleName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chModuleHandle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -55,32 +56,29 @@
             this.chModuleSize,
             this.chModulePath});
             this.lvwModules.ContextMenuStrip = this.mnuModulesContext;
-            this.lvwModules.Dock = System.Windows.Forms.DockStyle.Fill;
+            resources.ApplyResources(this.lvwModules, "lvwModules");
             this.lvwModules.FullRowSelect = true;
-            this.lvwModules.Location = new System.Drawing.Point(0, 0);
             this.lvwModules.Name = "lvwModules";
-            this.lvwModules.Size = new System.Drawing.Size(933, 637);
             this.lvwModules.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lvwModules.TabIndex = 0;
             this.lvwModules.UseCompatibleStateImageBehavior = false;
             this.lvwModules.View = System.Windows.Forms.View.Details;
             this.lvwModules.Resize += new System.EventHandler(this.lvwModules_Resize);
             // 
             // chModuleName
             // 
-            this.chModuleName.Text = "模块名";
+            resources.ApplyResources(this.chModuleName, "chModuleName");
             // 
             // chModuleHandle
             // 
-            this.chModuleHandle.Text = "模块句柄（基址）";
+            resources.ApplyResources(this.chModuleHandle, "chModuleHandle");
             // 
             // chModuleSize
             // 
-            this.chModuleSize.Text = "模块大小";
+            resources.ApplyResources(this.chModuleSize, "chModuleSize");
             // 
             // chModulePath
             // 
-            this.chModulePath.Text = "模块路径";
+            resources.ApplyResources(this.chModulePath, "chModulePath");
             // 
             // mnuModulesContext
             // 
@@ -93,65 +91,58 @@
             this.toolStripSeparator2,
             this.mnuGotoLocation});
             this.mnuModulesContext.Name = "mnuModulesContext";
-            this.mnuModulesContext.Size = new System.Drawing.Size(185, 148);
+            resources.ApplyResources(this.mnuModulesContext, "mnuModulesContext");
             // 
             // mnuDumpModule
             // 
             this.mnuDumpModule.Name = "mnuDumpModule";
-            this.mnuDumpModule.Size = new System.Drawing.Size(184, 22);
-            this.mnuDumpModule.Text = "转储模块";
+            resources.ApplyResources(this.mnuDumpModule, "mnuDumpModule");
             this.mnuDumpModule.Click += new System.EventHandler(this.mnuDumpModule_Click);
             // 
             // mnuRefreshModuleList
             // 
             this.mnuRefreshModuleList.Name = "mnuRefreshModuleList";
-            this.mnuRefreshModuleList.Size = new System.Drawing.Size(184, 22);
-            this.mnuRefreshModuleList.Text = "刷新模块列表";
+            resources.ApplyResources(this.mnuRefreshModuleList, "mnuRefreshModuleList");
             this.mnuRefreshModuleList.Click += new System.EventHandler(this.mnuRefreshModuleList_Click);
             // 
             // mnuViewFunctions
             // 
             this.mnuViewFunctions.Name = "mnuViewFunctions";
-            this.mnuViewFunctions.Size = new System.Drawing.Size(184, 22);
-            this.mnuViewFunctions.Text = "查看导出函数列表";
+            resources.ApplyResources(this.mnuViewFunctions, "mnuViewFunctions");
             this.mnuViewFunctions.Click += new System.EventHandler(this.mnuViewFunctions_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(181, 6);
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // mnuOnlyDotNetModule
             // 
             this.mnuOnlyDotNetModule.CheckOnClick = true;
             this.mnuOnlyDotNetModule.Name = "mnuOnlyDotNetModule";
-            this.mnuOnlyDotNetModule.Size = new System.Drawing.Size(184, 22);
-            this.mnuOnlyDotNetModule.Text = "仅显示.Net模块";
+            resources.ApplyResources(this.mnuOnlyDotNetModule, "mnuOnlyDotNetModule");
             this.mnuOnlyDotNetModule.Click += new System.EventHandler(this.mnuOnlyDotNetModule_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(181, 6);
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             // 
             // mnuGotoLocation
             // 
             this.mnuGotoLocation.Name = "mnuGotoLocation";
-            this.mnuGotoLocation.Size = new System.Drawing.Size(184, 22);
-            this.mnuGotoLocation.Text = "打开文件所在的位置";
+            resources.ApplyResources(this.mnuGotoLocation, "mnuGotoLocation");
             this.mnuGotoLocation.Click += new System.EventHandler(this.mnuGotoLocation_Click);
             // 
             // fbdlgDumped
             // 
-            this.fbdlgDumped.Description = "选择转储文件保存位置";
+            resources.ApplyResources(this.fbdlgDumped, "fbdlgDumped");
             // 
             // ModulesForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(933, 637);
             this.Controls.Add(this.lvwModules);
-            this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = global::ExtremeDumper.Forms.Resources.Icon;
             this.Name = "ModulesForm";
             this.mnuModulesContext.ResumeLayout(false);

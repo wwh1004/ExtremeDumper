@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
             this.picIcon = new System.Windows.Forms.PictureBox();
             this.lblTextAuthor = new System.Windows.Forms.Label();
             this.lblTextProductName = new System.Windows.Forms.Label();
@@ -41,85 +42,52 @@
             // 
             // picIcon
             // 
+            resources.ApplyResources(this.picIcon, "picIcon");
             this.picIcon.Image = global::ExtremeDumper.Forms.Resources.Avatar;
-            this.picIcon.Location = new System.Drawing.Point(0, 0);
             this.picIcon.Name = "picIcon";
-            this.picIcon.Size = new System.Drawing.Size(256, 256);
-            this.picIcon.TabIndex = 0;
             this.picIcon.TabStop = false;
             // 
             // lblTextAuthor
             // 
-            this.lblTextAuthor.AutoSize = true;
-            this.lblTextAuthor.Font = new System.Drawing.Font("微软雅黑", 13F);
-            this.lblTextAuthor.Location = new System.Drawing.Point(262, 67);
+            resources.ApplyResources(this.lblTextAuthor, "lblTextAuthor");
             this.lblTextAuthor.Name = "lblTextAuthor";
-            this.lblTextAuthor.Size = new System.Drawing.Size(46, 24);
-            this.lblTextAuthor.TabIndex = 1;
-            this.lblTextAuthor.Text = "作者";
             // 
             // lblTextProductName
             // 
-            this.lblTextProductName.AutoSize = true;
-            this.lblTextProductName.Font = new System.Drawing.Font("微软雅黑", 13F);
-            this.lblTextProductName.Location = new System.Drawing.Point(262, 9);
+            resources.ApplyResources(this.lblTextProductName, "lblTextProductName");
             this.lblTextProductName.Name = "lblTextProductName";
-            this.lblTextProductName.Size = new System.Drawing.Size(0, 24);
-            this.lblTextProductName.TabIndex = 2;
             // 
             // lblAuthor
             // 
-            this.lblAuthor.AutoSize = true;
-            this.lblAuthor.Location = new System.Drawing.Point(263, 91);
+            resources.ApplyResources(this.lblAuthor, "lblAuthor");
             this.lblAuthor.Name = "lblAuthor";
-            this.lblAuthor.Size = new System.Drawing.Size(61, 17);
-            this.lblAuthor.TabIndex = 3;
-            this.lblAuthor.Text = "wwh1004";
             // 
             // lblVersion
             // 
-            this.lblVersion.AutoSize = true;
-            this.lblVersion.Location = new System.Drawing.Point(263, 33);
+            resources.ApplyResources(this.lblVersion, "lblVersion");
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(52, 17);
-            this.lblVersion.TabIndex = 4;
-            this.lblVersion.Text = "Version";
             // 
             // lblTextThanks
             // 
-            this.lblTextThanks.AutoSize = true;
-            this.lblTextThanks.Font = new System.Drawing.Font("微软雅黑", 13F);
-            this.lblTextThanks.Location = new System.Drawing.Point(262, 126);
+            resources.ApplyResources(this.lblTextThanks, "lblTextThanks");
             this.lblTextThanks.Name = "lblTextThanks";
-            this.lblTextThanks.Size = new System.Drawing.Size(46, 24);
-            this.lblTextThanks.TabIndex = 5;
-            this.lblTextThanks.Text = "感谢";
             // 
             // lblThanks
             // 
-            this.lblThanks.AutoSize = true;
-            this.lblThanks.Location = new System.Drawing.Point(263, 150);
+            resources.ApplyResources(this.lblThanks, "lblThanks");
             this.lblThanks.Name = "lblThanks";
-            this.lblThanks.Size = new System.Drawing.Size(178, 51);
-            this.lblThanks.TabIndex = 6;
-            this.lblThanks.Text = "0xd4d - dnlib & dndbg\r\nCodeCracker - MegaDumper\r\nClrMD - Microsoft";
             // 
             // llblGithub
             // 
-            this.llblGithub.AutoSize = true;
-            this.llblGithub.Location = new System.Drawing.Point(263, 213);
+            resources.ApplyResources(this.llblGithub, "llblGithub");
             this.llblGithub.Name = "llblGithub";
-            this.llblGithub.Size = new System.Drawing.Size(176, 34);
-            this.llblGithub.TabIndex = 7;
             this.llblGithub.TabStop = true;
-            this.llblGithub.Text = "https://github.com/23651039\r\n39/ExtremeDumper";
             this.llblGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lkbGithub_LinkClicked);
             // 
             // AboutForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(452, 256);
             this.Controls.Add(this.llblGithub);
             this.Controls.Add(this.lblThanks);
             this.Controls.Add(this.lblTextThanks);
@@ -128,13 +96,11 @@
             this.Controls.Add(this.lblTextProductName);
             this.Controls.Add(this.lblTextAuthor);
             this.Controls.Add(this.picIcon);
-            this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutForm";
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             ((System.ComponentModel.ISupportInitialize)(this.picIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
