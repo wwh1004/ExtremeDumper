@@ -196,32 +196,36 @@ namespace ExtremeDumper.Dumper
             {
                 byte[] buffer;
 
-                buffer = new byte[(int)GetImageSize(processHandle, moduleHandle, is64)];
-                MemoryIO.EnumPages(processId, pageInfo =>
+                buffer = new byte[GetImageSize(processHandle, moduleHandle, is64)];
+                MemoryIO.EnumPages(processId, moduleHandle, pageInfo =>
                 {
                     int startOffset;
                     int endOffset;
 
                     startOffset = (int)((ulong)pageInfo.Address - (ulong)moduleHandle);
-                    endOffset = (int)((ulong)pageInfo.Address + (ulong)pageInfo.Size - (ulong)moduleHandle);
+                    //以p为起点，远程进程中页面起点映射到buffer中的偏移
+                    endOffset = startOffset + (int)pageInfo.Size;
+                    //以p为起点，远程进程中页面终点映射到buffer中的偏移
                     fixed (byte* p = buffer)
                         if (startOffset < 0)
                         {
-                            ReadProcessMemory(processHandle, moduleHandle, p, (size_t)endOffset, null);
+                            //页面前半部分超出buffer
+                            ReadProcessMemory(processHandle, moduleHandle, p, (size_t)((ulong)pageInfo.Size - ((ulong)moduleHandle - (ulong)pageInfo.Address)), null);
                             return true;
                         }
                         else
                         {
-
                             if (endOffset <= buffer.Length)
                             {
+                                //整个页面都可以存入buffer
                                 ReadProcessMemory(processHandle, pageInfo.Address, p + startOffset, pageInfo.Size, null);
                                 return true;
                             }
                             else
                             {
+                                //页面后半部分/全部超出buffer
                                 ReadProcessMemory(processHandle, pageInfo.Address, p + startOffset, pageInfo.Size - (endOffset - buffer.Length), null);
-                                return true;
+                                return false;
                             }
                         }
                 });
