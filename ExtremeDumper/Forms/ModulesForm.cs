@@ -94,23 +94,14 @@ namespace ExtremeDumper.Forms
                     return;
                 if (!Module32First(snapshotHandle, ref moduleEntry32))
                     return;
-                if (!_isDotNetProcess)
-                {
-                    //如果是.Net进程,这里获取的主模块信息会与通过ClrMD获取的信息重复
-                    listViewItem = new ListViewItem(moduleEntry32.szModule);
-                    listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseAddr.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8"));
-                    listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseSize.ToString("X8"));
-                    listViewItem.SubItems.Add(moduleEntry32.szExePath);
-                    lvwModules.Items.Add(listViewItem);
-                }
-                while (Module32Next(snapshotHandle, ref moduleEntry32))
+                do
                 {
                     listViewItem = new ListViewItem(moduleEntry32.szModule);
                     listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseAddr.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8"));
                     listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseSize.ToString("X8"));
                     listViewItem.SubItems.Add(moduleEntry32.szExePath);
                     lvwModules.Items.Add(listViewItem);
-                }
+                } while (Module32Next(snapshotHandle, ref moduleEntry32));
             }
             if (_isDotNetProcess)
                 using (dataTarget = DataTarget.AttachToProcess((int)_processId, 10000, AttachFlag.Passive))
