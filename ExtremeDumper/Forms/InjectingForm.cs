@@ -121,9 +121,9 @@ namespace ExtremeDumper.Forms
                         continue;
                     methodSig = (MethodSig)methodDef.Signature;
                     if (methodSig.Params.Count != 1 || methodSig.Params[0].FullName != "System.String")
-                        break;
+                        continue;
                     if (methodSig.RetType.FullName != "System.Int32")
-                        break;
+                        continue;
                     cmbEntryPoint.Items.Add(methodDef);
                 }
         }
