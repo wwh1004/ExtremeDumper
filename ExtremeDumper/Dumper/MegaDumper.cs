@@ -22,13 +22,13 @@ namespace ExtremeDumper.Dumper
         {
             bool is64;
 
-            if (!Process32.Is64BitProcess(processId, out is64))
-                return null;
-            return new MegaDumper
-            {
-                _processId = processId,
-                _is64 = is64
-            };
+            return !Process32.Is64BitProcess(processId, out is64)
+                ? null
+                : new MegaDumper
+                {
+                    _processId = processId,
+                    _is64 = is64
+                };
         }
 
         public bool DumpModule(IntPtr moduleHandle, string filePath) => _is64 ? MegaDumperPrivate64.DumpModule(_processId, filePath, (long)moduleHandle) : MegaDumperPrivate32.DumpModule(_processId, filePath, (int)moduleHandle);

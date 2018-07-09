@@ -28,14 +28,14 @@ namespace ExtremeDumper.Dumper
             IntPtr processHandle;
 
             processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, processId);
-            if (processHandle == IntPtr.Zero)
-                return null;
-            return new MetaDumper
-            {
-                _processId = processId,
-                _processHandle = processHandle,
-                _is64 = Is64BitProcess(processHandle)
-            };
+            return processHandle == IntPtr.Zero
+                ? null
+                : new MetaDumper
+                {
+                    _processId = processId,
+                    _processHandle = processHandle,
+                    _is64 = Is64BitProcess(processHandle)
+                };
         }
 
         public bool DumpModule(IntPtr moduleHandle, string filePath)

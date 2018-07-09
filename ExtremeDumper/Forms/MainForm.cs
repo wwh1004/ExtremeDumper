@@ -71,7 +71,7 @@ namespace ExtremeDumper.Forms
 
             if (fbdlgDumped.ShowDialog() != DialogResult.OK)
                 return;
-            DumpProcess(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), fbdlgDumped.SelectedPath);
+            DumpProcess(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), Path.Combine(fbdlgDumped.SelectedPath, "Dumps"));
         }
 
         private void mnuViewModules_Click(object sender, EventArgs e)
