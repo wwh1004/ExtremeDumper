@@ -48,10 +48,11 @@ namespace ExtremeDumper.Forms
 
             IntPtr moduleHandle;
 
-            if (fbdlgDumped.ShowDialog() != DialogResult.OK)
+            sfdlgDumped.FileName = EnsureValidFileName(lvwModules.SelectedItems[0].Text);
+            if (sfdlgDumped.ShowDialog() != DialogResult.OK)
                 return;
             moduleHandle = (IntPtr)(Cache.Is64BitOperatingSystem ? ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null) : uint.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null));
-            DumpModule(moduleHandle, Path.Combine(fbdlgDumped.SelectedPath, EnsureValidFileName(lvwModules.SelectedItems[0].Text)));
+            DumpModule(moduleHandle, sfdlgDumped.FileName);
         }
 
         private void mnuRefreshModuleList_Click(object sender, EventArgs e) => RefreshModuleList();

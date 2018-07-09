@@ -87,11 +87,11 @@ namespace ExtremeDumper.Dumper
             [DllImport("kernel32")]
             private static extern void GetSystemInfo(ref SYSTEM_INFO pSI);
 
-            private static uint minaddress;
+            private static readonly uint minaddress;
 
-            private static uint maxaddress;
+            private static readonly uint maxaddress;
 
-            private static uint pagesize;
+            private static readonly uint pagesize;
 
             static MegaDumperPrivate32()
             {
@@ -657,10 +657,7 @@ namespace ExtremeDumper.Dumper
                                                                             filename = Path.Combine(DirectoryName, "rawdump_" + (j + k).ToString("X8"));
                                                                             if (File.Exists(filename))
                                                                                 filename = Path.Combine(DirectoryName, "rawdump" + CurrentCount.ToString() + "_" + (j + k).ToString("X8"));
-                                                                            if (IsDll)
-                                                                                filename = filename + ".dll";
-                                                                            else
-                                                                                filename = filename + ".exe";
+                                                                            filename = IsDll ? filename + ".dll" : filename + ".exe";
 
                                                                             File.WriteAllBytes(filename, rawdump);
                                                                             CurrentCount++;
@@ -764,10 +761,7 @@ namespace ExtremeDumper.Dumper
                                                                 filename = Path.Combine(DirectoryName, "vdump_" + (j + k).ToString("X8"));
                                                                 if (File.Exists(filename))
                                                                     filename = Path.Combine(DirectoryName, "vdump" + CurrentCount.ToString() + "_" + (j + k).ToString("X8"));
-                                                                if (IsDll)
-                                                                    filename = filename + ".dll";
-                                                                else
-                                                                    filename = filename + ".exe";
+                                                                filename = IsDll ? filename + ".dll" : filename + ".exe";
                                                                 using (var fout = new FileStream(filename, FileMode.Create))
                                                                     fout.Write(virtualdump, 0, Math.Min(rightrawsize, virtualdump.Length));
                                                                 CurrentCount++;
@@ -841,11 +835,11 @@ namespace ExtremeDumper.Dumper
             [return: MarshalAs(UnmanagedType.Bool)]
             private static extern bool CloseHandle(IntPtr hObject);
 
-            private static ulong minAddress;
+            private static readonly ulong minAddress;
 
-            private static ulong maxAddress;
+            private static readonly ulong maxAddress;
 
-            private static uint PageSize;
+            private static readonly uint PageSize;
 
             static MegaDumperPrivate64()
             {

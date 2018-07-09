@@ -43,12 +43,13 @@
             this.mnuOnlyDotNetModule = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuGotoLocation = new System.Windows.Forms.ToolStripMenuItem();
-            this.fbdlgDumped = new System.Windows.Forms.FolderBrowserDialog();
+            this.sfdlgDumped = new System.Windows.Forms.SaveFileDialog();
             this.mnuModulesContext.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvwModules
             // 
+            resources.ApplyResources(this.lvwModules, "lvwModules");
             this.lvwModules.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lvwModules.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chModuleName,
@@ -56,7 +57,6 @@
             this.chModuleSize,
             this.chModulePath});
             this.lvwModules.ContextMenuStrip = this.mnuModulesContext;
-            resources.ApplyResources(this.lvwModules, "lvwModules");
             this.lvwModules.FullRowSelect = true;
             this.lvwModules.Name = "lvwModules";
             this.lvwModules.Sorting = System.Windows.Forms.SortOrder.Ascending;
@@ -82,6 +82,7 @@
             // 
             // mnuModulesContext
             // 
+            resources.ApplyResources(this.mnuModulesContext, "mnuModulesContext");
             this.mnuModulesContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuDumpModule,
             this.mnuRefreshModuleList,
@@ -91,52 +92,51 @@
             this.toolStripSeparator2,
             this.mnuGotoLocation});
             this.mnuModulesContext.Name = "mnuModulesContext";
-            resources.ApplyResources(this.mnuModulesContext, "mnuModulesContext");
             // 
             // mnuDumpModule
             // 
-            this.mnuDumpModule.Name = "mnuDumpModule";
             resources.ApplyResources(this.mnuDumpModule, "mnuDumpModule");
+            this.mnuDumpModule.Name = "mnuDumpModule";
             this.mnuDumpModule.Click += new System.EventHandler(this.mnuDumpModule_Click);
             // 
             // mnuRefreshModuleList
             // 
-            this.mnuRefreshModuleList.Name = "mnuRefreshModuleList";
             resources.ApplyResources(this.mnuRefreshModuleList, "mnuRefreshModuleList");
+            this.mnuRefreshModuleList.Name = "mnuRefreshModuleList";
             this.mnuRefreshModuleList.Click += new System.EventHandler(this.mnuRefreshModuleList_Click);
             // 
             // mnuViewFunctions
             // 
-            this.mnuViewFunctions.Name = "mnuViewFunctions";
             resources.ApplyResources(this.mnuViewFunctions, "mnuViewFunctions");
+            this.mnuViewFunctions.Name = "mnuViewFunctions";
             this.mnuViewFunctions.Click += new System.EventHandler(this.mnuViewFunctions_Click);
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
             // 
             // mnuOnlyDotNetModule
             // 
+            resources.ApplyResources(this.mnuOnlyDotNetModule, "mnuOnlyDotNetModule");
             this.mnuOnlyDotNetModule.CheckOnClick = true;
             this.mnuOnlyDotNetModule.Name = "mnuOnlyDotNetModule";
-            resources.ApplyResources(this.mnuOnlyDotNetModule, "mnuOnlyDotNetModule");
             this.mnuOnlyDotNetModule.Click += new System.EventHandler(this.mnuOnlyDotNetModule_Click);
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
             resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
             // 
             // mnuGotoLocation
             // 
-            this.mnuGotoLocation.Name = "mnuGotoLocation";
             resources.ApplyResources(this.mnuGotoLocation, "mnuGotoLocation");
+            this.mnuGotoLocation.Name = "mnuGotoLocation";
             this.mnuGotoLocation.Click += new System.EventHandler(this.mnuGotoLocation_Click);
             // 
-            // fbdlgDumped
+            // sfdlgDumped
             // 
-            resources.ApplyResources(this.fbdlgDumped, "fbdlgDumped");
+            resources.ApplyResources(this.sfdlgDumped, "sfdlgDumped");
             // 
             // ModulesForm
             // 
@@ -157,7 +157,7 @@
         private System.Windows.Forms.ColumnHeader chModuleHandle;
         private System.Windows.Forms.ColumnHeader chModuleSize;
         private System.Windows.Forms.ColumnHeader chModulePath;
-        private System.Windows.Forms.FolderBrowserDialog fbdlgDumped;
+        private System.Windows.Forms.SaveFileDialog sfdlgDumped;
         private System.Windows.Forms.ContextMenuStrip mnuModulesContext;
         private System.Windows.Forms.ToolStripMenuItem mnuDumpModule;
         private System.Windows.Forms.ToolStripMenuItem mnuRefreshModuleList;
