@@ -48,9 +48,17 @@ namespace ExtremeDumper.Dumper
             clrModule = GetClrModule(moduleHandle);
             fixed (byte* p = assembly)
             {
-                FixMDD(p, (uint)(clrModule.MetadataAddress - (ulong)moduleHandle), (uint)clrModule.MetadataLength);
-                moduleDef = ModuleDefMD.Load((IntPtr)p);
-                moduleDef.Write(filePath, new ModuleWriterOptions(moduleDef) { MetadataOptions = new MetadataOptions(MetadataFlags.KeepOldMaxStack) });
+                try
+                {
+                    moduleDef = ModuleDefMD.Load((IntPtr)p);
+                    moduleDef.Write(filePath, new ModuleWriterOptions(moduleDef) { MetadataOptions = new MetadataOptions(MetadataFlags.KeepOldMaxStack) });
+                }
+                catch
+                {
+                    FixMDD(p, (uint)(clrModule.MetadataAddress - (ulong)moduleHandle), (uint)clrModule.MetadataLength);
+                    moduleDef = ModuleDefMD.Load((IntPtr)p);
+                    moduleDef.Write(filePath, new ModuleWriterOptions(moduleDef) { MetadataOptions = new MetadataOptions(MetadataFlags.KeepOldMaxStack) });
+                }
             }
             return true;
         }
@@ -100,7 +108,7 @@ namespace ExtremeDumper.Dumper
                     case 20:
                         //EntryPointTokenOrRVA
                         memory.WriteUInt32(0x6000004);
-                        //Usually it's right.
+                        //随便写一个
                         break;
                     default:
                         memory.WriteUInt32(0);
