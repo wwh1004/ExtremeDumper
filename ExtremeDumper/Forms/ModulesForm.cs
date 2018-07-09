@@ -103,22 +103,28 @@ namespace ExtremeDumper.Forms
                     lvwModules.Items.Add(listViewItem);
                 } while (Module32Next(snapshotHandle, ref moduleEntry32));
             }
-            if (_isDotNetProcess)
-                using (dataTarget = DataTarget.AttachToProcess((int)_processId, 10000, AttachFlag.Passive))
-                    foreach (ClrInfo clrInfo in dataTarget.ClrVersions)
-                        foreach (ClrModule clrModule in clrInfo.CreateRuntime().Modules)
-                        {
-                            string moduleName;
+            try
+            {
+                if (_isDotNetProcess)
+                    using (dataTarget = DataTarget.AttachToProcess((int)_processId, 10000, AttachFlag.Passive))
+                        foreach (ClrInfo clrInfo in dataTarget.ClrVersions)
+                            foreach (ClrModule clrModule in clrInfo.CreateRuntime().Modules)
+                            {
+                                string moduleName;
 
-                            moduleName = clrModule.Name ?? "EmptyName";
-                            moduleName = clrModule.IsDynamic ? moduleName.Split(',')[0] : Path.GetFileName(moduleName);
-                            listViewItem = new ListViewItem(moduleName);
-                            listViewItem.SubItems.Add("0x" + clrModule.ImageBase.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8"));
-                            listViewItem.SubItems.Add("0x" + clrModule.Size.ToString("X8"));
-                            listViewItem.SubItems.Add(clrModule.IsDynamic ? "InMemory" : clrModule.FileName);
-                            listViewItem.BackColor = Cache.DotNetColor;
-                            lvwModules.Items.Add(listViewItem);
-                        }
+                                moduleName = clrModule.Name ?? "EmptyName";
+                                moduleName = clrModule.IsDynamic ? moduleName.Split(',')[0] : Path.GetFileName(moduleName);
+                                listViewItem = new ListViewItem(moduleName);
+                                listViewItem.SubItems.Add("0x" + clrModule.ImageBase.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8"));
+                                listViewItem.SubItems.Add("0x" + clrModule.Size.ToString("X8"));
+                                listViewItem.SubItems.Add(clrModule.IsDynamic ? "InMemory" : clrModule.FileName);
+                                listViewItem.BackColor = Cache.DotNetColor;
+                                lvwModules.Items.Add(listViewItem);
+                            }
+            }
+            catch
+            {
+            }
             lvwModules.AutoResizeColumns(false);
         }
 
