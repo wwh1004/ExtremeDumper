@@ -158,11 +158,11 @@ namespace ExtremeDumper.Forms
                     {
                         listViewItem.BackColor = Cache.DotNetColor;
                         isDotNetProcess = true;
-                        if (Cache.Is64BitOperatingSystem && Is64BitPE(moduleEntry32.szExePath, out is64) && !is64)
+                        if (Cache.Is64BitProcess && Is64BitPE(moduleEntry32.szExePath, out is64) && !is64)
                             listViewItem.Text += _resources.GetString("Str32Bit");
                         break;
                     }
-                if (Cache.Is64BitOperatingSystem && !isDotNetProcess && Is64BitPE(listViewItem.SubItems[2].Text, out is64) && !is64)
+                if (Cache.Is64BitProcess && !isDotNetProcess && Is64BitPE(listViewItem.SubItems[2].Text, out is64) && !is64)
                     listViewItem.Text += _resources.GetString("Str32Bit");
                 if (!mnuOnlyDotNetProcess.Checked || isDotNetProcess)
                     lvwProcesses.Items.Add(listViewItem);

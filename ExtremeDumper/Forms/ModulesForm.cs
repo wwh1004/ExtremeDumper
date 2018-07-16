@@ -34,7 +34,7 @@ namespace ExtremeDumper.Forms
             Text = $"{_resources.GetString("StrModules")} {processName}(ID={processId.ToString()})";
             mnuOnlyDotNetModule.Checked = isDotNetProcess;
             typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwModules, new object[] { true });
-            lvwModules.ListViewItemSorter = new ListViewItemSorter(lvwModules, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, Cache.Is64BitOperatingSystem ? TypeCode.UInt64 : TypeCode.UInt32 }, { 2, TypeCode.Int32 }, { 3, Cache.Is64BitOperatingSystem ? TypeCode.UInt64 : TypeCode.UInt32 }, { 4, TypeCode.String } }) { AllowHexLeadingSign = true };
+            lvwModules.ListViewItemSorter = new ListViewItemSorter(lvwModules, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, Cache.Is64BitProcess ? TypeCode.UInt64 : TypeCode.UInt32 }, { 2, TypeCode.Int32 }, { 3, Cache.Is64BitProcess ? TypeCode.UInt64 : TypeCode.UInt32 }, { 4, TypeCode.String } }) { AllowHexLeadingSign = true };
             RefreshModuleList();
         }
 
@@ -51,7 +51,7 @@ namespace ExtremeDumper.Forms
             sfdlgDumped.FileName = EnsureValidFileName(lvwModules.SelectedItems[0].Text);
             if (sfdlgDumped.ShowDialog() != DialogResult.OK)
                 return;
-            moduleHandle = (IntPtr)(Cache.Is64BitOperatingSystem ? ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null) : uint.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null));
+            moduleHandle = (IntPtr)(Cache.Is64BitProcess ? ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null) : uint.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null));
             DumpModule(moduleHandle, sfdlgDumped.FileName);
         }
 
@@ -62,7 +62,7 @@ namespace ExtremeDumper.Forms
             if (lvwModules.SelectedIndices.Count == 0)
                 return;
 
-            new FunctionsForm(_processId, (IntPtr)(Cache.Is64BitOperatingSystem ? ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null) : uint.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null)), lvwModules.SelectedItems[0].Text).Show();
+            new FunctionsForm(_processId, (IntPtr)(Cache.Is64BitProcess ? ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null) : uint.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null)), lvwModules.SelectedItems[0].Text).Show();
         }
 
         private void mnuOnlyDotNetModule_Click(object sender, EventArgs e) => RefreshModuleList();
@@ -98,7 +98,7 @@ namespace ExtremeDumper.Forms
                 do
                 {
                     listViewItem = new ListViewItem(moduleEntry32.szModule);
-                    listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseAddr.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8"));
+                    listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseAddr.ToString(Cache.Is64BitProcess ? "X16" : "X8"));
                     listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseSize.ToString("X8"));
                     listViewItem.SubItems.Add(moduleEntry32.szExePath);
                     lvwModules.Items.Add(listViewItem);
@@ -116,7 +116,7 @@ namespace ExtremeDumper.Forms
                                 moduleName = clrModule.Name ?? "EmptyName";
                                 moduleName = clrModule.IsDynamic ? moduleName.Split(',')[0] : Path.GetFileName(moduleName);
                                 listViewItem = new ListViewItem(moduleName);
-                                listViewItem.SubItems.Add("0x" + clrModule.ImageBase.ToString(Cache.Is64BitOperatingSystem ? "X16" : "X8"));
+                                listViewItem.SubItems.Add("0x" + clrModule.ImageBase.ToString(Cache.Is64BitProcess ? "X16" : "X8"));
                                 listViewItem.SubItems.Add("0x" + clrModule.Size.ToString("X8"));
                                 listViewItem.SubItems.Add(clrModule.IsDynamic ? "InMemory" : clrModule.FileName);
                                 listViewItem.BackColor = Cache.DotNetColor;
