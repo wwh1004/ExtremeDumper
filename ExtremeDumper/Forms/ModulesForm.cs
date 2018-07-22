@@ -11,10 +11,8 @@ using System.Windows.Forms;
 using Microsoft.Diagnostics.Runtime;
 using static ExtremeDumper.Forms.NativeMethods;
 
-namespace ExtremeDumper.Forms
-{
-    internal partial class ModulesForm : Form
-    {
+namespace ExtremeDumper.Forms {
+    internal partial class ModulesForm : Form {
         private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
 
         private uint _processId;
@@ -25,8 +23,7 @@ namespace ExtremeDumper.Forms
 
         private ResourceManager _resources = new ResourceManager(typeof(ModulesForm));
 
-        public ModulesForm(uint processId, string processName, bool isDotNetProcess, DumperCoreWrapper dumperCore)
-        {
+        public ModulesForm(uint processId, string processName, bool isDotNetProcess, DumperCoreWrapper dumperCore) {
             InitializeComponent();
             _processId = processId;
             _isDotNetProcess = isDotNetProcess;
@@ -41,8 +38,7 @@ namespace ExtremeDumper.Forms
         #region Events
         private void lvwModules_Resize(object sender, EventArgs e) => lvwModules.AutoResizeColumns(true);
 
-        private void mnuDumpModule_Click(object sender, EventArgs e)
-        {
+        private void mnuDumpModule_Click(object sender, EventArgs e) {
             if (lvwModules.SelectedIndices.Count == 0)
                 return;
 
@@ -57,8 +53,7 @@ namespace ExtremeDumper.Forms
 
         private void mnuRefreshModuleList_Click(object sender, EventArgs e) => RefreshModuleList();
 
-        private void mnuViewFunctions_Click(object sender, EventArgs e)
-        {
+        private void mnuViewFunctions_Click(object sender, EventArgs e) {
             if (lvwModules.SelectedIndices.Count == 0)
                 return;
 
@@ -67,8 +62,7 @@ namespace ExtremeDumper.Forms
 
         private void mnuOnlyDotNetModule_Click(object sender, EventArgs e) => RefreshModuleList();
 
-        private void mnuGotoLocation_Click(object sender, EventArgs e)
-        {
+        private void mnuGotoLocation_Click(object sender, EventArgs e) {
             if (lvwModules.SelectedIndices.Count == 0)
                 return;
 
@@ -79,24 +73,21 @@ namespace ExtremeDumper.Forms
         }
         #endregion
 
-        private void RefreshModuleList()
-        {
+        private void RefreshModuleList() {
             IntPtr snapshotHandle;
             MODULEENTRY32 moduleEntry32;
             ListViewItem listViewItem;
             DataTarget dataTarget;
 
             lvwModules.Items.Clear();
-            if (!mnuOnlyDotNetModule.Checked)
-            {
+            if (!mnuOnlyDotNetModule.Checked) {
                 moduleEntry32 = MODULEENTRY32.Default;
                 snapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, _processId);
                 if (snapshotHandle == INVALID_HANDLE_VALUE)
                     return;
                 if (!Module32First(snapshotHandle, ref moduleEntry32))
                     return;
-                do
-                {
+                do {
                     listViewItem = new ListViewItem(moduleEntry32.szModule);
                     listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseAddr.ToString(Cache.Is64BitProcess ? "X16" : "X8"));
                     listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseSize.ToString("X8"));
@@ -104,33 +95,31 @@ namespace ExtremeDumper.Forms
                     lvwModules.Items.Add(listViewItem);
                 } while (Module32Next(snapshotHandle, ref moduleEntry32));
             }
-            try
-            {
+            try {
                 if (_isDotNetProcess)
                     using (dataTarget = DataTarget.AttachToProcess((int)_processId, 10000, AttachFlag.Passive))
                         foreach (ClrInfo clrInfo in dataTarget.ClrVersions)
-                            foreach (ClrModule clrModule in clrInfo.CreateRuntime().Modules)
-                            {
-                                string moduleName;
+                            foreach (ClrAppDomain clrAppDomain in clrInfo.CreateRuntime().AppDomains)
+                                foreach (ClrModule clrModule in clrAppDomain.Modules) {
+                                    string moduleName;
 
-                                moduleName = clrModule.Name ?? "EmptyName";
-                                moduleName = clrModule.IsDynamic ? moduleName.Split(',')[0] : Path.GetFileName(moduleName);
-                                listViewItem = new ListViewItem(moduleName);
-                                listViewItem.SubItems.Add("0x" + clrModule.ImageBase.ToString(Cache.Is64BitProcess ? "X16" : "X8"));
-                                listViewItem.SubItems.Add("0x" + clrModule.Size.ToString("X8"));
-                                listViewItem.SubItems.Add(clrModule.IsDynamic ? "InMemory" : clrModule.FileName);
-                                listViewItem.BackColor = Cache.DotNetColor;
-                                lvwModules.Items.Add(listViewItem);
-                            }
+                                    moduleName = clrModule.Name ?? "EmptyName";
+                                    moduleName = clrModule.IsDynamic ? moduleName.Split(',')[0] : Path.GetFileName(moduleName);
+                                    moduleName += $" ({clrAppDomain.Name} | CLR {clrInfo.Version.ToString()})";
+                                    listViewItem = new ListViewItem(moduleName);
+                                    listViewItem.SubItems.Add("0x" + clrModule.ImageBase.ToString(Cache.Is64BitProcess ? "X16" : "X8"));
+                                    listViewItem.SubItems.Add("0x" + clrModule.Size.ToString("X8"));
+                                    listViewItem.SubItems.Add(clrModule.IsDynamic ? "InMemory" : clrModule.FileName);
+                                    listViewItem.BackColor = Cache.DotNetColor;
+                                    lvwModules.Items.Add(listViewItem);
+                                }
             }
-            catch
-            {
+            catch {
             }
             lvwModules.AutoResizeColumns(false);
         }
 
-        private static string EnsureValidFileName(string fileName)
-        {
+        private static string EnsureValidFileName(string fileName) {
             if (string.IsNullOrEmpty(fileName))
                 return string.Empty;
 
@@ -143,8 +132,7 @@ namespace ExtremeDumper.Forms
             return newFileName.ToString();
         }
 
-        private void DumpModule(IntPtr moduleHandle, string filePath)
-        {
+        private void DumpModule(IntPtr moduleHandle, string filePath) {
             bool result;
 
             result = DumperFactory.GetDumper(_processId, _dumperCore.Value).DumpModule(moduleHandle, filePath);
