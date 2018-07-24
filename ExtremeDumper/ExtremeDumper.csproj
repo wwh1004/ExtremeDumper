@@ -111,11 +111,11 @@
     </Compile>
     <Compile Include="Forms\GlobalExceptionCatcher.cs" />
     <Compile Include="Dumper\IDumper.cs" />
-    <Compile Include="Forms\MainForm.cs">
+    <Compile Include="Forms\ProcessesForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <Compile Include="Forms\ProcessesForm.Designer.cs">
+      <DependentUpon>ProcessesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\MessageBoxStub.cs" />
     <Compile Include="Dumper\MetaDumper.cs" />
@@ -139,11 +139,11 @@
     <EmbeddedResource Include="Forms\InjectingForm.zh-CN.resx">
       <DependentUpon>InjectingForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ProcessesForm.resx">
+      <DependentUpon>ProcessesForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainForm.zh-CN.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ProcessesForm.zh-CN.resx">
+      <DependentUpon>ProcessesForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ModulesForm.resx">
       <DependentUpon>ModulesForm.cs</DependentUpon>

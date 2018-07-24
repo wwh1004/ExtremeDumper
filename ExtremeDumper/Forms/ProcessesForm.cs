@@ -14,17 +14,17 @@ using static ExtremeDumper.Forms.NativeMethods;
 
 namespace ExtremeDumper.Forms
 {
-    internal partial class MainForm : Form
+    internal partial class ProcessesForm : Form
     {
         private DumperCoreWrapper _dumperCore = new DumperCoreWrapper { Value = DumperCore.MegaDumper };
 
-        private ResourceManager _resources = new ResourceManager(typeof(MainForm));
+        private ResourceManager _resources = new ResourceManager(typeof(ProcessesForm));
 
         private static readonly bool _isAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
         private static readonly AboutForm _aboutForm = new AboutForm();
 
-        public MainForm()
+        public ProcessesForm()
         {
             InitializeComponent();
             mnuRequireAdministrator.Checked = _isAdministrator;

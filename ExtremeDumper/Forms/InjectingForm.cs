@@ -38,6 +38,8 @@ namespace ExtremeDumper.Forms
             LoadAssembly();
         }
 
+        private void InjectingForm_FormClosing(object sender, FormClosingEventArgs e) => _manifestModule.Dispose();
+
         private void tbAssemblyPath_TextChanged(object sender, EventArgs e) => _assemblyPath = tbAssemblyPath.Text;
 
         private void btSelectAssembly_Click(object sender, EventArgs e)
@@ -61,6 +63,8 @@ namespace ExtremeDumper.Forms
                 return;
             if (cmbEntryPoint.SelectedItem == null)
                 return;
+            typeName = _entryPoint.FullName.Substring(_entryPoint.FullName.IndexOf(' ') + 1);
+            typeName = typeName.Substring(0, typeName.IndexOf(':'));
             if (chkWaitReturn.Checked)
             {
                 btInject.Enabled = false;
@@ -69,8 +73,6 @@ namespace ExtremeDumper.Forms
                 {
                     int ret;
 
-                    typeName = _entryPoint.FullName.Substring(_entryPoint.FullName.IndexOf(' ') + 1);
-                    typeName = typeName.Substring(0, typeName.IndexOf(':'));
                     if (Injector.InjectManaged(_processId, _assemblyPath, typeName, _entryPoint.Name, _argument, out ret))
                         Invoke((Action)(() => MessageBoxStub.Show($"{_resources.GetString("StrInjectSuccessfully")}\n{_resources.GetString("StrReturnValue")} {ret.ToString()}", MessageBoxIcon.Information)));
                     else
@@ -87,8 +89,6 @@ namespace ExtremeDumper.Forms
             }
             else
             {
-                typeName = _entryPoint.FullName.Substring(_entryPoint.FullName.IndexOf(' '));
-                typeName = typeName.Substring(0, typeName.IndexOf(':'));
                 if (Injector.InjectManaged(_processId, _assemblyPath, typeName, _entryPoint.Name, _argument))
                     MessageBoxStub.Show(_resources.GetString("StrInjectSuccessfully"), MessageBoxIcon.Information);
                 else

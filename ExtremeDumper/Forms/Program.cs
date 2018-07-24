@@ -14,7 +14,7 @@ namespace ExtremeDumper.Forms
             GlobalExceptionCatcher.Catch();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Run(new ProcessesForm());
         }
     }
 }
