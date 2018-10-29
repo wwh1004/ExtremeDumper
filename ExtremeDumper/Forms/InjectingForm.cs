@@ -34,7 +34,7 @@ namespace ExtremeDumper.Forms {
 			LoadAssembly();
 		}
 
-		private void InjectingForm_FormClosing(object sender, FormClosingEventArgs e) => _manifestModule.Dispose();
+		private void InjectingForm_FormClosing(object sender, FormClosingEventArgs e) => _manifestModule?.Dispose();
 
 		private void tbAssemblyPath_TextChanged(object sender, EventArgs e) => _assemblyPath = tbAssemblyPath.Text;
 
