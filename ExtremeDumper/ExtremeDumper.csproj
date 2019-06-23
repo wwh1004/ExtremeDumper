@@ -121,9 +121,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\AboutForm.en-US.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
