@@ -159,11 +159,11 @@
   <data name="mnuRefreshProcessList.Text" xml:space="preserve">
     <value>刷新进程列表</value>
   </data>
+  <data name="mnuUseDnlibDumper.Text" xml:space="preserve">
+    <value>DnlibDumper</value>
+  </data>
   <data name="mnuUseMegaDumper.Text" xml:space="preserve">
     <value>MegaDumper</value>
-  </data>
-  <data name="mnuUseMetaDumper.Text" xml:space="preserve">
-    <value>MetaDumper</value>
   </data>
   <data name="mnuViewModules.Text" xml:space="preserve">
     <value>查看模块列表</value>

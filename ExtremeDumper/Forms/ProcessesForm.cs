@@ -54,7 +54,7 @@ namespace ExtremeDumper.Forms {
 			SwitchDumperCore(DumperCore.MegaDumper);
 		}
 
-		private void mnuUseMetaDumper_Click(object sender, EventArgs e) {
+		private void mnuUseDnlibDumper_Click(object sender, EventArgs e) {
 			SwitchDumperCore(DumperCore.DnlibDumper);
 		}
 
@@ -123,7 +123,7 @@ namespace ExtremeDumper.Forms {
 
 		private void SwitchDumperCore(DumperCore dumperCore) {
 			mnuUseMegaDumper.Checked = false;
-			mnuUseMetaDumper.Checked = false;
+			mnuUseDnlibDumper.Checked = false;
 			switch (dumperCore) {
 			case DumperCore.MegaDumper:
 				_dumperCore.Value = DumperCore.MegaDumper;
@@ -131,7 +131,7 @@ namespace ExtremeDumper.Forms {
 				break;
 			case DumperCore.DnlibDumper:
 				_dumperCore.Value = DumperCore.DnlibDumper;
-				mnuUseMetaDumper.Checked = true;
+				mnuUseDnlibDumper.Checked = true;
 				break;
 			default:
 				throw new InvalidEnumArgumentException();
