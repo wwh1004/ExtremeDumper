@@ -6,6 +6,8 @@ platform:
 - x86
 install:
 - cmd: git submodule update --init --recursive
+before_build:
+- cmd: appveyor-retry nuget restore
 build:
   project: ExtremeDumper.sln
   verbosity: normal
