@@ -1,4 +1,4 @@
-﻿namespace ExtremeDumper.Forms
+namespace ExtremeDumper.Forms
 {
     partial class InjectingForm
     {
@@ -6,19 +6,6 @@
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
 
         #region Windows Form Designer generated code
 
@@ -95,7 +82,6 @@
             this.Controls.Add(this.tbAssemblyPath);
             this.Icon = global::ExtremeDumper.Forms.Resources.Icon;
             this.Name = "InjectingForm";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InjectingForm_FormClosing);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.InjectingForm_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.InjectingForm_DragEnter);
             this.ResumeLayout(false);

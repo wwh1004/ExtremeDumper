@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using FastWin32.Diagnostics;
+using NativeSharp;
 
 namespace ExtremeDumper.Dumper {
 	public sealed class MegaDumper : IDumper {
@@ -16,19 +16,20 @@ namespace ExtremeDumper.Dumper {
 		}
 
 		public static IDumper Create(uint processId) {
-			bool is64;
-
-			return !Process32.Is64BitProcess(processId, out is64)
-				? null
-				: new MegaDumper {
+			using (NativeProcess process = NativeProcess.Open(processId, ProcessAccess.QueryInformation))
+				return new MegaDumper {
 					_processId = processId,
-					_is64 = is64
+					_is64 = process.Is64Bit
 				};
 		}
 
-		public bool DumpModule(IntPtr moduleHandle, string filePath) => _is64 ? MegaDumperPrivate64.DumpModule(_processId, filePath, (long)moduleHandle) : MegaDumperPrivate32.DumpModule(_processId, filePath, (int)moduleHandle);
+		public bool DumpModule(IntPtr moduleHandle, string filePath) {
+			return _is64 ? MegaDumperPrivate64.DumpModule(_processId, filePath, (long)moduleHandle) : MegaDumperPrivate32.DumpModule(_processId, filePath, (int)moduleHandle);
+		}
 
-		public int DumpProcess(string directoryPath) => _is64 ? MegaDumperPrivate64.DumpProcess(_processId, directoryPath) : MegaDumperPrivate32.DumpProcess(_processId, directoryPath);
+		public int DumpProcess(string directoryPath) {
+			return _is64 ? MegaDumperPrivate64.DumpProcess(_processId, directoryPath) : MegaDumperPrivate32.DumpProcess(_processId, directoryPath);
+		}
 
 		public void Dispose() {
 		}
@@ -41,8 +42,8 @@ namespace ExtremeDumper.Dumper {
 				IntPtr hProcess,
 				IntPtr lpBaseAddress,
 				byte[] lpBuffer,
-				UInt32 nSize,
-				ref UInt32 lpNumberOfBytesRead
+				uint nSize,
+				ref uint lpNumberOfBytesRead
 			);
 
 			[DllImport("Kernel32.dll")]
@@ -51,12 +52,12 @@ namespace ExtremeDumper.Dumper {
 				IntPtr hProcess,
 				uint lpBaseAddress,
 				byte[] lpBuffer,
-				UInt32 nSize,
-				ref UInt32 lpNumberOfBytesRead
+				uint nSize,
+				ref uint lpNumberOfBytesRead
 			);
 
 			[DllImport("kernel32.dll")]
-			static extern IntPtr OpenProcess(UInt32 dwDesiredAccess, Int32 bInheritHandle, UInt32 dwProcessId);
+			static extern IntPtr OpenProcess(uint dwDesiredAccess, int bInheritHandle, uint dwProcessId);
 
 			[DllImport("kernel32.dll", SetLastError = true)]
 			[return: MarshalAs(UnmanagedType.Bool)]
@@ -86,15 +87,11 @@ namespace ExtremeDumper.Dumper {
 			private static readonly uint pagesize;
 
 			static MegaDumperPrivate32() {
-				minaddress = 0;
-				maxaddress = int.MaxValue;
 				SYSTEM_INFO pSI = new SYSTEM_INFO();
 				GetSystemInfo(ref pSI);
-				//minaddress = pSI.lpMinimumApplicationAddress;
-				//maxaddress = pSI.lpMaximumApplicationAddress;
+				minaddress = pSI.lpMinimumApplicationAddress;
+				maxaddress = pSI.lpMaximumApplicationAddress;
 				pagesize = pSI.dwPageSize;
-				if (pagesize == 0)
-					pagesize = 0x1000;
 			}
 
 			private static int RVA2Offset(byte[] input, int rva) {
@@ -102,11 +99,11 @@ namespace ExtremeDumper.Dumper {
 				int nrofsection = BitConverter.ToInt16(input, PEOffset + 0x06);
 
 				for (int i = 0; i < nrofsection; i++) {
-					int virtualAddress = BitConverter.ToInt32(input, PEOffset + 0x0F8 + 0x28 * i + 012);
-					int fvirtualsize = BitConverter.ToInt32(input, PEOffset + 0x0F8 + 0x28 * i + 08);
-					int frawAddress = BitConverter.ToInt32(input, PEOffset + 0x28 * i + 0x0F8 + 20);
+					int virtualAddress = BitConverter.ToInt32(input, PEOffset + 0x0F8 + (0x28 * i) + 012);
+					int fvirtualsize = BitConverter.ToInt32(input, PEOffset + 0x0F8 + (0x28 * i) + 08);
+					int frawAddress = BitConverter.ToInt32(input, PEOffset + (0x28 * i) + 0x0F8 + 20);
 					if ((virtualAddress <= rva) && (virtualAddress + fvirtualsize >= rva))
-						return (frawAddress + (rva - virtualAddress));
+						return frawAddress + (rva - virtualAddress);
 				}
 
 				return -1;
@@ -118,12 +115,11 @@ namespace ExtremeDumper.Dumper {
 				int nrofsection = BitConverter.ToInt16(input, PEOffset + 0x06);
 
 				for (int i = 0; i < nrofsection; i++) {
-					int virtualAddress = BitConverter.ToInt32(input, PEOffset + 0x0F8 + 0x28 * i + 012);
-					_ = BitConverter.ToInt32(input, PEOffset + 0x0F8 + 0x28 * i + 08);
-					int frawAddress = BitConverter.ToInt32(input, PEOffset + 0x28 * i + 0x0F8 + 20);
-					int frawsize = BitConverter.ToInt32(input, PEOffset + 0x28 * i + 0x0F8 + 16);
+					int virtualAddress = BitConverter.ToInt32(input, PEOffset + 0x0F8 + (0x28 * i) + 012);
+					int frawAddress = BitConverter.ToInt32(input, PEOffset + (0x28 * i) + 0x0F8 + 20);
+					int frawsize = BitConverter.ToInt32(input, PEOffset + (0x28 * i) + 0x0F8 + 16);
 					if ((frawAddress <= offset) && (frawAddress + frawsize >= offset))
-						return (virtualAddress + (offset - frawAddress));
+						return virtualAddress + (offset - frawAddress);
 				}
 
 				return -1;
@@ -168,7 +164,6 @@ namespace ExtremeDumper.Dumper {
 				byte[] CorDllMain = { 0x5F, 0x43, 0x6F, 0x72, 0x44, 0x6C, 0x6C, 0x4D, 0x61, 0x69, 0x6E, 0x00 };
 				int ThunkToFix = 0;
 				int ThunkData = 0;
-				_ = new byte[mscoreeAscii.Length];
 				int current = 0;
 				int NameRVA = BitConverter.ToInt32(Dump, impdiroffset + current + 12);
 				while (NameRVA > 0) {
@@ -269,7 +264,6 @@ namespace ExtremeDumper.Dumper {
 
 				if (hProcess != IntPtr.Zero) {
 					bool isok;
-					_ = new byte[pagesize];
 					byte[] InfoKeep = new byte[8];
 					uint BytesRead = 0;
 
@@ -281,7 +275,7 @@ namespace ExtremeDumper.Dumper {
 					int offset = 0;
 					bool ShouldFixrawsize = false;
 
-					_ = ReadProcessMemory(hProcess, (uint)(ImageBase + 0x03C), InfoKeep, 4, ref BytesRead);
+					ReadProcessMemory(hProcess, (uint)(ImageBase + 0x03C), InfoKeep, 4, ref BytesRead);
 					int PEOffset = BitConverter.ToInt32(InfoKeep, 0);
 
 					try {
@@ -291,7 +285,7 @@ namespace ExtremeDumper.Dumper {
 						rawaddress = BitConverter.ToInt32(InfoKeep, 0);
 						int sizetocopy = rawaddress;
 						if (sizetocopy > pagesize) sizetocopy = (int)pagesize;
-						isok = ReadProcessMemory(hProcess, (uint)(ImageBase), PeHeader, (uint)sizetocopy, ref BytesRead);
+						isok = ReadProcessMemory(hProcess, (uint)ImageBase, PeHeader, (uint)sizetocopy, ref BytesRead);
 						offset += rawaddress;
 
 						nrofsection = BitConverter.ToInt16(PeHeader, PEOffset + 0x06);
@@ -303,8 +297,8 @@ namespace ExtremeDumper.Dumper {
 						int calculatedimagesize = BitConverter.ToInt32(PeHeader, PEOffset + 0x0F8 + 012);
 
 						for (int i = 0; i < nrofsection; i++) {
-							int virtualsize = BitConverter.ToInt32(PeHeader, PEOffset + 0x0F8 + 0x28 * i + 08);
-							int toadd = (virtualsize % sectionalignment);
+							int virtualsize = BitConverter.ToInt32(PeHeader, PEOffset + 0x0F8 + (0x28 * i) + 08);
+							int toadd = virtualsize % sectionalignment;
 							if (toadd != 0) toadd = sectionalignment - toadd;
 							calculatedimagesize = calculatedimagesize + virtualsize + toadd;
 						}
@@ -323,9 +317,8 @@ namespace ExtremeDumper.Dumper {
 
 						int rawsize, virtualsize, virtualAddress;
 						for (int l = 0; l < nrofsection; l++) {
-							rawsize = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + 0x28 * l + 16);
-							virtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + 0x28 * l + 08);
-							_ = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + 0x28 * l + 012);
+							rawsize = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + (0x28 * l) + 16);
+							virtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + (0x28 * l) + 08);
 
 							// RawSize = Virtual Size rounded on FileAlligment
 							int calcrawsize = virtualsize % filealignment;
@@ -338,18 +331,18 @@ namespace ExtremeDumper.Dumper {
 							}
 						}
 
-						rawsize = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + 0x28 * i + 16);
-						virtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + 0x28 * i + 08);
+						rawsize = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + (0x28 * i) + 16);
+						virtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + (0x28 * i) + 08);
 						// RawSize = Virtual Size rounded on FileAlligment
-						virtualAddress = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + 0x28 * i + 012);
+						virtualAddress = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + (0x28 * i) + 012);
 
 
 						if (ShouldFixrawsize) {
 							rawsize = virtualsize;
 							BinaryWriter writer = new BinaryWriter(new MemoryStream(Dump));
-							writer.BaseStream.Position = PEOffset + 0x0F8 + 0x28 * i + 16;
+							writer.BaseStream.Position = PEOffset + 0x0F8 + (0x28 * i) + 16;
 							writer.Write(virtualsize);
-							writer.BaseStream.Position = PEOffset + 0x0F8 + 0x28 * i + 20;
+							writer.BaseStream.Position = PEOffset + 0x0F8 + (0x28 * i) + 20;
 							writer.Write(virtualAddress);
 							writer.Close();
 
@@ -357,13 +350,13 @@ namespace ExtremeDumper.Dumper {
 
 
 
-						int address = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + 0x28 * i + 12);
+						int address = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + (0x28 * i) + 12);
 
 						isok = ReadProcessMemory(hProcess, (uint)(ImageBase + address), Partkeep, (uint)rawsize, ref BytesRead);
 						if (!isok) {
 							byte[] onepage = new byte[512];
 							for (int c = 0; c < virtualsize; c += 512) {
-								_ = ReadProcessMemory(hProcess, (uint)(ImageBase + virtualAddress + c), onepage, 512, ref BytesRead);
+								ReadProcessMemory(hProcess, (uint)(ImageBase + virtualAddress + c), onepage, 512, ref BytesRead);
 								Array.Copy(onepage, 0, Partkeep, c, 512);
 							}
 						}
@@ -396,10 +389,10 @@ namespace ExtremeDumper.Dumper {
 								byte[] NameKeeper = new byte[mscoreeAscii.Length];
 								isok = ReadProcessMemory(hProcess, (uint)(ImageBase + NameOffset), NameKeeper, (uint)mscoreeAscii.Length, ref BytesRead);
 								if (isok && BytesEqual(NameKeeper, mscoreeAscii)) {
-									_ = ReadProcessMemory(hProcess, (uint)(ImageBase + ImportDirectoryRva + current), Partkeep, 4, ref BytesRead);
+									ReadProcessMemory(hProcess, (uint)(ImageBase + ImportDirectoryRva + current), Partkeep, 4, ref BytesRead);
 									int OriginalFirstThunk = BitConverter.ToInt32(Partkeep, 0);  // OriginalFirstThunk;
 									if (OriginalFirstThunk > 0 && OriginalFirstThunk < offset) {
-										_ = ReadProcessMemory(hProcess, (uint)(ImageBase + OriginalFirstThunk), Partkeep, 4, ref BytesRead);
+										ReadProcessMemory(hProcess, (uint)(ImageBase + OriginalFirstThunk), Partkeep, 4, ref BytesRead);
 										ThunkData = BitConverter.ToInt32(Partkeep, 0);
 										if (ThunkData > 0 && ThunkData < offset) {
 											byte[] CorExeMain = { 0x5F, 0x43, 0x6F, 0x72, 0x45, 0x78, 0x65, 0x4D, 0x61, 0x69, 0x6E, 0x00 };
@@ -408,7 +401,7 @@ namespace ExtremeDumper.Dumper {
 											isok = ReadProcessMemory(hProcess, (uint)(ImageBase + ThunkData + 2), NameKeeper,
 											(uint)CorExeMain.Length, ref BytesRead);
 											if (isok && (BytesEqual(NameKeeper, CorExeMain) || BytesEqual(NameKeeper, CorDllMain))) {
-												_ = ReadProcessMemory(hProcess, (uint)(ImageBase + ImportDirectoryRva + current + 16), Partkeep, 4, ref BytesRead);
+												ReadProcessMemory(hProcess, (uint)(ImageBase + ImportDirectoryRva + current + 16), Partkeep, 4, ref BytesRead);
 												ThunkToFix = BitConverter.ToInt32(Partkeep, 0);  // FirstThunk;
 												break;
 											}
@@ -426,7 +419,6 @@ namespace ExtremeDumper.Dumper {
 								isok = ReadProcessMemory(hProcess, (uint)(ImageBase + ThunkToFix), Partkeep, 4, ref BytesRead);
 								int ThunkValue = BitConverter.ToInt32(Partkeep, 0);
 								if (isok && (ThunkValue < 0 || ThunkValue > offset)) {
-									_ = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + 08);
 									int fvirtualAddress = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + 012);
 									int frawAddress = BitConverter.ToInt32(Dump, PEOffset + 0x0F8 + 20);
 									writer.BaseStream.Position = ThunkToFix - fvirtualAddress + frawAddress;
@@ -545,7 +537,7 @@ namespace ExtremeDumper.Dumper {
 
 																for (int i = 0; i < nrofsection; i++) {
 																	virtualsize = sections[i].virtual_size;
-																	int toadd = (virtualsize % sectionalignment);
+																	int toadd = virtualsize % sectionalignment;
 																	if (toadd != 0) toadd = sectionalignment - toadd;
 																	calculatedimagesize = calculatedimagesize + virtualsize + toadd;
 																}
@@ -601,9 +593,9 @@ namespace ExtremeDumper.Dumper {
 																		rawsize = virtualsize;
 																		rawAddress = virtualAddress;
 																		BinaryWriter writer = new BinaryWriter(new MemoryStream(virtualdump));
-																		writer.BaseStream.Position = PEOffset + 0x0F8 + 0x28 * l + 16;
+																		writer.BaseStream.Position = PEOffset + 0x0F8 + (0x28 * l) + 16;
 																		writer.Write(virtualsize);
-																		writer.BaseStream.Position = PEOffset + 0x0F8 + 0x28 * l + 20;
+																		writer.BaseStream.Position = PEOffset + 0x0F8 + (0x28 * l) + 20;
 																		writer.Write(virtualAddress);
 																		writer.Close();
 																	}
@@ -737,8 +729,8 @@ namespace ExtremeDumper.Dumper {
 				PageSize = 0x1000;
 				SYSTEM_INFO system_INFO = default;
 				GetNativeSystemInfo(ref system_INFO);
-				minAddress = (ulong)((long)system_INFO.lpMinimumApplicationAddress);
-				maxAddress = (ulong)((long)system_INFO.lpMaximumApplicationAddress);
+				minAddress = (ulong)(long)system_INFO.lpMinimumApplicationAddress;
+				maxAddress = (ulong)(long)system_INFO.lpMaximumApplicationAddress;
 				PageSize = system_INFO.dwPageSize;
 			}
 
@@ -793,8 +785,8 @@ namespace ExtremeDumper.Dumper {
 						int calculatedimagesize = BitConverter.ToInt32(PeHeader, PEOffset + 0x0108 + 012);
 
 						for (int i = 0; i < nrofsection; i++) {
-							int virtualsize = BitConverter.ToInt32(PeHeader, PEOffset + 0x0108 + 0x28 * i + 08);
-							int toadd = (virtualsize % sectionalignment);
+							int virtualsize = BitConverter.ToInt32(PeHeader, PEOffset + 0x0108 + (0x28 * i) + 08);
+							int toadd = virtualsize % sectionalignment;
 							if (toadd != 0) toadd = sectionalignment - toadd;
 							calculatedimagesize = calculatedimagesize + virtualsize + toadd;
 						}
@@ -813,9 +805,9 @@ namespace ExtremeDumper.Dumper {
 
 						int rawsize, virtualsize, virtualAddress;
 						for (int l = 0; l < nrofsection; l++) {
-							rawsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * l + 16);
-							virtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * l + 08);
-							_ = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * l + 012);
+							rawsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + (0x28 * l) + 16);
+							virtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + (0x28 * l) + 08);
+							_ = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + (0x28 * l) + 012);
 
 							// RawSize = Virtual Size rounded on FileAlligment
 							int calcrawsize = virtualsize % filealignment;
@@ -828,18 +820,18 @@ namespace ExtremeDumper.Dumper {
 							}
 						}
 
-						rawsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * i + 16);
-						virtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * i + 08);
+						rawsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + (0x28 * i) + 16);
+						virtualsize = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + (0x28 * i) + 08);
 						// RawSize = Virtual Size rounded on FileAlligment
-						virtualAddress = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * i + 012);
+						virtualAddress = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + (0x28 * i) + 012);
 
 
 						if (ShouldFixrawsize) {
 							rawsize = virtualsize;
 							BinaryWriter writer = new BinaryWriter(new MemoryStream(Dump));
-							writer.BaseStream.Position = PEOffset + 0x0108 + 0x28 * i + 16;
+							writer.BaseStream.Position = PEOffset + 0x0108 + (0x28 * i) + 16;
 							writer.Write(virtualsize);
-							writer.BaseStream.Position = PEOffset + 0x0108 + 0x28 * i + 20;
+							writer.BaseStream.Position = PEOffset + 0x0108 + (0x28 * i) + 20;
 							writer.Write(virtualAddress);
 							writer.Close();
 
@@ -847,7 +839,7 @@ namespace ExtremeDumper.Dumper {
 
 
 
-						int address = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + 0x28 * i + 12);
+						int address = BitConverter.ToInt32(Dump, PEOffset + 0x0108 + (0x28 * i) + 12);
 
 						isok = ReadProcessMemory(hProcess, (IntPtr)(ImageBase + address), Partkeep, (uint)rawsize, ref BytesRead);
 						if (!isok) {
@@ -976,25 +968,25 @@ namespace ExtremeDumper.Dumper {
 							byte[] array = new byte[memory_BASIC_INFORMATION.RegionSize];
 							uint num4 = 0u;
 							byte[] array2 = new byte[8];
-							bool flag = ReadProcessMemory(processHandle, (IntPtr)((long)num3), array, (uint)array.Length, ref num4);
+							bool flag = ReadProcessMemory(processHandle, (IntPtr)(long)num3, array, (uint)array.Length, ref num4);
 							if (flag) {
 								for (int i = 0; i < array.Length - 2; i++) {
 									if (array[i] == 77 && array[i + 1] == 90) {
-										if (ReadProcessMemory(processHandle, (IntPtr)((long)(num3 + (ulong)i + 60UL)), array2, 4u, ref num4)) {
+										if (ReadProcessMemory(processHandle, (IntPtr)(long)(num3 + (ulong)i + 60UL), array2, 4u, ref num4)) {
 											int num5 = BitConverter.ToInt32(array2, 0);
 											if (num5 > 0 && num5 + 288 < array.Length) {
-												if (ReadProcessMemory(processHandle, (IntPtr)((long)(num3 + (ulong)i + (ulong)num5)), array2, 2u, ref num4)) {
+												if (ReadProcessMemory(processHandle, (IntPtr)(long)(num3 + (ulong)i + (ulong)num5), array2, 2u, ref num4)) {
 													if (array2[0] == 80 && array2[1] == 69) {
 														long num6 = 0L;
 														try {
-															if (ReadProcessMemory(processHandle, (IntPtr)((long)(num3 + (ulong)i + (ulong)num5 + 248UL)), array2, 8u, ref num4))
+															if (ReadProcessMemory(processHandle, (IntPtr)(long)(num3 + (ulong)i + (ulong)num5 + 248UL), array2, 8u, ref num4))
 																num6 = BitConverter.ToInt64(array2, 0);
 														}
 														catch {
 														}
 														#region Dump Native
 														byte[] array3 = new byte[PageSize];
-														if (ReadProcessMemory(processHandle, (IntPtr)((long)(num3 + (ulong)i)), array3, (uint)array3.Length, ref num4)) {
+														if (ReadProcessMemory(processHandle, (IntPtr)(long)(num3 + (ulong)i), array3, (uint)array3.Length, ref num4)) {
 															int num7 = BitConverter.ToInt16(array3, num5 + 6);
 															if (num7 > 0) {
 																int num8 = BitConverter.ToInt32(array3, num5 + 56);
@@ -1009,9 +1001,9 @@ namespace ExtremeDumper.Dumper {
 																ulong num11 = num3 + (ulong)i + (ulong)num5 + (ulong)num10 + 4UL + (ulong)Marshal.SizeOf(typeof(IMAGE_FILE_HEADER));
 																for (int j = 0; j < num7; j++) {
 																	byte[] array5 = new byte[Marshal.SizeOf(typeof(IMAGE_SECTION_HEADER))];
-																	ReadProcessMemory(processHandle, (IntPtr)((long)num11), array5, (uint)array5.Length, ref num4);
+																	ReadProcessMemory(processHandle, (IntPtr)(long)num11, array5, (uint)array5.Length, ref num4);
 																	fixed (byte* ptr2 = array5) {
-																		ptr = (IntPtr)((void*)ptr2);
+																		ptr = (IntPtr)(void*)ptr2;
 																	}
 																	array4[j] = (IMAGE_SECTION_HEADER)Marshal.PtrToStructure(ptr, typeof(IMAGE_SECTION_HEADER));
 																	num11 += (ulong)Marshal.SizeOf(typeof(IMAGE_SECTION_HEADER));
@@ -1046,7 +1038,7 @@ namespace ExtremeDumper.Dumper {
 																if (num12 != 0) {
 																	byte[] array7 = new byte[num12];
 																	try {
-																		if (ReadProcessMemory(processHandle, (IntPtr)((long)(num3 + (ulong)i)), array7, (uint)array7.Length, ref num4)) {
+																		if (ReadProcessMemory(processHandle, (IntPtr)(long)(num3 + (ulong)i), array7, (uint)array7.Length, ref num4)) {
 																			string filePath1 = Path.Combine(DirectoryName, "rawdump_" + (num3 + (ulong)i).ToString("X16"));
 																			if (File.Exists(filePath1))
 																				filePath1 = Path.Combine(DirectoryName, "rawdump" + num2.ToString() + "_" + (num3 + (ulong)i).ToString("X16"));
@@ -1062,7 +1054,7 @@ namespace ExtremeDumper.Dumper {
 																	}
 																}
 																byte[] array8 = new byte[num14];
-																Array.Copy(array3, array8, (long)((ulong)PageSize));
+																Array.Copy(array3, array8, (long)(ulong)PageSize);
 																int num18 = 0;
 																for (int k = 0; k < num7; k++) {
 																	int num19 = array4[k].size_of_raw_data;
@@ -1079,9 +1071,9 @@ namespace ExtremeDumper.Dumper {
 																		num19 = virtual_size;
 																		num20 = num16;
 																		BinaryWriter binaryWriter = new BinaryWriter(new MemoryStream(array8));
-																		binaryWriter.BaseStream.Position = num5 + 232 + 40 * k + 20 + 28;
+																		binaryWriter.BaseStream.Position = num5 + 232 + (40 * k) + 20 + 28;
 																		binaryWriter.Write(virtual_size);
-																		binaryWriter.BaseStream.Position = num5 + 232 + 40 * k + 24 + 28;
+																		binaryWriter.BaseStream.Position = num5 + 232 + (40 * k) + 24 + 28;
 																		binaryWriter.Write(num16);
 																		binaryWriter.Close();
 																	}
@@ -1094,13 +1086,13 @@ namespace ExtremeDumper.Dumper {
 																		array9 = new byte[virtual_size];
 																	}
 																	int num22 = array9.Length;
-																	flag = ReadProcessMemory(processHandle, (IntPtr)((long)(num3 + (ulong)i + (ulong)num16)), array9, (uint)num19, ref num4);
+																	flag = ReadProcessMemory(processHandle, (IntPtr)(long)(num3 + (ulong)i + (ulong)num16), array9, (uint)num19, ref num4);
 																	if (!flag || num4 != (ulong)num19) {
 																		num22 = 0;
 																		byte[] array10 = new byte[PageSize];
 																		for (int l = 0; l < num19; l += (int)PageSize) {
 																			try {
-																				flag = ReadProcessMemory(processHandle, (IntPtr)((long)(num3 + (ulong)i + (ulong)num16 + (ulong)l)), array10, PageSize, ref num4);
+																				flag = ReadProcessMemory(processHandle, (IntPtr)(long)(num3 + (ulong)i + (ulong)num16 + (ulong)l), array10, PageSize, ref num4);
 																			}
 																			catch {
 																				break;
@@ -1108,7 +1100,7 @@ namespace ExtremeDumper.Dumper {
 																			if (flag) {
 																				num22 += (int)PageSize;
 																				int j = 0;
-																				while (j < (long)((ulong)PageSize)) {
+																				while (j < (long)(ulong)PageSize) {
 																					if (l + j < array9.Length)
 																						array9[l + j] = array10[j];
 																					j++;

@@ -8,24 +8,22 @@ using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Windows.Forms;
+using ExtremeDumper.Dumper;
 using Microsoft.Diagnostics.Runtime;
+using NativeSharp;
 using static ExtremeDumper.Forms.NativeMethods;
 
 namespace ExtremeDumper.Forms {
 	internal partial class ModulesForm : Form {
 		private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
-
-		private uint _processId;
-
-		private bool _isDotNetProcess;
-
-		private DumperCoreWrapper _dumperCore;
-
-		private ResourceManager _resources = new ResourceManager(typeof(ModulesForm));
+		private readonly NativeProcess _process;
+		private readonly bool _isDotNetProcess;
+		private readonly DumperCoreWrapper _dumperCore;
+		private readonly ResourceManager _resources = new ResourceManager(typeof(ModulesForm));
 
 		public ModulesForm(uint processId, string processName, bool isDotNetProcess, DumperCoreWrapper dumperCore) {
 			InitializeComponent();
-			_processId = processId;
+			_process = NativeProcess.Open(processId);
 			_isDotNetProcess = isDotNetProcess;
 			_dumperCore = dumperCore;
 			Text = $"{_resources.GetString("StrModules")} {processName}(ID={processId.ToString()})";
@@ -36,7 +34,9 @@ namespace ExtremeDumper.Forms {
 		}
 
 		#region Events
-		private void lvwModules_Resize(object sender, EventArgs e) => lvwModules.AutoResizeColumns(true);
+		private void lvwModules_Resize(object sender, EventArgs e) {
+			lvwModules.AutoResizeColumns(true);
+		}
 
 		private void mnuDumpModule_Click(object sender, EventArgs e) {
 			if (lvwModules.SelectedIndices.Count == 0)
@@ -47,20 +47,30 @@ namespace ExtremeDumper.Forms {
 			sfdlgDumped.FileName = EnsureValidFileName(lvwModules.SelectedItems[0].Text);
 			if (sfdlgDumped.ShowDialog() != DialogResult.OK)
 				return;
-			moduleHandle = (IntPtr)(Cache.Is64BitProcess ? ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null) : uint.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null));
+			moduleHandle = (IntPtr)ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null);
 			DumpModule(moduleHandle, sfdlgDumped.FileName);
 		}
 
-		private void mnuRefreshModuleList_Click(object sender, EventArgs e) => RefreshModuleList();
+		private void mnuRefreshModuleList_Click(object sender, EventArgs e) {
+			RefreshModuleList();
+		}
 
 		private void mnuViewFunctions_Click(object sender, EventArgs e) {
 			if (lvwModules.SelectedIndices.Count == 0)
 				return;
 
-			new FunctionsForm(_processId, (IntPtr)(Cache.Is64BitProcess ? ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null) : uint.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null)), lvwModules.SelectedItems[0].Text).Show();
+			FunctionsForm functionsForm;
+
+#pragma warning disable IDE0067
+			functionsForm = new FunctionsForm(_process.UnsafeGetModule((IntPtr)ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null)));
+#pragma warning restore IDE0067
+			functionsForm.FormClosed += (v1, v2) => functionsForm.Dispose();
+			functionsForm.Show();
 		}
 
-		private void mnuOnlyDotNetModule_Click(object sender, EventArgs e) => RefreshModuleList();
+		private void mnuOnlyDotNetModule_Click(object sender, EventArgs e) {
+			RefreshModuleList();
+		}
 
 		private void mnuGotoLocation_Click(object sender, EventArgs e) {
 			if (lvwModules.SelectedIndices.Count == 0)
@@ -82,7 +92,7 @@ namespace ExtremeDumper.Forms {
 			lvwModules.Items.Clear();
 			if (!mnuOnlyDotNetModule.Checked) {
 				moduleEntry32 = MODULEENTRY32.Default;
-				snapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, _processId);
+				snapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, _process.Id);
 				if (snapshotHandle == INVALID_HANDLE_VALUE)
 					return;
 				if (!Module32First(snapshotHandle, ref moduleEntry32))
@@ -97,7 +107,7 @@ namespace ExtremeDumper.Forms {
 			}
 			try {
 				if (_isDotNetProcess)
-					using (dataTarget = DataTarget.AttachToProcess((int)_processId, 10000, AttachFlag.Passive))
+					using (dataTarget = DataTarget.AttachToProcess((int)_process.Id, 10000, AttachFlag.Passive))
 						foreach (ClrInfo clrInfo in dataTarget.ClrVersions)
 							foreach (ClrAppDomain clrAppDomain in clrInfo.CreateRuntime().AppDomains)
 								foreach (ClrModule clrModule in clrAppDomain.Modules) {
@@ -139,8 +149,17 @@ namespace ExtremeDumper.Forms {
 		private void DumpModule(IntPtr moduleHandle, string filePath) {
 			bool result;
 
-			result = DumperFactory.GetDumper(_processId, _dumperCore.Value).DumpModule(moduleHandle, filePath);
+			using (IDumper dumper = DumperFactory.GetDumper(_process.Id, _dumperCore.Value))
+				result = dumper.DumpModule(moduleHandle, filePath);
 			MessageBoxStub.Show(result ? $"{_resources.GetString("StrDumpModuleSuccessfully")}{Environment.NewLine}{filePath}" : _resources.GetString("StrFailToDumpModule"), result ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+		}
+
+		protected override void Dispose(bool disposing) {
+			if (disposing && (components != null)) {
+				components.Dispose();
+				_process.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 	}
 }

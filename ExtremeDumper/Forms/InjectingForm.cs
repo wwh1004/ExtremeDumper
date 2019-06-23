@@ -4,39 +4,36 @@ using System.Resources;
 using System.Threading;
 using System.Windows.Forms;
 using dnlib.DotNet;
-using FastWin32.Diagnostics;
+using NativeSharp;
 
 namespace ExtremeDumper.Forms {
 	internal partial class InjectingForm : Form {
-		private uint _processId;
-
+		private readonly NativeProcess _process;
 		private string _assemblyPath;
-
 		private ModuleDef _manifestModule;
-
 		private MethodDef _entryPoint;
-
 		private string _argument;
+		private readonly ResourceManager _resources = new ResourceManager(typeof(InjectingForm));
 
-		private ResourceManager _resources = new ResourceManager(typeof(InjectingForm));
-
-		public InjectingForm(uint processId, string processName) {
+		public InjectingForm(uint processId) {
 			InitializeComponent();
-			Text = $"Injector - {processName}(ID={processId.ToString()})";
-			_processId = processId;
+			_process = NativeProcess.Open(processId);
+			Text = $"Injector - {_process.Name}(ID={_process.Id.ToString()})";
 		}
 
 		#region Events
-		private void InjectingForm_DragEnter(object sender, DragEventArgs e) => e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+		private void InjectingForm_DragEnter(object sender, DragEventArgs e) {
+			e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+		}
 
 		private void InjectingForm_DragDrop(object sender, DragEventArgs e) {
 			tbAssemblyPath.Text = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
 			LoadAssembly();
 		}
 
-		private void InjectingForm_FormClosing(object sender, FormClosingEventArgs e) => _manifestModule?.Dispose();
-
-		private void tbAssemblyPath_TextChanged(object sender, EventArgs e) => _assemblyPath = tbAssemblyPath.Text;
+		private void tbAssemblyPath_TextChanged(object sender, EventArgs e) {
+			_assemblyPath = tbAssemblyPath.Text;
+		}
 
 		private void btSelectAssembly_Click(object sender, EventArgs e) {
 			if (odlgSelectAssembly.ShowDialog() == DialogResult.OK)
@@ -46,9 +43,13 @@ namespace ExtremeDumper.Forms {
 			LoadAssembly();
 		}
 
-		private void cmbEntryPoint_SelectedIndexChanged(object sender, EventArgs e) => _entryPoint = (MethodDef)cmbEntryPoint.SelectedItem;
+		private void cmbEntryPoint_SelectedIndexChanged(object sender, EventArgs e) {
+			_entryPoint = (MethodDef)cmbEntryPoint.SelectedItem;
+		}
 
-		private void tbArgument_TextChanged(object sender, EventArgs e) => _argument = tbArgument.Text;
+		private void tbArgument_TextChanged(object sender, EventArgs e) {
+			_argument = tbArgument.Text;
+		}
 
 		private void btInject_Click(object sender, EventArgs e) {
 			string typeName;
@@ -65,7 +66,7 @@ namespace ExtremeDumper.Forms {
 				new Thread(() => {
 					int ret;
 
-					if (Injector.InjectManaged(_processId, _assemblyPath, typeName, _entryPoint.Name, _argument, out ret))
+					if (_process.InjectManaged(_assemblyPath, typeName, _entryPoint.Name, _argument, out ret))
 						Invoke((Action)(() => MessageBoxStub.Show($"{_resources.GetString("StrInjectSuccessfully")}\n{_resources.GetString("StrReturnValue")} {ret.ToString()}", MessageBoxIcon.Information)));
 					else
 						Invoke((Action)(() => MessageBoxStub.Show(_resources.GetString("StrFailToInject"), MessageBoxIcon.Error)));
@@ -78,7 +79,7 @@ namespace ExtremeDumper.Forms {
 				}.Start();
 			}
 			else {
-				if (Injector.InjectManaged(_processId, _assemblyPath, typeName, _entryPoint.Name, _argument))
+				if (_process.InjectManaged(_assemblyPath, typeName, _entryPoint.Name, _argument))
 					MessageBoxStub.Show(_resources.GetString("StrInjectSuccessfully"), MessageBoxIcon.Information);
 				else
 					MessageBoxStub.Show(_resources.GetString("StrFailToInject"), MessageBoxIcon.Error);
@@ -113,6 +114,15 @@ namespace ExtremeDumper.Forms {
 				}
 			if (cmbEntryPoint.Items.Count == 1)
 				cmbEntryPoint.SelectedIndex = 0;
+		}
+
+		protected override void Dispose(bool disposing) {
+			if (disposing && (components != null)) {
+				components.Dispose();
+				_manifestModule?.Dispose();
+				_process.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 	}
 }

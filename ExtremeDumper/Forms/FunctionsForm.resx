@@ -146,20 +146,11 @@
   <data name="mnuForceFalse.Size" type="System.Drawing.Size, System.Drawing">
     <value>172, 22</value>
   </data>
-  <data name="mnuForceFalse.Text" xml:space="preserve">
-    <value>Return False</value>
-  </data>
   <data name="mnuForceTrue.Size" type="System.Drawing.Size, System.Drawing">
     <value>172, 22</value>
   </data>
-  <data name="mnuForceTrue.Text" xml:space="preserve">
-    <value>Return True</value>
-  </data>
   <data name="mnuForceReturn.Size" type="System.Drawing.Size, System.Drawing">
     <value>172, 22</value>
-  </data>
-  <data name="mnuForceReturn.Text" xml:space="preserve">
-    <value>Return</value>
   </data>
   <data name="mnuFunctionsContext.Size" type="System.Drawing.Size, System.Drawing">
     <value>173, 98</value>
@@ -242,24 +233,6 @@
   </data>
   <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuForceFalse.Name" xml:space="preserve">
-    <value>mnuForceFalse</value>
-  </data>
-  <data name="&gt;&gt;mnuForceFalse.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuForceTrue.Name" xml:space="preserve">
-    <value>mnuForceTrue</value>
-  </data>
-  <data name="&gt;&gt;mnuForceTrue.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuForceReturn.Name" xml:space="preserve">
-    <value>mnuForceReturn</value>
-  </data>
-  <data name="&gt;&gt;mnuForceReturn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>FunctionsForm</value>

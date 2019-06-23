@@ -252,9 +252,6 @@
   <data name="mnuRequireAdministrator.Size" type="System.Drawing.Size, System.Drawing">
     <value>163, 22</value>
   </data>
-  <data name="mnuRequireAdministrator.Text" xml:space="preserve">
-    <value>Require Administrator</value>
-  </data>
   <data name="mnuDebugPrivilege.Size" type="System.Drawing.Size, System.Drawing">
     <value>163, 22</value>
   </data>
@@ -397,12 +394,6 @@
     <value>mnuOptions</value>
   </data>
   <data name="&gt;&gt;mnuOptions.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuRequireAdministrator.Name" xml:space="preserve">
-    <value>mnuRequireAdministrator</value>
-  </data>
-  <data name="&gt;&gt;mnuRequireAdministrator.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuDebugPrivilege.Name" xml:space="preserve">

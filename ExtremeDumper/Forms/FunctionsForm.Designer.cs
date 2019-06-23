@@ -1,4 +1,4 @@
-﻿namespace ExtremeDumper.Forms
+namespace ExtremeDumper.Forms
 {
     partial class FunctionsForm
     {
@@ -37,9 +37,6 @@
             this.mnuFunctionsContext = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnuRefreshFunctionList = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.mnuForceFalse = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuForceTrue = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuForceReturn = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuFunctionsContext.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,10 +72,7 @@
             // 
             this.mnuFunctionsContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuRefreshFunctionList,
-            this.toolStripSeparator1,
-            this.mnuForceFalse,
-            this.mnuForceTrue,
-            this.mnuForceReturn});
+            this.toolStripSeparator1});
             this.mnuFunctionsContext.Name = "mnuModulesContext";
             resources.ApplyResources(this.mnuFunctionsContext, "mnuFunctionsContext");
             // 
@@ -92,24 +86,6 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
-            // 
-            // mnuForceFalse
-            // 
-            this.mnuForceFalse.Name = "mnuForceFalse";
-            resources.ApplyResources(this.mnuForceFalse, "mnuForceFalse");
-            this.mnuForceFalse.Click += new System.EventHandler(this.mnuForceFalse_Click);
-            // 
-            // mnuForceTrue
-            // 
-            this.mnuForceTrue.Name = "mnuForceTrue";
-            resources.ApplyResources(this.mnuForceTrue, "mnuForceTrue");
-            this.mnuForceTrue.Click += new System.EventHandler(this.mnuForceTrue_Click);
-            // 
-            // mnuForceReturn
-            // 
-            this.mnuForceReturn.Name = "mnuForceReturn";
-            resources.ApplyResources(this.mnuForceReturn, "mnuForceReturn");
-            this.mnuForceReturn.Click += new System.EventHandler(this.mnuForceReturn_Click);
             // 
             // FunctionsForm
             // 
@@ -132,8 +108,5 @@
         private System.Windows.Forms.ContextMenuStrip mnuFunctionsContext;
         private System.Windows.Forms.ToolStripMenuItem mnuRefreshFunctionList;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem mnuForceFalse;
-        private System.Windows.Forms.ToolStripMenuItem mnuForceTrue;
-        private System.Windows.Forms.ToolStripMenuItem mnuForceReturn;
     }
 }

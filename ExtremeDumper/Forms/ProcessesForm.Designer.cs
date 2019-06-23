@@ -1,4 +1,4 @@
-﻿namespace ExtremeDumper.Forms
+namespace ExtremeDumper.Forms
 {
     partial class ProcessesForm
     {
@@ -46,7 +46,6 @@
             this.mnuGotoLocation = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuMain = new System.Windows.Forms.MenuStrip();
             this.mnuOptions = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuRequireAdministrator = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuDebugPrivilege = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuDumperCore = new System.Windows.Forms.ToolStripMenuItem();
@@ -167,18 +166,11 @@
             // mnuOptions
             // 
             this.mnuOptions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuRequireAdministrator,
             this.mnuDebugPrivilege,
             this.toolStripSeparator1,
             this.mnuDumperCore});
             this.mnuOptions.Name = "mnuOptions";
             resources.ApplyResources(this.mnuOptions, "mnuOptions");
-            // 
-            // mnuRequireAdministrator
-            // 
-            this.mnuRequireAdministrator.Name = "mnuRequireAdministrator";
-            resources.ApplyResources(this.mnuRequireAdministrator, "mnuRequireAdministrator");
-            this.mnuRequireAdministrator.Click += new System.EventHandler(this.mnuRequireAdministrator_Click);
             // 
             // mnuDebugPrivilege
             // 
@@ -260,7 +252,6 @@
         private System.Windows.Forms.ColumnHeader chProcessName;
         private System.Windows.Forms.ColumnHeader chProcessId;
         private System.Windows.Forms.ColumnHeader chProcessPath;
-        private System.Windows.Forms.ToolStripMenuItem mnuRequireAdministrator;
         private System.Windows.Forms.ContextMenuStrip mnuProcessContext;
         private System.Windows.Forms.ToolStripMenuItem mnuDumpProcess;
         private System.Windows.Forms.ToolStripMenuItem mnuViewModules;

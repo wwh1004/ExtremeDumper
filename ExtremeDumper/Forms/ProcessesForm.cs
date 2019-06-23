@@ -3,29 +3,25 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Security.Principal;
 using System.Windows.Forms;
 using ExtremeDumper.Dumper;
-using FastWin32;
-using FastWin32.Diagnostics;
+using NativeSharp;
 using static ExtremeDumper.Forms.NativeMethods;
 
 namespace ExtremeDumper.Forms {
 	internal partial class ProcessesForm : Form {
-		private DumperCoreWrapper _dumperCore = new DumperCoreWrapper { Value = DumperCore.MegaDumper };
-
-		private ResourceManager _resources = new ResourceManager(typeof(ProcessesForm));
-
 		private static readonly bool _isAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
-
 		private static readonly AboutForm _aboutForm = new AboutForm();
+		private readonly DumperCoreWrapper _dumperCore = new DumperCoreWrapper { Value = DumperCore.MegaDumper };
+		private readonly ResourceManager _resources = new ResourceManager(typeof(ProcessesForm));
+		private static bool _hasSeDebugPrivilege;
 
 		public ProcessesForm() {
 			InitializeComponent();
-			mnuRequireAdministrator.Checked = _isAdministrator;
-			mnuRequireAdministrator.Enabled = !_isAdministrator;
 			Text = $"{Application.ProductName} v{Application.ProductVersion} ({(Environment.Is64BitProcess ? "x64" : "x86")}{(_isAdministrator ? _resources.GetString("StrAdministrator") : string.Empty)})";
 			typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwProcesses, new object[] { true });
 			lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, TypeCode.Int32 }, { 2, TypeCode.String } });
@@ -33,30 +29,42 @@ namespace ExtremeDumper.Forms {
 		}
 
 		#region Events
-		private void mnuRequireAdministrator_Click(object sender, EventArgs e) => Process32.SelfElevate(Handle);
-
 		private void mnuDebugPrivilege_Click(object sender, EventArgs e) {
+			if (_hasSeDebugPrivilege)
+				return;
+
 			if (!_isAdministrator) {
 				MessageBoxStub.Show(_resources.GetString("StrRunAsAdmin") + Application.ProductName, MessageBoxIcon.Error);
 				return;
 			}
-			if (FastWin32Settings.EnableDebugPrivilege()) {
+			try {
+				Process.EnterDebugMode();
+				_hasSeDebugPrivilege = true;
 				mnuDebugPrivilege.Checked = true;
 				mnuDebugPrivilege.Enabled = false;
 				Text = Text.Substring(0, Text.Length - 1) + ", SeDebugPrivilege)";
 				MessageBoxStub.Show(_resources.GetString("StrSuccess"), MessageBoxIcon.Information);
 			}
-			else
+			catch {
 				MessageBoxStub.Show(_resources.GetString("StrFailed"), MessageBoxIcon.Error);
+			}
 		}
 
-		private void mnuUseMegaDumper_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.MegaDumper);
+		private void mnuUseMegaDumper_Click(object sender, EventArgs e) {
+			SwitchDumperCore(DumperCore.MegaDumper);
+		}
 
-		private void mnuUseMetaDumper_Click(object sender, EventArgs e) => SwitchDumperCore(DumperCore.MetaDumper);
+		private void mnuUseMetaDumper_Click(object sender, EventArgs e) {
+			SwitchDumperCore(DumperCore.DnlibDumper);
+		}
 
-		private void mnuAbout_Click(object sender, EventArgs e) => _aboutForm.ShowDialog();
+		private void mnuAbout_Click(object sender, EventArgs e) {
+			_aboutForm.ShowDialog();
+		}
 
-		private void lvwProcesses_Resize(object sender, EventArgs e) => lvwProcesses.AutoResizeColumns(true);
+		private void lvwProcesses_Resize(object sender, EventArgs e) {
+			lvwProcesses.AutoResizeColumns(true);
+		}
 
 		private void mnuDumpProcess_Click(object sender, EventArgs e) {
 			if (lvwProcesses.SelectedIndices.Count == 0)
@@ -73,19 +81,36 @@ namespace ExtremeDumper.Forms {
 
 			if (Environment.Is64BitProcess && lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor && lvwProcesses.SelectedItems[0].Text.EndsWith(_resources.GetString("Str32Bit"), StringComparison.Ordinal))
 				MessageBoxStub.Show(_resources.GetString("StrViewModulesSwitchTo32Bit"), MessageBoxIcon.Error);
-			else
-				new ModulesForm(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), lvwProcesses.SelectedItems[0].Text, lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor, _dumperCore).Show();
+			else {
+				ModulesForm modulesForm;
+
+#pragma warning disable IDE0067
+				modulesForm = new ModulesForm(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), lvwProcesses.SelectedItems[0].Text, lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor, _dumperCore);
+#pragma warning restore IDE0067
+				modulesForm.FormClosed += (v1, v2) => modulesForm.Dispose();
+				modulesForm.Show();
+			}
 		}
 
-		private void mnuRefreshProcessList_Click(object sender, EventArgs e) => RefreshProcessList();
+		private void mnuRefreshProcessList_Click(object sender, EventArgs e) {
+			RefreshProcessList();
+		}
 
-		private void mnuOnlyDotNetProcess_Click(object sender, EventArgs e) => RefreshProcessList();
+		private void mnuOnlyDotNetProcess_Click(object sender, EventArgs e) {
+			RefreshProcessList();
+		}
 
 		private void mnuInjectDll_Click(object sender, EventArgs e) {
 			if (lvwProcesses.SelectedIndices.Count == 0)
 				return;
 
-			new InjectingForm(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), lvwProcesses.SelectedItems[0].Text).Show();
+			InjectingForm injectingForm;
+
+#pragma warning disable IDE0067
+			injectingForm = new InjectingForm(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text));
+#pragma warning restore IDE0067
+			injectingForm.FormClosed += (v1, v2) => injectingForm.Dispose();
+			injectingForm.Show();
 		}
 
 		private void mnuGotoLocation_Click(object sender, EventArgs e) {
@@ -104,8 +129,8 @@ namespace ExtremeDumper.Forms {
 				_dumperCore.Value = DumperCore.MegaDumper;
 				mnuUseMegaDumper.Checked = true;
 				break;
-			case DumperCore.MetaDumper:
-				_dumperCore.Value = DumperCore.MetaDumper;
+			case DumperCore.DnlibDumper:
+				_dumperCore.Value = DumperCore.DnlibDumper;
 				mnuUseMetaDumper.Checked = true;
 				break;
 			default:
@@ -123,7 +148,7 @@ namespace ExtremeDumper.Forms {
 			bool is64;
 
 			lvwProcesses.Items.Clear();
-			processIds = Process32.GetAllProcessIds();
+			processIds = NativeProcess.GetAllProcessIds();
 			if (processIds == null)
 				return;
 			moduleEntry32 = MODULEENTRY32.Default;
@@ -162,8 +187,8 @@ namespace ExtremeDumper.Forms {
 			ushort machine;
 
 			try {
-				using (fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-					binaryReader = new BinaryReader(fileStream);
+				using (fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (binaryReader = new BinaryReader(fileStream)) {
 					binaryReader.BaseStream.Position = 0x3C;
 					peOffset = binaryReader.ReadUInt32();
 					binaryReader.BaseStream.Position = peOffset + 0x4;
@@ -180,6 +205,9 @@ namespace ExtremeDumper.Forms {
 			}
 		}
 
-		private void DumpProcess(uint processId, string directoryPath) => MessageBoxStub.Show($"{DumperFactory.GetDumper(processId, _dumperCore.Value).DumpProcess(directoryPath).ToString()} {_resources.GetString("StrDumpFilesSuccess")}{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
+		private void DumpProcess(uint processId, string directoryPath) {
+			using (IDumper dumper = DumperFactory.GetDumper(processId, _dumperCore.Value))
+				MessageBoxStub.Show($"{dumper.DumpProcess(directoryPath).ToString()} {_resources.GetString("StrDumpFilesSuccess")}{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
+		}
 	}
 }

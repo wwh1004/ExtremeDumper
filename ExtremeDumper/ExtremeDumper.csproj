@@ -68,7 +68,11 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dumper\AssemblyDetector.cs" />
+    <Compile Include="Dumper\DnlibDumper.cs" />
+    <Compile Include="Dumper\DumperCore.cs" />
     <Compile Include="Dumper\EnvironmentCache.cs" />
+    <Compile Include="Dumper\IDumper.cs" />
     <Compile Include="Dumper\MegaDumper.cs" />
     <Compile Include="Dumper\NativeMethods.cs" />
     <Compile Include="Dumper\SafeNativeHandle.cs" />
@@ -78,11 +82,16 @@
     <Compile Include="Forms\AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dumper\AssemblyDetector.cs" />
-    <Compile Include="Forms\DumperFactory.cs" />
-    <Compile Include="Dumper\DumperCore.cs" />
     <Compile Include="Forms\Cache.cs" />
     <Compile Include="Forms\DumperCoreWrapper.cs" />
+    <Compile Include="Forms\DumperFactory.cs" />
+    <Compile Include="Forms\FunctionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FunctionsForm.Designer.cs">
+      <DependentUpon>FunctionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GlobalExceptionCatcher.cs" />
     <Compile Include="Forms\InjectingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,12 +100,7 @@
     </Compile>
     <Compile Include="Forms\ListViewExtesion.cs" />
     <Compile Include="Forms\ListViewItemSorter.cs" />
-    <Compile Include="Forms\FunctionsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FunctionsForm.Designer.cs">
-      <DependentUpon>FunctionsForm.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Forms\MessageBoxStub.cs" />
     <Compile Include="Forms\ModulesForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -104,22 +108,18 @@
       <DependentUpon>ModulesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\NativeMethods.cs" />
-    <Compile Include="Forms\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\GlobalExceptionCatcher.cs" />
-    <Compile Include="Dumper\IDumper.cs" />
     <Compile Include="Forms\ProcessesForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\ProcessesForm.Designer.cs">
       <DependentUpon>ProcessesForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MessageBoxStub.cs" />
-    <Compile Include="Dumper\MetaDumper.cs" />
     <Compile Include="Forms\Program.cs" />
+    <Compile Include="Forms\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\AboutForm.en-US.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
@@ -173,6 +173,10 @@
     <ProjectReference Include="..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\NativeSharp\NativeSharp\NativeSharp.csproj">
+      <Project>{2cd47f09-b324-4b20-8c8b-38fc4a037e37}</Project>
+      <Name>NativeSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

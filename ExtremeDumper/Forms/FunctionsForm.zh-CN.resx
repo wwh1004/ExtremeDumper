@@ -126,15 +126,6 @@
   <data name="chOrdinal.Text" xml:space="preserve">
     <value>导出函数序号</value>
   </data>
-  <data name="mnuForceFalse.Text" xml:space="preserve">
-    <value>强制返回False</value>
-  </data>
-  <data name="mnuForceReturn.Text" xml:space="preserve">
-    <value>强制直接返回</value>
-  </data>
-  <data name="mnuForceTrue.Text" xml:space="preserve">
-    <value>强制返回True</value>
-  </data>
   <data name="mnuRefreshFunctionList.Text" xml:space="preserve">
     <value>刷新导出函数列表</value>
   </data>

@@ -9,7 +9,7 @@ namespace ExtremeDumper.Forms {
 	internal class ListViewItemSorter : IComparer, IDisposable {
 		private delegate bool Parser<T>(string s, NumberStyles style, IFormatProvider provider, out T result);
 
-		private ListView _listView;
+		private readonly ListView _listView;
 
 		private Dictionary<int, TypeCode> _columnMapping;
 

@@ -2,13 +2,13 @@ using System;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Writer;
-using FastWin32.Memory;
 using Microsoft.Diagnostics.Runtime;
+using NativeSharp;
 using static ExtremeDumper.Dumper.NativeMethods;
 using size_t = System.IntPtr;
 
 namespace ExtremeDumper.Dumper {
-	public sealed unsafe class MetaDumper : IDumper {
+	public sealed unsafe class DnlibDumper : IDumper {
 		private uint _processId;
 
 		private SafeNativeHandle _processHandle;
@@ -17,7 +17,7 @@ namespace ExtremeDumper.Dumper {
 
 		private bool _isDisposed;
 
-		private MetaDumper() {
+		private DnlibDumper() {
 		}
 
 		public static IDumper Create(uint processId) {
@@ -26,7 +26,7 @@ namespace ExtremeDumper.Dumper {
 			processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, processId);
 			return processHandle == IntPtr.Zero
 				? null
-				: new MetaDumper {
+				: new DnlibDumper {
 					_processId = processId,
 					_processHandle = processHandle,
 					_is64 = Is64BitProcess(processHandle)
@@ -95,7 +95,7 @@ namespace ExtremeDumper.Dumper {
 					break;
 				case 20:
 					//EntryPointTokenOrRVA
-					memory.WriteUInt32(0x6000004);
+					memory.WriteUInt32(0x6000001);
 					//随便写一个
 					break;
 				default:
@@ -178,36 +178,38 @@ namespace ExtremeDumper.Dumper {
 
 		private static class RemotePEImageCopyer {
 			public static byte[] Copy(uint processId, IntPtr processHandle, IntPtr moduleHandle, bool is64) {
+				ulong imageSize;
 				byte[] buffer;
 
-				buffer = new byte[GetImageSize(processHandle, moduleHandle, is64)];
-				MemoryIO.EnumPages(processId, moduleHandle, pageInfo => {
-					int startOffset;
-					int endOffset;
+				imageSize = GetImageSize(processHandle, moduleHandle, is64);
+				buffer = new byte[imageSize];
+				using (NativeProcess process = NativeProcess.Open(processId))
+					foreach (PageInfo pageInfo in process.GetPageInfos(moduleHandle, (IntPtr)((ulong)moduleHandle + imageSize))) {
+						int startOffset;
+						int endOffset;
 
-					startOffset = (int)((ulong)pageInfo.Address - (ulong)moduleHandle);
-					//以p为起点，远程进程中页面起点映射到buffer中的偏移
-					endOffset = startOffset + (int)pageInfo.Size;
-					//以p为起点，远程进程中页面终点映射到buffer中的偏移
-					fixed (byte* p = buffer)
-						if (startOffset < 0) {
-							//页面前半部分超出buffer
-							ReadProcessMemory(processHandle, moduleHandle, p, (size_t)((ulong)pageInfo.Size - ((ulong)moduleHandle - (ulong)pageInfo.Address)), null);
-							return true;
-						}
-						else {
-							if (endOffset <= buffer.Length) {
-								//整个页面都可以存入buffer
-								ReadProcessMemory(processHandle, pageInfo.Address, p + startOffset, pageInfo.Size, null);
-								return true;
+						startOffset = (int)((ulong)pageInfo.Address - (ulong)moduleHandle);
+						//以p为起点，远程进程中页面起点映射到buffer中的偏移
+						endOffset = startOffset + (int)pageInfo.Size;
+						//以p为起点，远程进程中页面终点映射到buffer中的偏移
+						fixed (byte* p = buffer) {
+							if (startOffset < 0) {
+								//页面前半部分超出buffer
+								ReadProcessMemory(processHandle, moduleHandle, p, (size_t)((ulong)pageInfo.Size - ((ulong)moduleHandle - (ulong)pageInfo.Address)), null);
 							}
 							else {
-								//页面后半部分/全部超出buffer
-								ReadProcessMemory(processHandle, pageInfo.Address, p + startOffset, pageInfo.Size - (endOffset - buffer.Length), null);
-								return false;
+								if (endOffset <= buffer.Length) {
+									//整个页面都可以存入buffer
+									ReadProcessMemory(processHandle, pageInfo.Address, p + startOffset, pageInfo.Size, null);
+								}
+								else {
+									//页面后半部分/全部超出buffer
+									ReadProcessMemory(processHandle, pageInfo.Address, p + startOffset, pageInfo.Size - (endOffset - buffer.Length), null);
+									break;
+								}
 							}
 						}
-				});
+					}
 				return buffer;
 			}
 
@@ -240,8 +242,8 @@ namespace ExtremeDumper.Dumper {
 				int calculatedimagesize = BitConverter.ToInt32(PeHeader, PEOffset + sectionsoffset + 012);
 
 				for (int i = 0; i < nrofsection; i++) {
-					int virtualsize = BitConverter.ToInt32(PeHeader, PEOffset + sectionsoffset + 0x28 * i + 08);
-					int toadd = (virtualsize % sectionalignment);
+					int virtualsize = BitConverter.ToInt32(PeHeader, PEOffset + sectionsoffset + (0x28 * i) + 08);
+					int toadd = virtualsize % sectionalignment;
 					if (toadd != 0) toadd = sectionalignment - toadd;
 					calculatedimagesize = calculatedimagesize + virtualsize + toadd;
 				}

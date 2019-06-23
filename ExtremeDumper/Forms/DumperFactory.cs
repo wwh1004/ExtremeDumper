@@ -7,8 +7,8 @@ namespace ExtremeDumper.Forms {
 			switch (dumperCore) {
 			case DumperCore.MegaDumper:
 				return MegaDumper.Create(processId);
-			case DumperCore.MetaDumper:
-				return MetaDumper.Create(processId);
+			case DumperCore.DnlibDumper:
+				return DnlibDumper.Create(processId);
 			default:
 				throw new InvalidEnumArgumentException();
 			}

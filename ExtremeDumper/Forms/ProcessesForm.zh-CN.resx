@@ -159,9 +159,6 @@
   <data name="mnuRefreshProcessList.Text" xml:space="preserve">
     <value>刷新进程列表</value>
   </data>
-  <data name="mnuRequireAdministrator.Text" xml:space="preserve">
-    <value>提升管理员权限</value>
-  </data>
   <data name="mnuUseMegaDumper.Text" xml:space="preserve">
     <value>MegaDumper</value>
   </data>
