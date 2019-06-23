@@ -1,0 +1,24 @@
+version: '{build}'
+image: Visual Studio 2019 Preview
+configuration: Release
+platform:
+- x64
+- x86
+install:
+- cmd: git submodule update --init --recursive
+build:
+  project: ExtremeDumper.sln
+  verbosity: normal
+artifacts:
+- path: ExtremeDumper\bin\x64\Release\
+  name: ExtremeDumper-x64
+- path: ExtremeDumper\bin\x86\Release\
+  name: ExtremeDumper-x86
+deploy:
+- provider: GitHub
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  release: ExtremeDumper
+  auth_token:
+    secure: +8UJ1C312inNq+80I8WST34vPMrCylnmTx+9rmuIh1qnsArA5x2b8yc+kcwkXmQC
+  on:
+    APPVEYOR_REPO_TAG: true

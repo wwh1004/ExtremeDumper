@@ -4,6 +4,3 @@
 [submodule "Libraries/clrmd"]
 	path = Libraries/clrmd
 	url = https://github.com/Microsoft/clrmd.git
-[submodule "Libraries/FastWin32"]
-	path = Libraries/FastWin32
-	url = https://github.com/2365103939/FastWin32.git

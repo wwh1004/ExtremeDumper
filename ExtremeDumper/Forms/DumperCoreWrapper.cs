@@ -1,9 +1,7 @@
-﻿using ExtremeDumper.Dumper;
+using ExtremeDumper.Dumper;
 
-namespace ExtremeDumper.Forms
-{
-    internal class DumperCoreWrapper
-    {
-        public DumperCore Value { get; set; }
-    }
+namespace ExtremeDumper.Forms {
+	internal class DumperCoreWrapper {
+		public DumperCore Value { get; set; }
+	}
 }

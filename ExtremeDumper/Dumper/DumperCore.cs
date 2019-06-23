@@ -1,9 +1,7 @@
-﻿namespace ExtremeDumper.Dumper
-{
-    public enum DumperCore
-    {
-        MegaDumper,
+namespace ExtremeDumper.Dumper {
+	public enum DumperCore {
+		MegaDumper,
 
-        MetaDumper
-    }
+		MetaDumper
+	}
 }

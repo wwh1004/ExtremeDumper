@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27413.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29006.145
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtremeDumper", "ExtremeDumper\ExtremeDumper.csproj", "{BA1D5A3E-330E-4D82-BFF5-58B6CF52726C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Diagnostics.Runtime.v2", "Libraries\clrmd\src\Microsoft.Diagnostics.Runtime\v2\Microsoft.Diagnostics.Runtime.v2.csproj", "{935D33C5-62F1-40FE-8DB0-46B6E01342FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "Libraries\dnlib\src\dnlib.csproj", "{FDFC1237-143F-4919-8318-4926901F4639}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastWin32", "Libraries\FastWin32\FastWin32\FastWin32.csproj", "{0B6AC808-3A51-4072-954F-D55DE4F0209B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,14 +41,6 @@ Global
 		{FDFC1237-143F-4919-8318-4926901F4639}.Release|x64.Build.0 = Release|Any CPU
 		{FDFC1237-143F-4919-8318-4926901F4639}.Release|x86.ActiveCfg = Release|Any CPU
 		{FDFC1237-143F-4919-8318-4926901F4639}.Release|x86.Build.0 = Release|Any CPU
-		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Debug|x64.Build.0 = Debug|Any CPU
-		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Debug|x86.Build.0 = Debug|Any CPU
-		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Release|x64.ActiveCfg = Release|Any CPU
-		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Release|x64.Build.0 = Release|Any CPU
-		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Release|x86.ActiveCfg = Release|Any CPU
-		{0B6AC808-3A51-4072-954F-D55DE4F0209B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

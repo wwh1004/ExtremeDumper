@@ -146,8 +146,8 @@
   <data name="&gt;&gt;picIcon.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <data name="&gt;&gt;lblTextAuthor.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>AboutForm</value>
   </data>
   <data name="llblGithub.Location" type="System.Drawing.Point, System.Drawing">
     <value>263, 213</value>
@@ -201,12 +201,6 @@
   <data name="&gt;&gt;lblTextThanks.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;picIcon.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;lblAuthor.Name" xml:space="preserve">
-    <value>lblAuthor</value>
-  </data>
   <data name="&gt;&gt;lblThanks.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
@@ -244,8 +238,11 @@
   <data name="&gt;&gt;lblAuthor.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;lblVersion.ZOrder" xml:space="preserve">
-    <value>3</value>
+  <data name="&gt;&gt;lblAuthor.Name" xml:space="preserve">
+    <value>lblAuthor</value>
+  </data>
+  <data name="&gt;&gt;lblTextAuthor.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="lblVersion.Size" type="System.Drawing.Size, System.Drawing">
     <value>52, 17</value>
@@ -264,8 +261,8 @@
 CodeCracker - MegaDumper
 ClrMD - Microsoft</value>
   </data>
-  <data name="&gt;&gt;lblTextAuthor.Name" xml:space="preserve">
-    <value>lblTextAuthor</value>
+  <data name="&gt;&gt;lblTextAuthor.ZOrder" xml:space="preserve">
+    <value>6</value>
   </data>
   <data name="&gt;&gt;lblTextProductName.Parent" xml:space="preserve">
     <value>$this</value>
@@ -279,17 +276,14 @@ ClrMD - Microsoft</value>
   <data name="&gt;&gt;lblVersion.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;lblTextAuthor.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
   <data name="picIcon.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="&gt;&gt;lblTextAuthor.Name" xml:space="preserve">
+    <value>lblTextAuthor</value>
+  </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>AboutForm</value>
   </data>
   <data name="lblAuthor.Size" type="System.Drawing.Size, System.Drawing">
     <value>61, 17</value>
@@ -306,8 +300,8 @@ ClrMD - Microsoft</value>
   <data name="llblGithub.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
-  <data name="lblTextProductName.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微软雅黑, 13pt</value>
+  <data name="&gt;&gt;picIcon.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="lblVersion.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -342,11 +336,17 @@ ClrMD - Microsoft</value>
   <data name="lblThanks.Location" type="System.Drawing.Point, System.Drawing">
     <value>263, 150</value>
   </data>
+  <data name="&gt;&gt;lblVersion.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="lblTextThanks.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="lblThanks.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
+  </data>
+  <data name="lblTextProductName.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微软雅黑, 13pt</value>
   </data>
   <data name="lblTextProductName.Size" type="System.Drawing.Size, System.Drawing">
     <value>0, 24</value>
@@ -357,37 +357,37 @@ ClrMD - Microsoft</value>
   <data name="lblAuthor.Text" xml:space="preserve">
     <value>wwh1004</value>
   </data>
-  <data name="lblAuthor.Locked" type="System.Boolean, mscorlib">
+  <metadata name="picIcon.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="llblGithub.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="lblAuthor.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="lblTextThanks.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="lblTextThanks.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="$this.Language" type="System.Globalization.CultureInfo, mscorlib">
+  </metadata>
+  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>en-US</value>
-  </data>
-  <data name="$this.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="$this.Localizable" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="lblTextAuthor.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="lblVersion.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="lblVersion.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="lblThanks.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="lblThanks.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="lblTextAuthor.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="$this.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="lblTextProductName.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="lblTextProductName.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="picIcon.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="llblGithub.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
+  </metadata>
 </root>
