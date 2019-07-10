@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="chCLRVersion.Text" xml:space="preserve">
+    <value>CLR版本</value>
+  </data>
+  <data name="chDomainName.Text" xml:space="preserve">
+    <value>程序域</value>
+  </data>
   <data name="chModuleHandle.Text" xml:space="preserve">
     <value>模块句柄（基址）</value>
   </data>

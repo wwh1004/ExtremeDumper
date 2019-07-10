@@ -12,9 +12,9 @@ build:
   project: ExtremeDumper.sln
   verbosity: normal
 artifacts:
-- path: ExtremeDumper\bin\x64\Release\
+- path: bin\x64\Release\
   name: ExtremeDumper-x64
-- path: ExtremeDumper\bin\x86\Release\
+- path: bin\x86\Release\
   name: ExtremeDumper-x86
 deploy:
 - provider: GitHub

@@ -24,12 +24,22 @@ namespace ExtremeDumper.Forms {
 		public ModulesForm(uint processId, string processName, bool isDotNetProcess, DumperCoreWrapper dumperCore) {
 			InitializeComponent();
 			_process = NativeProcess.Open(processId);
+			if (_process == null)
+				throw new InvalidOperationException();
 			_isDotNetProcess = isDotNetProcess;
 			_dumperCore = dumperCore;
 			Text = $"{_resources.GetString("StrModules")} {processName}(ID={processId.ToString()})";
-			mnuOnlyDotNetModule.Checked = isDotNetProcess;
 			typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwModules, new object[] { true });
-			lvwModules.ListViewItemSorter = new ListViewItemSorter(lvwModules, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, Cache.Is64BitProcess ? TypeCode.UInt64 : TypeCode.UInt32 }, { 2, TypeCode.Int32 }, { 3, TypeCode.String } }) { AllowHexLeading = true };
+			lvwModules.ListViewItemSorter = new ListViewItemSorter(lvwModules, new List<TypeCode> {
+				TypeCode.String,
+				TypeCode.String,
+				TypeCode.String,
+				TypeCode.UInt64,
+				TypeCode.Int32,
+				TypeCode.String
+			}) {
+				AllowHexLeading = true
+			};
 			RefreshModuleList();
 		}
 
@@ -44,10 +54,10 @@ namespace ExtremeDumper.Forms {
 
 			IntPtr moduleHandle;
 
-			sfdlgDumped.FileName = EnsureValidFileName(lvwModules.SelectedItems[0].Text);
+			sfdlgDumped.FileName = EnsureValidFileName(lvwModules.GetFirstSubItem(chModuleName.Index).Text);
 			if (sfdlgDumped.ShowDialog() != DialogResult.OK)
 				return;
-			moduleHandle = (IntPtr)ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null);
+			moduleHandle = (IntPtr)ulong.Parse(lvwModules.GetFirstSubItem(chModuleHandle.Index).Text.Substring(2), NumberStyles.HexNumber, null);
 			DumpModule(moduleHandle, sfdlgDumped.FileName);
 		}
 
@@ -62,7 +72,7 @@ namespace ExtremeDumper.Forms {
 			FunctionsForm functionsForm;
 
 #pragma warning disable IDE0067
-			functionsForm = new FunctionsForm(_process.UnsafeGetModule((IntPtr)ulong.Parse(lvwModules.SelectedItems[0].SubItems[1].Text.Substring(2), NumberStyles.HexNumber, null)));
+			functionsForm = new FunctionsForm(_process.UnsafeGetModule((IntPtr)ulong.Parse(lvwModules.GetFirstSubItem(chModuleHandle.Index).Text.Substring(2), NumberStyles.HexNumber, null)));
 #pragma warning restore IDE0067
 			functionsForm.FormClosed += (v1, v2) => functionsForm.Dispose();
 			functionsForm.Show();
@@ -76,8 +86,9 @@ namespace ExtremeDumper.Forms {
 			if (lvwModules.SelectedIndices.Count == 0)
 				return;
 
-			string filePath = lvwModules.SelectedItems[0].SubItems[3].Text;
+			string filePath;
 
+			filePath = lvwModules.GetFirstSubItem(chModulePath.Index).Text;
 			if (filePath != "InMemory")
 				Process.Start("explorer.exe", @"/select, " + filePath);
 		}
@@ -99,14 +110,22 @@ namespace ExtremeDumper.Forms {
 					return;
 				do {
 					listViewItem = new ListViewItem(moduleEntry32.szModule);
+					// Name
+					listViewItem.SubItems.Add(string.Empty);
+					// Domain Name
+					listViewItem.SubItems.Add(string.Empty);
+					// CLR Version
 					listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseAddr.ToString(Cache.Is64BitProcess ? "X16" : "X8"));
+					// BaseAddress
 					listViewItem.SubItems.Add("0x" + moduleEntry32.modBaseSize.ToString("X8"));
+					// Size
 					listViewItem.SubItems.Add(moduleEntry32.szExePath);
+					// Path
 					lvwModules.Items.Add(listViewItem);
 				} while (Module32Next(snapshotHandle, ref moduleEntry32));
 			}
-			try {
-				if (_isDotNetProcess)
+			if (_isDotNetProcess)
+				try {
 					using (dataTarget = DataTarget.AttachToProcess((int)_process.Id, 10000, AttachFlag.Passive))
 						foreach (ClrInfo clrInfo in dataTarget.ClrVersions)
 							foreach (ClrAppDomain clrAppDomain in clrInfo.CreateRuntime().AppDomains)
@@ -116,20 +135,27 @@ namespace ExtremeDumper.Forms {
 
 										moduleName = clrModule.Name ?? "EmptyName";
 										moduleName = clrModule.IsDynamic ? moduleName.Split(',')[0] : Path.GetFileName(moduleName);
-										moduleName += $" ({clrAppDomain.Name} | CLR {clrInfo.Version.ToString()})";
 										listViewItem = new ListViewItem(moduleName);
+										// Name
+										listViewItem.SubItems.Add(clrAppDomain.Name);
+										// Domain Name
+										listViewItem.SubItems.Add(clrInfo.Version.ToString());
+										// CLR Version
 										listViewItem.SubItems.Add("0x" + clrModule.ImageBase.ToString(Cache.Is64BitProcess ? "X16" : "X8"));
+										// BaseAddress
 										listViewItem.SubItems.Add("0x" + clrModule.Size.ToString("X8"));
+										// Size
 										listViewItem.SubItems.Add(clrModule.IsDynamic ? "InMemory" : clrModule.FileName);
+										// Path
 										listViewItem.BackColor = Cache.DotNetColor;
 										lvwModules.Items.Add(listViewItem);
 									}
 									catch {
 									}
 								}
-			}
-			catch {
-			}
+				}
+				catch {
+				}
 			lvwModules.AutoResizeColumns(false);
 		}
 

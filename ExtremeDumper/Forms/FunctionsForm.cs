@@ -11,11 +11,20 @@ namespace ExtremeDumper.Forms {
 		private readonly ResourceManager _resources = new ResourceManager(typeof(FunctionsForm));
 
 		public FunctionsForm(NativeModule module) {
+			if (module is null)
+				throw new ArgumentNullException(nameof(module));
+
 			InitializeComponent();
 			_module = module;
 			Text = $"{_resources.GetString("StrExportFunctions")} {_module.Name}(0x{_module.Handle.ToString(Cache.Is64BitProcess ? "X16" : "X8")})";
 			typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwFunctions, new object[] { true });
-			lvwFunctions.ListViewItemSorter = new ListViewItemSorter(lvwFunctions, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, Cache.Is64BitProcess ? TypeCode.UInt64 : TypeCode.UInt32 }, { 2, TypeCode.Int16 } }) { AllowHexLeading = true };
+			lvwFunctions.ListViewItemSorter = new ListViewItemSorter(lvwFunctions, new List<TypeCode> {
+				TypeCode.String,
+				TypeCode.UInt64,
+				TypeCode.Int16
+			}) {
+				AllowHexLeading = true
+			};
 			RefreshFunctionList();
 		}
 
@@ -31,7 +40,7 @@ namespace ExtremeDumper.Forms {
 
 		private void RefreshFunctionList() {
 			lvwFunctions.Items.Clear();
-			foreach (ExportFunctionInfo functionInfo in _module.GetFunctionInfos()) {
+			foreach (ExportFunctionInfo functionInfo in _module.EnumerateFunctionInfos()) {
 				ListViewItem listViewItem;
 
 				listViewItem = new ListViewItem(functionInfo.Name);

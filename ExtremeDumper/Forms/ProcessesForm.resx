@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -133,20 +133,14 @@
   <data name="&gt;&gt;chProcessId.Name" xml:space="preserve">
     <value>chProcessId</value>
   </data>
-  <data name="mnuDebugPrivilege.Text" xml:space="preserve">
-    <value>Enable Debug Privilege</value>
-  </data>
   <data name="&gt;&gt;mnuDebugPrivilege.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="StrAdministrator" xml:space="preserve">
-    <value>, Administrator</value>
   </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
     <value>181, 6</value>
   </data>
-  <data name="&gt;&gt;mnuUseDnlibDumper.Name" xml:space="preserve">
-    <value>mnuUseDnlibDumper</value>
+  <data name="&gt;&gt;mnuUseAntiAntiDumper.Name" xml:space="preserve">
+    <value>mnuUseAntiAntiDumper</value>
   </data>
   <data name="&gt;&gt;mnuViewModules.Name" xml:space="preserve">
     <value>mnuViewModules</value>
@@ -166,9 +160,6 @@
   <data name="&gt;&gt;mnuAbout.Name" xml:space="preserve">
     <value>mnuAbout</value>
   </data>
-  <data name="StrDumpFilesSuccess" xml:space="preserve">
-    <value>Images have been dumped to:</value>
-  </data>
   <data name="mnuMain.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -180,9 +171,6 @@
   </data>
   <data name="&gt;&gt;lvwProcesses.Parent" xml:space="preserve">
     <value>$this</value>
-  </data>
-  <data name="mnuViewModules.Text" xml:space="preserve">
-    <value>View Modules</value>
   </data>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>7, 17</value>
@@ -205,26 +193,11 @@
   <data name="&gt;&gt;mnuAbout.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="Str32Bit" xml:space="preserve">
-    <value>(32 Bit)</value>
-  </data>
   <data name="&gt;&gt;chProcessPath.Name" xml:space="preserve">
     <value>chProcessPath</value>
   </data>
-  <data name="StrViewModulesSwitchTo32Bit" xml:space="preserve">
-    <value>Please run x86 version</value>
-  </data>
-  <data name="StrFailed" xml:space="preserve">
-    <value>Failed</value>
-  </data>
   <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="fbdlgDumped.Description" xml:space="preserve">
-    <value>Select a directory to save dumps</value>
-  </data>
-  <data name="mnuInjectDll.Text" xml:space="preserve">
-    <value>Inject Dll</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator4.Name" xml:space="preserve">
     <value>toolStripSeparator4</value>
@@ -236,17 +209,8 @@
   <data name="lvwProcesses.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="mnuDumperCore.Text" xml:space="preserve">
-    <value>DumperCore</value>
-  </data>
   <data name="mnuDumperCore.Size" type="System.Drawing.Size, System.Drawing">
     <value>163, 22</value>
-  </data>
-  <data name="chProcessPath.Text" xml:space="preserve">
-    <value>Path</value>
-  </data>
-  <data name="mnuUseDnlibDumper.Text" xml:space="preserve">
-    <value>DnlibDumper</value>
   </data>
   <data name="mnuAbout.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 22</value>
@@ -260,17 +224,11 @@
   <data name="&gt;&gt;mnuDumperCore.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="mnuUseMegaDumper.Text" xml:space="preserve">
-    <value>MegaDumper</value>
-  </data>
-  <data name="mnuUseDnlibDumper.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="mnuUseAntiAntiDumper.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 22</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>
-  </data>
-  <data name="mnuGotoLocation.Text" xml:space="preserve">
-    <value>Goto Location</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>微软雅黑, 9pt</value>
@@ -278,17 +236,8 @@
   <data name="&gt;&gt;lvwProcesses.Name" xml:space="preserve">
     <value>lvwProcesses</value>
   </data>
-  <data name="mnuHelp.Text" xml:space="preserve">
-    <value>Help</value>
-  </data>
   <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
     <value>toolStripSeparator2</value>
-  </data>
-  <data name="chProcessName.Text" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="mnuRefreshProcessList.Text" xml:space="preserve">
-    <value>Refresh</value>
   </data>
   <data name="mnuGotoLocation.Size" type="System.Drawing.Size, System.Drawing">
     <value>184, 22</value>
@@ -305,14 +254,8 @@
   <data name="&gt;&gt;mnuProcessContext.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="mnuDumpProcess.Text" xml:space="preserve">
-    <value>Dump Selected Process</value>
-  </data>
   <data name="&gt;&gt;chProcessPath.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="mnuOnlyDotNetProcess.Text" xml:space="preserve">
-    <value>Only .Net Processes</value>
   </data>
   <data name="&gt;&gt;mnuOnlyDotNetProcess.Name" xml:space="preserve">
     <value>mnuOnlyDotNetProcess</value>
@@ -331,9 +274,6 @@
   </data>
   <data name="mnuInjectDll.Size" type="System.Drawing.Size, System.Drawing">
     <value>184, 22</value>
-  </data>
-  <data name="mnuAbout.Text" xml:space="preserve">
-    <value>About</value>
   </data>
   <data name="&gt;&gt;chProcessName.Name" xml:space="preserve">
     <value>chProcessName</value>
@@ -361,12 +301,6 @@
   </data>
   <data name="&gt;&gt;chProcessId.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="StrSuccess" xml:space="preserve">
-    <value>Success</value>
-  </data>
-  <data name="chProcessId.Text" xml:space="preserve">
-    <value>PID</value>
   </data>
   <data name="&gt;&gt;fbdlgDumped.Name" xml:space="preserve">
     <value>fbdlgDumped</value>
@@ -405,7 +339,7 @@
   <data name="&gt;&gt;lvwProcesses.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;mnuUseDnlibDumper.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuUseAntiAntiDumper.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="mnuDebugPrivilege.Size" type="System.Drawing.Size, System.Drawing">
@@ -413,9 +347,6 @@
   </data>
   <data name="mnuMain.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
-  </data>
-  <data name="mnuOptions.Text" xml:space="preserve">
-    <value>Options</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>933, 637</value>
@@ -446,9 +377,6 @@
   </data>
   <data name="&gt;&gt;toolStripSeparator3.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="StrRunAsAdmin" xml:space="preserve">
-    <value>Please runas administator</value>
   </data>
   <data name="mnuProcessContext.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 17</value>

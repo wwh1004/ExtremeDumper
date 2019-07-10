@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using static ExtremeDumper.Forms.NativeMethods;
@@ -5,6 +6,9 @@ using static ExtremeDumper.Forms.NativeMethods;
 namespace ExtremeDumper.Forms {
 	internal static class ListViewExtesion {
 		public static void AutoResizeColumns(this ListView listView, bool onlyLastColumn) {
+			if (listView is null)
+				throw new ArgumentNullException(nameof(listView));
+
 			SCROLLBARINFO scrollBarInfo;
 			int sumWidths;
 			int[] minWidths;
@@ -30,6 +34,13 @@ namespace ExtremeDumper.Forms {
 				}
 				listView.Columns[minWidths.Length - 1].Width += listView.Width - sumWidths;
 			}
+		}
+
+		public static ListViewItem.ListViewSubItem GetFirstSubItem(this ListView listView, int index) {
+			if (listView is null)
+				throw new ArgumentNullException(nameof(listView));
+
+			return listView.SelectedItems[0].SubItems[index];
 		}
 	}
 }

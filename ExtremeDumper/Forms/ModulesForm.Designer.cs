@@ -31,6 +31,8 @@ namespace ExtremeDumper.Forms
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuGotoLocation = new System.Windows.Forms.ToolStripMenuItem();
             this.sfdlgDumped = new System.Windows.Forms.SaveFileDialog();
+            this.chDomainName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chCLRVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.mnuModulesContext.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -40,6 +42,8 @@ namespace ExtremeDumper.Forms
             this.lvwModules.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lvwModules.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chModuleName,
+            this.chDomainName,
+            this.chCLRVersion,
             this.chModuleHandle,
             this.chModuleSize,
             this.chModulePath});
@@ -125,6 +129,14 @@ namespace ExtremeDumper.Forms
             // 
             resources.ApplyResources(this.sfdlgDumped, "sfdlgDumped");
             // 
+            // chDomainName
+            // 
+            resources.ApplyResources(this.chDomainName, "chDomainName");
+            // 
+            // chCLRVersion
+            // 
+            resources.ApplyResources(this.chCLRVersion, "chCLRVersion");
+            // 
             // ModulesForm
             // 
             resources.ApplyResources(this, "$this");
@@ -132,7 +144,7 @@ namespace ExtremeDumper.Forms
             this.Controls.Add(this.lvwModules);
             this.Icon = global::ExtremeDumper.Forms.Resources.Icon;
             this.Name = "ModulesForm";
-			this.mnuModulesContext.ResumeLayout(false);
+            this.mnuModulesContext.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -153,5 +165,7 @@ namespace ExtremeDumper.Forms
         private System.Windows.Forms.ToolStripMenuItem mnuOnlyDotNetModule;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem mnuGotoLocation;
-    }
+		private System.Windows.Forms.ColumnHeader chDomainName;
+		private System.Windows.Forms.ColumnHeader chCLRVersion;
+	}
 }

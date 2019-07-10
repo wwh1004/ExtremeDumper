@@ -11,7 +11,7 @@ namespace ExtremeDumper.Forms {
 
 		private readonly ListView _listView;
 
-		private Dictionary<int, TypeCode> _columnMapping;
+		private List<TypeCode> _columnTypes;
 
 		private int _column;
 
@@ -21,9 +21,14 @@ namespace ExtremeDumper.Forms {
 
 		public bool AllowHexLeading { get; set; }
 
-		public ListViewItemSorter(ListView listView, Dictionary<int, TypeCode> columnMapping) {
-			_listView = listView ?? throw new ArgumentNullException();
-			_columnMapping = columnMapping ?? throw new ArgumentNullException();
+		public ListViewItemSorter(ListView listView, List<TypeCode> columnTypes) {
+			if (listView is null)
+				throw new ArgumentNullException(nameof(listView));
+			if (columnTypes is null)
+				throw new ArgumentNullException(nameof(columnTypes));
+
+			_listView = listView;
+			_columnTypes = columnTypes;
 			listView.ColumnClick += ListView_ColumnClick;
 		}
 
@@ -54,7 +59,7 @@ namespace ExtremeDumper.Forms {
 		}
 
 		private int Compare(string x, string y) {
-			switch (_columnMapping[_column]) {
+			switch (_columnTypes[_column]) {
 			case TypeCode.Boolean:
 				throw new NotImplementedException();
 			case TypeCode.Char:
@@ -114,7 +119,7 @@ namespace ExtremeDumper.Forms {
 			if (_isDisposed)
 				return;
 			_listView.ColumnClick -= ListView_ColumnClick;
-			_columnMapping = null;
+			_columnTypes = null;
 			_isDisposed = true;
 		}
 	}

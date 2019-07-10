@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -159,8 +159,8 @@
   <data name="mnuRefreshProcessList.Text" xml:space="preserve">
     <value>刷新进程列表</value>
   </data>
-  <data name="mnuUseDnlibDumper.Text" xml:space="preserve">
-    <value>DnlibDumper</value>
+  <data name="mnuUseAntiAntiDumper.Text" xml:space="preserve">
+    <value>AntiAntiDumper</value>
   </data>
   <data name="mnuUseMegaDumper.Text" xml:space="preserve">
     <value>MegaDumper</value>

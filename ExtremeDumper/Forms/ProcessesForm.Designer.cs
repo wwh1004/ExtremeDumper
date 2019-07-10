@@ -50,7 +50,7 @@ namespace ExtremeDumper.Forms
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuDumperCore = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuUseMegaDumper = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuUseDnlibDumper = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuUseAntiAntiDumper = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.fbdlgDumped = new System.Windows.Forms.FolderBrowserDialog();
@@ -188,7 +188,7 @@ namespace ExtremeDumper.Forms
             resources.ApplyResources(this.mnuDumperCore, "mnuDumperCore");
             this.mnuDumperCore.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuUseMegaDumper,
-            this.mnuUseDnlibDumper});
+            this.mnuUseAntiAntiDumper});
             this.mnuDumperCore.Name = "mnuDumperCore";
             // 
             // mnuUseMegaDumper
@@ -199,11 +199,11 @@ namespace ExtremeDumper.Forms
             this.mnuUseMegaDumper.Name = "mnuUseMegaDumper";
             this.mnuUseMegaDumper.Click += new System.EventHandler(this.mnuUseMegaDumper_Click);
             // 
-            // mnuUseDnlibDumper
+            // mnuUseAntiAntiDumper
             // 
-            resources.ApplyResources(this.mnuUseDnlibDumper, "mnuUseDnlibDumper");
-            this.mnuUseDnlibDumper.Name = "mnuUseDnlibDumper";
-            this.mnuUseDnlibDumper.Click += new System.EventHandler(this.mnuUseDnlibDumper_Click);
+            resources.ApplyResources(this.mnuUseAntiAntiDumper, "mnuUseAntiAntiDumper");
+            this.mnuUseAntiAntiDumper.Name = "mnuUseAntiAntiDumper";
+            this.mnuUseAntiAntiDumper.Click += new System.EventHandler(this.mnuUseAntiAntiDumper_Click);
             // 
             // mnuHelp
             // 
@@ -264,7 +264,7 @@ namespace ExtremeDumper.Forms
         private System.Windows.Forms.ToolStripMenuItem mnuInjectDll;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem mnuGotoLocation;
-        private System.Windows.Forms.ToolStripMenuItem mnuUseDnlibDumper;
+        private System.Windows.Forms.ToolStripMenuItem mnuUseAntiAntiDumper;
     }
 }
 

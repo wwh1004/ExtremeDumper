@@ -149,18 +149,14 @@
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ModulesForm</value>
   </data>
-  <data name="chModuleName.Text" xml:space="preserve">
-    <value>Name</value>
+  <data name="&gt;&gt;chCLRVersion.Name" xml:space="preserve">
+    <value>chCLRVersion</value>
   </data>
-  <data name="chModuleSize.Text" xml:space="preserve">
-    <value>Size</value>
+  <data name="&gt;&gt;chDomainName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="mnuDumpModule.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 22</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="lvwModules.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="&gt;&gt;chDomainName.Name" xml:space="preserve">
+    <value>chDomainName</value>
   </data>
   <data name="&gt;&gt;mnuViewFunctions.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -168,14 +164,8 @@
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>7, 17</value>
   </data>
-  <data name="mnuRefreshModuleList.Text" xml:space="preserve">
-    <value>Refresh</value>
-  </data>
   <data name="&gt;&gt;chModuleName.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="chModulePath.Text" xml:space="preserve">
-    <value>Path</value>
   </data>
   <data name="&gt;&gt;mnuGotoLocation.Name" xml:space="preserve">
     <value>mnuGotoLocation</value>
@@ -192,9 +182,6 @@
   <data name="&gt;&gt;mnuDumpModule.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="fbdlgDumped.Description" xml:space="preserve">
-    <value>Select a path to save dump</value>
-  </data>
   <data name="&gt;&gt;sfdlgDumped.Type" xml:space="preserve">
     <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -204,8 +191,8 @@
   <data name="&gt;&gt;mnuRefreshModuleList.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="StrFailToDumpModule" xml:space="preserve">
-    <value>Fail to dump module.</value>
+  <data name="&gt;&gt;mnuViewFunctions.Name" xml:space="preserve">
+    <value>mnuViewFunctions</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
     <value>toolStripSeparator1</value>
@@ -213,47 +200,29 @@
   <data name="&gt;&gt;ofdlgDumped.Type" xml:space="preserve">
     <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="mnuOnlyDotNetModule.Text" xml:space="preserve">
-    <value>Only .Net Modules</value>
-  </data>
-  <data name="mnuGotoLocation.Text" xml:space="preserve">
-    <value>Goto Location</value>
-  </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>微软雅黑, 9pt</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
     <value>181, 6</value>
   </data>
-  <data name="StrDumpModuleSuccessfully" xml:space="preserve">
-    <value>Dump module successfully. Dump was saved in </value>
-  </data>
   <data name="mnuViewFunctions.Size" type="System.Drawing.Size, System.Drawing">
     <value>184, 22</value>
   </data>
-  <data name="&gt;&gt;lvwModules.Name" xml:space="preserve">
-    <value>lvwModules</value>
+  <data name="mnuDumpModule.Size" type="System.Drawing.Size, System.Drawing">
+    <value>184, 22</value>
   </data>
   <data name="mnuGotoLocation.Size" type="System.Drawing.Size, System.Drawing">
     <value>184, 22</value>
   </data>
-  <data name="mnuViewFunctions.Text" xml:space="preserve">
-    <value>View Export Functions</value>
-  </data>
-  <data name="StrModules" xml:space="preserve">
-    <value>Modules</value>
+  <data name="&gt;&gt;lvwModules.Name" xml:space="preserve">
+    <value>lvwModules</value>
   </data>
   <data name="&gt;&gt;lvwModules.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;chModuleName.Name" xml:space="preserve">
     <value>chModuleName</value>
-  </data>
-  <data name="chModuleHandle.Text" xml:space="preserve">
-    <value>BaseAddress</value>
-  </data>
-  <data name="mnuDumpModule.Text" xml:space="preserve">
-    <value>Dump Selected Module</value>
   </data>
   <data name="&gt;&gt;chModuleHandle.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -291,6 +260,9 @@
   <data name="&gt;&gt;chModulePath.Name" xml:space="preserve">
     <value>chModulePath</value>
   </data>
+  <data name="&gt;&gt;chCLRVersion.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuGotoLocation.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -312,28 +284,29 @@
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnuViewFunctions.Name" xml:space="preserve">
-    <value>mnuViewFunctions</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lvwModules.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
-  <metadata name="lvwModules.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="lvwModules.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="$this.Language" type="System.Globalization.CultureInfo, mscorlib">
     <value>en-US</value>
-  </metadata>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="$this.Localizable" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="mnuModulesContext.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="mnuModulesContext.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 17</value>
-  </metadata>
-  <metadata name="$this.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="sfdlgDumped.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>193, 17</value>
+  </data>
+  <data name="$this.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="ofdlgDumped.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="ofdlgDumped.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>193, 17</value>
-  </metadata>
-  <metadata name="sfdlgDumped.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>193, 17</value>
-  </metadata>
+  </data>
 </root>

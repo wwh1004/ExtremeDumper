@@ -132,10 +132,10 @@ CodeCracker - MegaDumper
 ClrMD - Microsoft</value>
   </data>
   <data name="lblVersion.Text" xml:space="preserve">
-    <value>Version</value>
+    <value>版本号</value>
   </data>
   <data name="llblGithub.Text" xml:space="preserve">
-    <value>https://github.com/23651039
-39/ExtremeDumper</value>
+    <value>https://github.com/wwh1004
+/ExtremeDumper</value>
   </data>
 </root>

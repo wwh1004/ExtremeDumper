@@ -5,16 +5,12 @@ using dnlib.DotNet.Writer;
 using Microsoft.Diagnostics.Runtime;
 using NativeSharp;
 using static ExtremeDumper.Dumper.NativeMethods;
-using size_t = System.IntPtr;
 
 namespace ExtremeDumper.Dumper {
 	public sealed unsafe class DnlibDumper : IDumper {
 		private uint _processId;
-
-		private SafeNativeHandle _processHandle;
-
+		private IntPtr _processHandle;
 		private bool _is64;
-
 		private bool _isDisposed;
 
 		private DnlibDumper() {
@@ -24,13 +20,11 @@ namespace ExtremeDumper.Dumper {
 			IntPtr processHandle;
 
 			processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, processId);
-			return processHandle == IntPtr.Zero
-				? null
-				: new DnlibDumper {
-					_processId = processId,
-					_processHandle = processHandle,
-					_is64 = Is64BitProcess(processHandle)
-				};
+			return processHandle == IntPtr.Zero ? null : new DnlibDumper {
+				_processId = processId,
+				_processHandle = processHandle,
+				_is64 = Is64BitProcess(processHandle)
+			};
 		}
 
 		public bool DumpModule(IntPtr moduleHandle, string filePath) {
@@ -150,7 +144,7 @@ namespace ExtremeDumper.Dumper {
 			if (_isDisposed)
 				return;
 
-			_processHandle.Dispose();
+			CloseHandle(_processHandle);
 			_isDisposed = true;
 		}
 
@@ -184,18 +178,18 @@ namespace ExtremeDumper.Dumper {
 				imageSize = GetImageSize(processHandle, moduleHandle, is64);
 				buffer = new byte[imageSize];
 				using (NativeProcess process = NativeProcess.Open(processId))
-					foreach (PageInfo pageInfo in process.GetPageInfos(moduleHandle, (IntPtr)((ulong)moduleHandle + imageSize))) {
+					foreach (PageInfo pageInfo in process.EnumeratePageInfos(moduleHandle, (IntPtr)((ulong)moduleHandle + imageSize))) {
 						int startOffset;
 						int endOffset;
 
-						startOffset = (int)((ulong)pageInfo.Address - (ulong)moduleHandle);
+						startOffset = (int)((long)pageInfo.Address - (long)moduleHandle);
 						//以p为起点，远程进程中页面起点映射到buffer中的偏移
 						endOffset = startOffset + (int)pageInfo.Size;
 						//以p为起点，远程进程中页面终点映射到buffer中的偏移
 						fixed (byte* p = buffer) {
 							if (startOffset < 0) {
 								//页面前半部分超出buffer
-								ReadProcessMemory(processHandle, moduleHandle, p, (size_t)((ulong)pageInfo.Size - ((ulong)moduleHandle - (ulong)pageInfo.Address)), null);
+								ReadProcessMemory(processHandle, moduleHandle, p, (IntPtr)((ulong)pageInfo.Size - ((ulong)moduleHandle - (ulong)pageInfo.Address)), null);
 							}
 							else {
 								if (endOffset <= buffer.Length) {
@@ -216,21 +210,21 @@ namespace ExtremeDumper.Dumper {
 			private static ulong GetImageSize(IntPtr processHandle, IntPtr moduleHandle, bool is64) {
 				int pagesize = (int)EnvironmentCache.SystemInfo.dwPageSize;
 				byte[] InfoKeep = new byte[8];
-				size_t BytesRead = size_t.Zero;
+				IntPtr BytesRead = IntPtr.Zero;
 				int rawaddress;
 				int offset = 0;
 				int sectionsoffset = is64 ? 0x108 : 0xF8;
 
-				_ = ReadProcessMemory(processHandle, moduleHandle + 0x03C, InfoKeep, (size_t)4, &BytesRead);
+				_ = ReadProcessMemory(processHandle, moduleHandle + 0x03C, InfoKeep, (IntPtr)4, &BytesRead);
 				int PEOffset = BitConverter.ToInt32(InfoKeep, 0);
 
-				_ = ReadProcessMemory(processHandle, moduleHandle + PEOffset + sectionsoffset + +20, InfoKeep, (size_t)4, &BytesRead);
+				_ = ReadProcessMemory(processHandle, moduleHandle + PEOffset + sectionsoffset + +20, InfoKeep, (IntPtr)4, &BytesRead);
 				byte[] PeHeader = new byte[pagesize];
 
 				rawaddress = BitConverter.ToInt32(InfoKeep, 0);
 				int sizetocopy = rawaddress;
 				if (sizetocopy > pagesize) sizetocopy = pagesize;
-				_ = ReadProcessMemory(processHandle, moduleHandle, PeHeader, (size_t)sizetocopy, &BytesRead);
+				_ = ReadProcessMemory(processHandle, moduleHandle, PeHeader, (IntPtr)sizetocopy, &BytesRead);
 				_ = offset + rawaddress;
 
 				int nrofsection = BitConverter.ToInt16(PeHeader, PEOffset + 0x06);

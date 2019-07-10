@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Security.Principal;
@@ -24,7 +23,11 @@ namespace ExtremeDumper.Forms {
 			InitializeComponent();
 			Text = $"{Application.ProductName} v{Application.ProductVersion} ({(Environment.Is64BitProcess ? "x64" : "x86")}{(_isAdministrator ? _resources.GetString("StrAdministrator") : string.Empty)})";
 			typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwProcesses, new object[] { true });
-			lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new Dictionary<int, TypeCode> { { 0, TypeCode.String }, { 1, TypeCode.Int32 }, { 2, TypeCode.String } });
+			lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new List<TypeCode> {
+				TypeCode.String,
+				TypeCode.Int32,
+				TypeCode.String
+			});
 			RefreshProcessList();
 		}
 
@@ -54,8 +57,8 @@ namespace ExtremeDumper.Forms {
 			SwitchDumperCore(DumperCore.MegaDumper);
 		}
 
-		private void mnuUseDnlibDumper_Click(object sender, EventArgs e) {
-			SwitchDumperCore(DumperCore.DnlibDumper);
+		private void mnuUseAntiAntiDumper_Click(object sender, EventArgs e) {
+			SwitchDumperCore(DumperCore.AntiAntiDumper);
 		}
 
 		private void mnuAbout_Click(object sender, EventArgs e) {
@@ -72,20 +75,23 @@ namespace ExtremeDumper.Forms {
 
 			if (fbdlgDumped.ShowDialog() != DialogResult.OK)
 				return;
-			DumpProcess(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), Path.Combine(fbdlgDumped.SelectedPath, "Dumps"));
+			DumpProcess(uint.Parse(lvwProcesses.GetFirstSubItem(chProcessId.Index).Text), Path.Combine(fbdlgDumped.SelectedPath, "Dumps"));
 		}
 
 		private void mnuViewModules_Click(object sender, EventArgs e) {
 			if (lvwProcesses.SelectedIndices.Count == 0)
 				return;
 
-			if (Environment.Is64BitProcess && lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor && lvwProcesses.SelectedItems[0].Text.EndsWith(_resources.GetString("Str32Bit"), StringComparison.Ordinal))
+			ListViewItem.ListViewSubItem processNameItem;
+
+			processNameItem = lvwProcesses.GetFirstSubItem(chProcessName.Index);
+			if (Environment.Is64BitProcess && processNameItem.BackColor == Cache.DotNetColor && processNameItem.Text.EndsWith(_resources.GetString("Str32Bit"), StringComparison.Ordinal))
 				MessageBoxStub.Show(_resources.GetString("StrViewModulesSwitchTo32Bit"), MessageBoxIcon.Error);
 			else {
 				ModulesForm modulesForm;
 
 #pragma warning disable IDE0067
-				modulesForm = new ModulesForm(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text), lvwProcesses.SelectedItems[0].Text, lvwProcesses.SelectedItems[0].BackColor == Cache.DotNetColor, _dumperCore);
+				modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Cache.DotNetColor, _dumperCore);
 #pragma warning restore IDE0067
 				modulesForm.FormClosed += (v1, v2) => modulesForm.Dispose();
 				modulesForm.Show();
@@ -107,7 +113,7 @@ namespace ExtremeDumper.Forms {
 			InjectingForm injectingForm;
 
 #pragma warning disable IDE0067
-			injectingForm = new InjectingForm(uint.Parse(lvwProcesses.SelectedItems[0].SubItems[1].Text));
+			injectingForm = new InjectingForm(uint.Parse(lvwProcesses.GetFirstSubItem(chProcessId.Index).Text));
 #pragma warning restore IDE0067
 			injectingForm.FormClosed += (v1, v2) => injectingForm.Dispose();
 			injectingForm.Show();
@@ -117,21 +123,21 @@ namespace ExtremeDumper.Forms {
 			if (lvwProcesses.SelectedIndices.Count == 0)
 				return;
 
-			Process.Start("explorer.exe", @"/select, " + lvwProcesses.SelectedItems[0].SubItems[2].Text);
+			Process.Start("explorer.exe", @"/select, " + lvwProcesses.GetFirstSubItem(chProcessPath.Index).Text);
 		}
 		#endregion
 
 		private void SwitchDumperCore(DumperCore dumperCore) {
 			mnuUseMegaDumper.Checked = false;
-			mnuUseDnlibDumper.Checked = false;
+			mnuUseAntiAntiDumper.Checked = false;
 			switch (dumperCore) {
 			case DumperCore.MegaDumper:
 				_dumperCore.Value = DumperCore.MegaDumper;
 				mnuUseMegaDumper.Checked = true;
 				break;
-			case DumperCore.DnlibDumper:
-				_dumperCore.Value = DumperCore.DnlibDumper;
-				mnuUseDnlibDumper.Checked = true;
+			case DumperCore.AntiAntiDumper:
+				_dumperCore.Value = DumperCore.AntiAntiDumper;
+				mnuUseAntiAntiDumper.Checked = true;
 				break;
 			default:
 				throw new InvalidEnumArgumentException();
