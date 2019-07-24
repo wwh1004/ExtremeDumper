@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using NativeSharp;
 
 namespace ExtremeDumper.Forms {
-	internal partial class FunctionsForm : Form {
+	internal unsafe partial class FunctionsForm : Form {
 		private readonly NativeModule _module;
 		private readonly ResourceManager _resources = new ResourceManager(typeof(FunctionsForm));
 
@@ -44,7 +44,7 @@ namespace ExtremeDumper.Forms {
 				ListViewItem listViewItem;
 
 				listViewItem = new ListViewItem(functionInfo.Name);
-				listViewItem.SubItems.Add("0x" + functionInfo.Address.ToString(Cache.Is64BitProcess ? "X16" : "X8"));
+				listViewItem.SubItems.Add("0x" + ((IntPtr)functionInfo.Address).ToString(Cache.Is64BitProcess ? "X16" : "X8"));
 				listViewItem.SubItems.Add(functionInfo.Ordinal.ToString());
 				lvwFunctions.Items.Add(listViewItem);
 			}

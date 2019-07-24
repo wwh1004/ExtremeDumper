@@ -12,9 +12,10 @@ using ExtremeDumper.Dumper;
 using Microsoft.Diagnostics.Runtime;
 using NativeSharp;
 using static ExtremeDumper.Forms.NativeMethods;
+using ImageLayout = dnlib.PE.ImageLayout;
 
 namespace ExtremeDumper.Forms {
-	internal partial class ModulesForm : Form {
+	internal unsafe partial class ModulesForm : Form {
 		private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
 		private readonly NativeProcess _process;
 		private readonly bool _isDotNetProcess;
@@ -24,7 +25,7 @@ namespace ExtremeDumper.Forms {
 		public ModulesForm(uint processId, string processName, bool isDotNetProcess, DumperCoreWrapper dumperCore) {
 			InitializeComponent();
 			_process = NativeProcess.Open(processId);
-			if (_process == null)
+			if (_process == NativeProcess.InvalidProcess)
 				throw new InvalidOperationException();
 			_isDotNetProcess = isDotNetProcess;
 			_dumperCore = dumperCore;
@@ -54,11 +55,11 @@ namespace ExtremeDumper.Forms {
 
 			IntPtr moduleHandle;
 
-			sfdlgDumped.FileName = EnsureValidFileName(lvwModules.GetFirstSubItem(chModuleName.Index).Text);
+			sfdlgDumped.FileName = PathInsertPostfix(EnsureValidFileName(lvwModules.GetFirstSelectedSubItem(chModuleName.Index).Text), ".dump");
 			if (sfdlgDumped.ShowDialog() != DialogResult.OK)
 				return;
-			moduleHandle = (IntPtr)ulong.Parse(lvwModules.GetFirstSubItem(chModuleHandle.Index).Text.Substring(2), NumberStyles.HexNumber, null);
-			DumpModule(moduleHandle, sfdlgDumped.FileName);
+			moduleHandle = (IntPtr)ulong.Parse(lvwModules.GetFirstSelectedSubItem(chModuleHandle.Index).Text.Substring(2), NumberStyles.HexNumber, null);
+			DumpModule(moduleHandle, lvwModules.GetFirstSelectedSubItem(chModulePath.Index).Text == "InMemory" ? ImageLayout.File : ImageLayout.Memory, sfdlgDumped.FileName);
 		}
 
 		private void mnuRefreshModuleList_Click(object sender, EventArgs e) {
@@ -72,7 +73,7 @@ namespace ExtremeDumper.Forms {
 			FunctionsForm functionsForm;
 
 #pragma warning disable IDE0067
-			functionsForm = new FunctionsForm(_process.UnsafeGetModule((IntPtr)ulong.Parse(lvwModules.GetFirstSubItem(chModuleHandle.Index).Text.Substring(2), NumberStyles.HexNumber, null)));
+			functionsForm = new FunctionsForm(_process.UnsafeGetModule((void*)ulong.Parse(lvwModules.GetFirstSelectedSubItem(chModuleHandle.Index).Text.Substring(2), NumberStyles.HexNumber, null)));
 #pragma warning restore IDE0067
 			functionsForm.FormClosed += (v1, v2) => functionsForm.Dispose();
 			functionsForm.Show();
@@ -88,7 +89,7 @@ namespace ExtremeDumper.Forms {
 
 			string filePath;
 
-			filePath = lvwModules.GetFirstSubItem(chModulePath.Index).Text;
+			filePath = lvwModules.GetFirstSelectedSubItem(chModulePath.Index).Text;
 			if (filePath != "InMemory")
 				Process.Start("explorer.exe", @"/select, " + filePath);
 		}
@@ -172,12 +173,16 @@ namespace ExtremeDumper.Forms {
 			return newFileName.ToString();
 		}
 
-		private void DumpModule(IntPtr moduleHandle, string filePath) {
+		private void DumpModule(IntPtr moduleHandle, ImageLayout imageLayout, string filePath) {
 			bool result;
 
 			using (IDumper dumper = DumperFactory.GetDumper(_process.Id, _dumperCore.Value))
-				result = dumper.DumpModule(moduleHandle, filePath);
+				result = dumper.DumpModule(moduleHandle, imageLayout, filePath);
 			MessageBoxStub.Show(result ? $"{_resources.GetString("StrDumpModuleSuccessfully")}{Environment.NewLine}{filePath}" : _resources.GetString("StrFailToDumpModule"), result ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+		}
+
+		private static string PathInsertPostfix(string path, string postfix) {
+			return Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + postfix + Path.GetExtension(path));
 		}
 
 		protected override void Dispose(bool disposing) {

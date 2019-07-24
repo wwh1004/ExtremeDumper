@@ -70,13 +70,12 @@
   <ItemGroup>
     <Compile Include="Dumper\AntiAntiDumper.cs" />
     <Compile Include="Dumper\AssemblyDetector.cs" />
-    <Compile Include="Dumper\DnlibDumper.cs" />
     <Compile Include="Dumper\DumperCore.cs" />
     <Compile Include="Dumper\EnvironmentCache.cs" />
     <Compile Include="Dumper\IDumper.cs" />
     <Compile Include="Dumper\MegaDumper.cs" />
     <Compile Include="Dumper\NativeMethods.cs" />
-    <Compile Include="Dumper\SafeNativeHandle.cs" />
+    <Compile Include="Dumper\PEImageHelper.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>

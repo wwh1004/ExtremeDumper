@@ -18,7 +18,7 @@ namespace ExtremeDumper.Forms {
 		public InjectingForm(uint processId) {
 			InitializeComponent();
 			_process = NativeProcess.Open(processId);
-			if (_process == null)
+			if (_process == NativeProcess.InvalidProcess)
 				throw new InvalidOperationException();
 			Text = $"Injector - {_process.Name}(ID={_process.Id.ToString()})";
 		}

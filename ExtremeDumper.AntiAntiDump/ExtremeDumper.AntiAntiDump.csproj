@@ -35,17 +35,25 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AntiAntiDumpImpl.cs" />
+    <Compile Include="AntiAntiDumpInfo.cs" />
+    <Compile Include="AntiAntiDumpService.cs" />
     <Compile Include="Injection.cs" />
-    <Compile Include="MetadataLocator\MetadataHelper.cs" />
-    <Compile Include="MetadataLocator\MetadataInfo.cs" />
-    <Compile Include="MetadataLocator\MetadataStreamInfo.cs" />
-    <Compile Include="MetadataLocator\NativeInterfaces.cs" />
-    <Compile Include="MetadataLocator\NativeMethods.cs" />
-    <Compile Include="MetadataService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System" />
     <Reference Include="System.Runtime.Remoting" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Libraries\MetadataLocator\MetadataLocator\MetadataLocator.csproj">
+      <Project>{aed69d77-8c7b-41ba-9967-ac9b522430f9}</Project>
+      <Name>MetadataLocator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\NativeSharp\NativeSharp\NativeSharp.csproj">
+      <Project>{2cd47f09-b324-4b20-8c8b-38fc4a037e37}</Project>
+      <Name>NativeSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

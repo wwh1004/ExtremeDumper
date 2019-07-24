@@ -10,10 +10,10 @@ namespace ExtremeDumper.AntiAntiDump {
 		public static int Main(string arg) {
 			try {
 				Options options;
-				MetadataService metadataService;
+				AntiAntiDumpService metadataService;
 
 				options = Options.Deserialize(arg);
-				metadataService = new MetadataService();
+				metadataService = new AntiAntiDumpService();
 				ChannelServices.RegisterChannel(new IpcServerChannel(null, options.PortName), false);
 				RemotingServices.Marshal(metadataService, options.ObjectName);
 			}

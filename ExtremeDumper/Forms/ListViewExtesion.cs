@@ -36,7 +36,7 @@ namespace ExtremeDumper.Forms {
 			}
 		}
 
-		public static ListViewItem.ListViewSubItem GetFirstSubItem(this ListView listView, int index) {
+		public static ListViewItem.ListViewSubItem GetFirstSelectedSubItem(this ListView listView, int index) {
 			if (listView is null)
 				throw new ArgumentNullException(nameof(listView));
 

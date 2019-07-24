@@ -4,10 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using dnlib.PE;
 using NativeSharp;
 
 namespace ExtremeDumper.Dumper {
-	public sealed class MegaDumper : IDumper {
+	public sealed unsafe class MegaDumper : IDumper {
 		private uint _processId;
 
 		private bool _is64;
@@ -23,8 +24,14 @@ namespace ExtremeDumper.Dumper {
 				};
 		}
 
-		public bool DumpModule(IntPtr moduleHandle, string filePath) {
-			return _is64 ? MegaDumperPrivate64.DumpModule(_processId, filePath, (long)moduleHandle) : MegaDumperPrivate32.DumpModule(_processId, filePath, (int)moduleHandle);
+		public bool DumpModule(IntPtr moduleHandle, ImageLayout imageLayout, string filePath) {
+			byte[] peImage;
+
+			if (imageLayout == ImageLayout.Memory)
+				return _is64 ? MegaDumperPrivate64.DumpModule(_processId, filePath, (long)moduleHandle) : MegaDumperPrivate32.DumpModule(_processId, filePath, (int)moduleHandle);
+			peImage = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout);
+			File.WriteAllBytes(filePath, peImage);
+			return true;
 		}
 
 		public int DumpProcess(string directoryPath) {

@@ -75,7 +75,7 @@ namespace ExtremeDumper.Forms {
 
 			if (fbdlgDumped.ShowDialog() != DialogResult.OK)
 				return;
-			DumpProcess(uint.Parse(lvwProcesses.GetFirstSubItem(chProcessId.Index).Text), Path.Combine(fbdlgDumped.SelectedPath, "Dumps"));
+			DumpProcess(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), Path.Combine(fbdlgDumped.SelectedPath, "Dumps"));
 		}
 
 		private void mnuViewModules_Click(object sender, EventArgs e) {
@@ -84,14 +84,14 @@ namespace ExtremeDumper.Forms {
 
 			ListViewItem.ListViewSubItem processNameItem;
 
-			processNameItem = lvwProcesses.GetFirstSubItem(chProcessName.Index);
+			processNameItem = lvwProcesses.GetFirstSelectedSubItem(chProcessName.Index);
 			if (Environment.Is64BitProcess && processNameItem.BackColor == Cache.DotNetColor && processNameItem.Text.EndsWith(_resources.GetString("Str32Bit"), StringComparison.Ordinal))
 				MessageBoxStub.Show(_resources.GetString("StrViewModulesSwitchTo32Bit"), MessageBoxIcon.Error);
 			else {
 				ModulesForm modulesForm;
 
 #pragma warning disable IDE0067
-				modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Cache.DotNetColor, _dumperCore);
+				modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Cache.DotNetColor, _dumperCore);
 #pragma warning restore IDE0067
 				modulesForm.FormClosed += (v1, v2) => modulesForm.Dispose();
 				modulesForm.Show();
@@ -113,7 +113,7 @@ namespace ExtremeDumper.Forms {
 			InjectingForm injectingForm;
 
 #pragma warning disable IDE0067
-			injectingForm = new InjectingForm(uint.Parse(lvwProcesses.GetFirstSubItem(chProcessId.Index).Text));
+			injectingForm = new InjectingForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text));
 #pragma warning restore IDE0067
 			injectingForm.FormClosed += (v1, v2) => injectingForm.Dispose();
 			injectingForm.Show();
@@ -123,7 +123,7 @@ namespace ExtremeDumper.Forms {
 			if (lvwProcesses.SelectedIndices.Count == 0)
 				return;
 
-			Process.Start("explorer.exe", @"/select, " + lvwProcesses.GetFirstSubItem(chProcessPath.Index).Text);
+			Process.Start("explorer.exe", @"/select, " + lvwProcesses.GetFirstSelectedSubItem(chProcessPath.Index).Text);
 		}
 		#endregion
 
