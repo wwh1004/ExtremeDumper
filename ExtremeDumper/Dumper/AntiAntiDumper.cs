@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -118,28 +117,11 @@ namespace ExtremeDumper.Dumper {
 			imageLayout = (ImageLayout)antiAntiDumpInfo.ImageLayout;
 			// 覆盖通过DAC获取的，不确定DAC获取的是否准确，毕竟DAC的bug还不少
 			metadataInfo = antiAntiDumpInfo.MetadataInfo;
-			PrintStreamInfo("#~ or #-", metadataInfo.TableStream);
-			PrintStreamInfo("#Strings", metadataInfo.StringHeap);
-			PrintStreamInfo("#US", metadataInfo.UserStringHeap);
-			PrintStreamInfo("#GUID", metadataInfo.GuidHeap);
-			PrintStreamInfo("#Blob", metadataInfo.BlobHeap);
 			peImageData = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout);
 			FixHeader(peImageData, antiAntiDumpInfo);
 			peImageData = PEImageHelper.ConvertImageLayout(peImageData, imageLayout, ImageLayout.File);
 			File.WriteAllBytes(filePath, peImageData);
 			return true;
-		}
-
-		private static void PrintStreamInfo(string name, MetadataStreamInfo streamInfo) {
-			Debug.WriteLine($"Name: {name}");
-			if (streamInfo is null) {
-				Debug.WriteLine("Not exists.");
-			}
-			else {
-				Debug.WriteLine($"Rva: 0x{streamInfo.Rva.ToString("X8")}");
-				Debug.WriteLine($"Length: 0x{streamInfo.Length.ToString("X8")}");
-			}
-			Debug.WriteLine(string.Empty);
 		}
 
 		public int DumpProcess(string directoryPath) {
