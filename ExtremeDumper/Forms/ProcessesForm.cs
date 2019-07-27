@@ -15,7 +15,7 @@ namespace ExtremeDumper.Forms {
 	internal partial class ProcessesForm : Form {
 		private static readonly bool _isAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 		private static readonly AboutForm _aboutForm = new AboutForm();
-		private readonly DumperCoreWrapper _dumperCore = new DumperCoreWrapper { Value = DumperCore.MegaDumper };
+		private readonly DumperTypeWrapper _dumperType = new DumperTypeWrapper { Value = DumperType.MegaDumper };
 		private readonly ResourceManager _resources = new ResourceManager(typeof(ProcessesForm));
 		private static bool _hasSeDebugPrivilege;
 
@@ -54,11 +54,11 @@ namespace ExtremeDumper.Forms {
 		}
 
 		private void mnuUseMegaDumper_Click(object sender, EventArgs e) {
-			SwitchDumperCore(DumperCore.MegaDumper);
+			SwitchDumperType(DumperType.MegaDumper);
 		}
 
 		private void mnuUseAntiAntiDumper_Click(object sender, EventArgs e) {
-			SwitchDumperCore(DumperCore.AntiAntiDumper);
+			SwitchDumperType(DumperType.AntiAntiDumper);
 		}
 
 		private void mnuAbout_Click(object sender, EventArgs e) {
@@ -91,7 +91,7 @@ namespace ExtremeDumper.Forms {
 				ModulesForm modulesForm;
 
 #pragma warning disable IDE0067
-				modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Cache.DotNetColor, _dumperCore);
+				modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Cache.DotNetColor, _dumperType);
 #pragma warning restore IDE0067
 				modulesForm.FormClosed += (v1, v2) => modulesForm.Dispose();
 				modulesForm.Show();
@@ -127,16 +127,16 @@ namespace ExtremeDumper.Forms {
 		}
 		#endregion
 
-		private void SwitchDumperCore(DumperCore dumperCore) {
+		private void SwitchDumperType(DumperType dumperType) {
 			mnuUseMegaDumper.Checked = false;
 			mnuUseAntiAntiDumper.Checked = false;
-			switch (dumperCore) {
-			case DumperCore.MegaDumper:
-				_dumperCore.Value = DumperCore.MegaDumper;
+			switch (dumperType) {
+			case DumperType.MegaDumper:
+				_dumperType.Value = DumperType.MegaDumper;
 				mnuUseMegaDumper.Checked = true;
 				break;
-			case DumperCore.AntiAntiDumper:
-				_dumperCore.Value = DumperCore.AntiAntiDumper;
+			case DumperType.AntiAntiDumper:
+				_dumperType.Value = DumperType.AntiAntiDumper;
 				mnuUseAntiAntiDumper.Checked = true;
 				break;
 			default:
@@ -212,7 +212,7 @@ namespace ExtremeDumper.Forms {
 		}
 
 		private void DumpProcess(uint processId, string directoryPath) {
-			using (IDumper dumper = DumperFactory.GetDumper(processId, _dumperCore.Value))
+			using (IDumper dumper = DumperFactory.GetDumper(processId, _dumperType.Value))
 				MessageBoxStub.Show($"{dumper.DumpProcess(directoryPath).ToString()} {_resources.GetString("StrDumpFilesSuccess")}{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
 		}
 	}

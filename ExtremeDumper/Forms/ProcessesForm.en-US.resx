@@ -135,8 +135,8 @@
   <data name="mnuDebugPrivilege.Text" xml:space="preserve">
     <value>Enable Debug Privilege</value>
   </data>
-  <data name="mnuDumperCore.Text" xml:space="preserve">
-    <value>DumperCore</value>
+  <data name="mnuDumperType.Text" xml:space="preserve">
+    <value>DumperType</value>
   </data>
   <data name="mnuDumpProcess.Text" xml:space="preserve">
     <value>Dump Selected Process</value>

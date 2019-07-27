@@ -14,53 +14,27 @@
   <PropertyGroup>
     <ApplicationIcon>Forms\Resources\Icon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\x86\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>IDE0001;IDE1006</NoWarn>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>..\bin\x86\Release\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <NoWarn>IDE0001;IDE1006</NoWarn>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>IDE0001;IDE1006</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <NoWarn>IDE0001;IDE1006</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -70,7 +44,7 @@
   <ItemGroup>
     <Compile Include="Dumper\AntiAntiDumper.cs" />
     <Compile Include="Dumper\AssemblyDetector.cs" />
-    <Compile Include="Dumper\DumperCore.cs" />
+    <Compile Include="Dumper\DumperType.cs" />
     <Compile Include="Dumper\EnvironmentCache.cs" />
     <Compile Include="Dumper\IDumper.cs" />
     <Compile Include="Dumper\MegaDumper.cs" />
@@ -83,15 +57,14 @@
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Cache.cs" />
-    <Compile Include="Forms\DumperCoreWrapper.cs" />
     <Compile Include="Forms\DumperFactory.cs" />
+    <Compile Include="Forms\DumperTypeWrapper.cs" />
     <Compile Include="Forms\FunctionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FunctionsForm.Designer.cs">
       <DependentUpon>FunctionsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\GlobalExceptionCatcher.cs" />
     <Compile Include="Forms\InjectingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -114,12 +87,13 @@
     <Compile Include="Forms\ProcessesForm.Designer.cs">
       <DependentUpon>ProcessesForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Program.cs" />
     <Compile Include="Forms\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="GlobalExceptionCatcher.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\AboutForm.en-US.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>

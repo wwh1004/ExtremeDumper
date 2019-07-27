@@ -184,8 +184,8 @@
   <data name="&gt;&gt;mnuGotoLocation.Name" xml:space="preserve">
     <value>mnuGotoLocation</value>
   </data>
-  <data name="&gt;&gt;mnuDumperCore.Name" xml:space="preserve">
-    <value>mnuDumperCore</value>
+  <data name="&gt;&gt;mnuDumperType.Name" xml:space="preserve">
+    <value>mnuDumperType</value>
   </data>
   <data name="&gt;&gt;mnuOptions.Name" xml:space="preserve">
     <value>mnuOptions</value>
@@ -209,7 +209,7 @@
   <data name="lvwProcesses.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="mnuDumperCore.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="mnuDumperType.Size" type="System.Drawing.Size, System.Drawing">
     <value>163, 22</value>
   </data>
   <data name="mnuAbout.Size" type="System.Drawing.Size, System.Drawing">
@@ -221,7 +221,7 @@
   <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
     <value>toolStripSeparator1</value>
   </data>
-  <data name="&gt;&gt;mnuDumperCore.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuDumperType.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="mnuUseAntiAntiDumper.Size" type="System.Drawing.Size, System.Drawing">

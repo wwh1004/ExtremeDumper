@@ -1,5 +1,5 @@
 namespace ExtremeDumper.Dumper {
-	public enum DumperCore {
+	public enum DumperType {
 		MegaDumper,
 
 		AntiAntiDumper

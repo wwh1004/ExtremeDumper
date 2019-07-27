@@ -22,42 +22,47 @@ namespace ExtremeDumper.AntiAntiDump {
 	/// <summary>
 	/// Metadata stream info
 	/// </summary>
-	public sealed class MetadataStreamInfo : MarshalByRefObject {
-		private readonly uint _rva;
-		private readonly uint _length;
+	[Serializable]
+	public sealed class MetadataStreamInfo {
+		/// <summary />
+		public uint Rva;
 
-		public uint Rva => _rva;
+		/// <summary />
+		public uint Length;
 
-		public uint Length => _length;
-
-		internal unsafe MetadataStreamInfo(InternalMetadataStreamInfo streamInfo, IntPtr moduleHandle) : this((uint)((byte*)streamInfo.Address - (byte*)moduleHandle), streamInfo.Length) {
+		/// <summary />
+		public MetadataStreamInfo() {
 		}
 
-		internal MetadataStreamInfo(uint rva, uint length) {
-			_rva = rva;
-			_length = length;
+		internal unsafe MetadataStreamInfo(InternalMetadataStreamInfo streamInfo, IntPtr moduleHandle) {
+			Rva = (uint)((byte*)streamInfo.Address - (byte*)moduleHandle);
+			Length = streamInfo.Length;
 		}
 	}
 
 	/// <summary>
 	/// Metadata info
 	/// </summary>
-	public sealed class MetadataInfo : MarshalByRefObject {
-		private readonly MetadataStreamInfo _tableStream;
-		private readonly MetadataStreamInfo _stringHeap;
-		private readonly MetadataStreamInfo _userStringHeap;
-		private readonly MetadataStreamInfo _guidHeap;
-		private readonly MetadataStreamInfo _blobHeap;
+	[Serializable]
+	public sealed class MetadataInfo {
+		/// <summary />
+		public MetadataStreamInfo TableStream;
 
-		public MetadataStreamInfo TableStream => _tableStream;
+		/// <summary />
+		public MetadataStreamInfo StringHeap;
 
-		public MetadataStreamInfo StringHeap => _stringHeap;
+		/// <summary />
+		public MetadataStreamInfo UserStringHeap;
 
-		public MetadataStreamInfo UserStringHeap => _userStringHeap;
+		/// <summary />
+		public MetadataStreamInfo GuidHeap;
 
-		public MetadataStreamInfo GuidHeap => _guidHeap;
+		/// <summary />
+		public MetadataStreamInfo BlobHeap;
 
-		public MetadataStreamInfo BlobHeap => _blobHeap;
+		/// <summary />
+		public MetadataInfo() {
+		}
 
 		internal MetadataInfo(InternalMetadataInfo metadataInfo) {
 			if (metadataInfo is null)
@@ -67,68 +72,53 @@ namespace ExtremeDumper.AntiAntiDump {
 
 			moduleHandle = Marshal.GetHINSTANCE(metadataInfo.Module);
 			if (!(metadataInfo.TableStream is null))
-				_tableStream = new MetadataStreamInfo(metadataInfo.TableStream, moduleHandle);
+				TableStream = new MetadataStreamInfo(metadataInfo.TableStream, moduleHandle);
 			if (!(metadataInfo.StringHeap is null))
-				_stringHeap = new MetadataStreamInfo(metadataInfo.StringHeap, moduleHandle);
+				StringHeap = new MetadataStreamInfo(metadataInfo.StringHeap, moduleHandle);
 			if (!(metadataInfo.UserStringHeap is null))
-				_userStringHeap = new MetadataStreamInfo(metadataInfo.UserStringHeap, moduleHandle);
+				UserStringHeap = new MetadataStreamInfo(metadataInfo.UserStringHeap, moduleHandle);
 			if (!(metadataInfo.GuidHeap is null))
-				_guidHeap = new MetadataStreamInfo(metadataInfo.GuidHeap, moduleHandle);
+				GuidHeap = new MetadataStreamInfo(metadataInfo.GuidHeap, moduleHandle);
 			if (!(metadataInfo.BlobHeap is null))
-				_blobHeap = new MetadataStreamInfo(metadataInfo.BlobHeap, moduleHandle);
+				BlobHeap = new MetadataStreamInfo(metadataInfo.BlobHeap, moduleHandle);
 		}
 	}
 
 	/// <summary>
 	/// AntiAntiDump info
 	/// </summary>
-	public sealed class AntiAntiDumpInfo : MarshalByRefObject {
-		private readonly bool _canAntiAntiDump;
-		private readonly ImageLayout _imageLayout;
-		private readonly uint _cor20HeaderRva;
-		private readonly uint _metadataRva;
-		private readonly uint _metadataSize;
-		private readonly MetadataInfo _metadataInfo;
-
+	[Serializable]
+	public sealed class AntiAntiDumpInfo {
 		/// <summary>
 		/// Can AntiAntiDump
 		/// </summary>
-		public bool CanAntiAntiDump => _canAntiAntiDump;
+		public bool CanAntiAntiDump;
 
 		/// <summary>
 		/// ImageLayout
 		/// </summary>
-		public ImageLayout ImageLayout => _imageLayout;
+		public ImageLayout ImageLayout;
 
 		/// <summary>
 		/// Rva of COR20_HEADER
 		/// NOTICE: It is calculated by (pCor20Header - methodHandle). So you can't direct use it to fill the field ".NET Metadata Directory Rva"
 		/// </summary>
-		public uint Cor20HeaderRva => _cor20HeaderRva;
+		public uint Cor20HeaderRva;
 
 		/// <summary>
 		/// Rva of metadata
 		/// NOTICE: It is calculated by (pMetadata - methodHandle). So you can't direct use it to fill the field "Metadata Rva"
 		/// </summary>
-		public uint MetadataRva => _metadataRva;
+		public uint MetadataRva;
 
 		/// <summary>
 		/// Size of metadata
 		/// </summary>
-		public uint MetadataSize => _metadataSize;
+		public uint MetadataSize;
 
 		/// <summary>
 		/// Metadata info
 		/// </summary>
-		public MetadataInfo MetadataInfo => _metadataInfo;
-
-		public AntiAntiDumpInfo(bool canAntiAntiDump, ImageLayout imageLayout, uint cor20HeaderRva, uint metadataRva, uint metadataSize, MetadataInfo metadataInfo) {
-			_canAntiAntiDump = canAntiAntiDump;
-			_imageLayout = imageLayout;
-			_cor20HeaderRva = cor20HeaderRva;
-			_metadataRva = metadataRva;
-			_metadataSize = metadataSize;
-			_metadataInfo = metadataInfo;
-		}
+		public MetadataInfo MetadataInfo;
 	}
 }

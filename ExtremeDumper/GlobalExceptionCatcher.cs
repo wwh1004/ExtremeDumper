@@ -1,8 +1,9 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
+using ExtremeDumper.Forms;
 
-namespace ExtremeDumper.Forms {
+namespace ExtremeDumper {
 	/// <summary>
 	/// 全局错误捕获
 	/// </summary>

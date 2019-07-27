@@ -7,6 +7,7 @@ using dnlib.DotNet;
 using dnlib.IO;
 using dnlib.PE;
 using ExtremeDumper.AntiAntiDump;
+using ExtremeDumper.AntiAntiDump.Serialization;
 using Microsoft.Diagnostics.Runtime;
 using NativeSharp;
 using ImageLayout = dnlib.PE.ImageLayout;
@@ -82,7 +83,7 @@ namespace ExtremeDumper.Dumper {
 		public bool DumpModule(IntPtr moduleHandle, ImageLayout imageLayout, string filePath) {
 			ClrModule dacModule;
 			InjectionClrVersion clrVersion;
-			Injection.Options options;
+			InjectionOptions injectionOptions;
 			AntiAntiDumpService antiAntiDumpService;
 			AntiAntiDumpInfo antiAntiDumpInfo;
 			MetadataInfo metadataInfo;
@@ -102,24 +103,23 @@ namespace ExtremeDumper.Dumper {
 				return false;
 			}
 			// 判断要dump的模块的CLR版本
-			options = new Injection.Options {
+			injectionOptions = new InjectionOptions {
 				PortName = Guid.NewGuid().ToString(),
 				ObjectName = Guid.NewGuid().ToString()
 			};
 			using (NativeProcess process = NativeProcess.Open(_processId))
-				if (!process.InjectManaged(typeof(AntiAntiDumpService).Assembly.Location, typeof(Injection).FullName, "Main", options.Serialize(), clrVersion, out int result) || result != 0)
+				if (!process.InjectManaged(typeof(AntiAntiDumpService).Assembly.Location, typeof(Injection).FullName, "Main", XmlSerializer.Serialize(injectionOptions), clrVersion, out int result) || result != 0)
 					return false;
-			antiAntiDumpService = (AntiAntiDumpService)Activator.GetObject(typeof(AntiAntiDumpService), $"Ipc://{options.PortName}/{options.ObjectName}");
+			antiAntiDumpService = (AntiAntiDumpService)Activator.GetObject(typeof(AntiAntiDumpService), $"Ipc://{injectionOptions.PortName}/{injectionOptions.ObjectName}");
 			// 注入DLL，通过.NET Remoting获取AntiAntiDumpService实例
-			antiAntiDumpInfo = antiAntiDumpService.GetAntiAntiDumpInfo(moduleHandle);
+			antiAntiDumpInfo = XmlSerializer.Deserialize<AntiAntiDumpInfo>(antiAntiDumpService.GetAntiAntiDumpInfo(moduleHandle));
 			if (!antiAntiDumpInfo.CanAntiAntiDump)
 				return false;
 			imageLayout = (ImageLayout)antiAntiDumpInfo.ImageLayout;
 			// 覆盖通过DAC获取的，不确定DAC获取的是否准确，毕竟DAC的bug还不少
-			metadataInfo = antiAntiDumpInfo.MetadataInfo;
 			peImageData = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout);
-			FixHeader(peImageData, antiAntiDumpInfo);
-			peImageData = PEImageHelper.ConvertImageLayout(peImageData, imageLayout, ImageLayout.File);
+			FixHeader(ref peImageData, antiAntiDumpInfo);
+			//peImageData = PEImageHelper.ConvertImageLayout(peImageData, imageLayout, ImageLayout.File);
 			File.WriteAllBytes(filePath, peImageData);
 			return true;
 		}
@@ -128,7 +128,7 @@ namespace ExtremeDumper.Dumper {
 			throw new NotSupportedException();
 		}
 
-		private void FixHeader(byte[] peImageData, AntiAntiDumpInfo antiAntiDumpInfo) {
+		private void FixHeader(ref byte[] peImageData, AntiAntiDumpInfo antiAntiDumpInfo) {
 			ImageLayout imageLayout;
 			uint cor20HeaderRva;
 			uint metadataRva;

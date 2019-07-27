@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using ExtremeDumper.AntiAntiDump.Serialization;
 using InternalMetadataInfo = MetadataLocator.MetadataInfo;
 
 namespace ExtremeDumper.AntiAntiDump {
@@ -17,26 +18,27 @@ namespace ExtremeDumper.AntiAntiDump {
 		/// </summary>
 		/// <param name="moduleHandle"></param>
 		/// <returns></returns>
-		public AntiAntiDumpInfo GetAntiAntiDumpInfo(IntPtr moduleHandle) {
+		public string GetAntiAntiDumpInfo(IntPtr moduleHandle) {
 			Module module;
-			bool canAntiAntiDump;
 			AntiAntiDumpInfo info;
 
 			module = GetModuleFromNativeModuleHandle(moduleHandle);
-			canAntiAntiDump = CanAntiAntiDump(module);
-			if (canAntiAntiDump) {
+			info = new AntiAntiDumpInfo {
+				CanAntiAntiDump = CanAntiAntiDump(module)
+			};
+			if (info.CanAntiAntiDump) {
 				void* pCor20Header;
 				void* pMetadata;
-				uint metadataSize;
-				MetadataInfo metadataInfo;
 
-				LocateMetadata(module, out pCor20Header, out pMetadata, out metadataSize);
-				metadataInfo = GetMetadataInfo(module);
-				info = new AntiAntiDumpInfo(true, GetImageLayout(module), (uint)((byte*)pCor20Header - (byte*)moduleHandle), (uint)((byte*)pMetadata - (byte*)moduleHandle), metadataSize, metadataInfo);
+				LocateMetadata(module, out pCor20Header, out pMetadata, out info.MetadataSize);
+				info = new AntiAntiDumpInfo {
+					ImageLayout = GetImageLayout(module),
+					Cor20HeaderRva = (uint)((byte*)pCor20Header - (byte*)moduleHandle),
+					MetadataRva = (uint)((byte*)pMetadata - (byte*)moduleHandle),
+					MetadataInfo = GetMetadataInfo(module)
+				};
 			}
-			else
-				info = new AntiAntiDumpInfo(false, default, default, default, default, default);
-			return info;
+			return XmlSerializer.Serialize(info);
 		}
 
 		private static Module GetModuleFromNativeModuleHandle(IntPtr moduleHandle) {
@@ -71,7 +73,7 @@ namespace ExtremeDumper.AntiAntiDump {
 		}
 
 		private static void LocateMetadata(Module module, out void* pCor20Header, out void* pMetadata, out uint metadataSize) {
-			AntiAntiDumpImpl.LocateMetadata(module, out pCor20Header, out pMetadata, out metadataSize);
+			AntiAntiDumpImpl.LocateDotNetPEInfo(module, out pCor20Header, out pMetadata, out metadataSize);
 		}
 
 		private static MetadataInfo GetMetadataInfo(Module module) {

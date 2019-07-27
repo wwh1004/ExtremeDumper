@@ -10,6 +10,7 @@ using Pointer = NativeSharp.Pointer;
 
 namespace ExtremeDumper.AntiAntiDump {
 	internal static unsafe class AntiAntiDumpImpl {
+		private static readonly Random _random = new Random();
 		private static FieldInfo _moduleHandleField;
 		private static void*[] _testModuleHandles;
 		private static void*[] _testMemoryModuleHandles;
@@ -65,7 +66,7 @@ namespace ExtremeDumper.AntiAntiDump {
 		private static Pointer Cor20HeaderAddressPointerTemplate {
 			get {
 				if (_cor20HeaderAddressPointerTemplate == null) {
-					_cor20HeaderAddressPointerTemplate = GetFirstValidTemplate(ScanCor20HeaderAddressPointerTemplates(), pCorHeader => VerifyCor20HeaderAddressPointer((void*)pCorHeader));
+					_cor20HeaderAddressPointerTemplate = GetFirstValidTemplate(ScanCor20HeaderAddressPointerTemplates(), pCorHeader => CheckCor20HeaderAddressPointer((void*)pCorHeader));
 					if (_cor20HeaderAddressPointerTemplate == null)
 						throw new InvalidOperationException();
 				}
@@ -76,7 +77,7 @@ namespace ExtremeDumper.AntiAntiDump {
 		private static Pointer MetadataAddressPointerTemplate {
 			get {
 				if (_metadataAddressPointerTemplate == null) {
-					_metadataAddressPointerTemplate = GetFirstValidTemplate(ScanMetadataAddressPointerTemplates(), pMetadata => VerifyMetadataAddressPointer((void*)pMetadata));
+					_metadataAddressPointerTemplate = GetFirstValidTemplate(ScanMetadataAddressPointerTemplates(), pMetadata => CheckMetadataAddressPointer((void*)pMetadata));
 					if (_metadataAddressPointerTemplate == null)
 						throw new InvalidOperationException();
 				}
@@ -110,13 +111,13 @@ namespace ExtremeDumper.AntiAntiDump {
 		}
 
 		/// <summary>
-		/// 获取关键.NET元数据信息
+		/// 获取关键.NET PE头相关信息
 		/// </summary>
 		/// <param name="module"></param>
 		/// <param name="pCor20Header"></param>
 		/// <param name="pMetadata"></param>
 		/// <param name="metadataSize"></param>
-		public static void LocateMetadata(Module module, out void* pCor20Header, out void* pMetadata, out uint metadataSize) {
+		public static void LocateDotNetPEInfo(Module module, out void* pCor20Header, out void* pMetadata, out uint metadataSize) {
 			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 
@@ -155,40 +156,45 @@ namespace ExtremeDumper.AntiAntiDump {
 				CompilerParameters options;
 				CodeCompileUnit assembly;
 				CodeNamespace @namespace;
+				CodeTypeDeclaration @class;
 				CompilerResults results;
 				Assembly compiledAssembly;
 
 				options = new CompilerParameters {
-					GenerateExecutable = false
+					GenerateExecutable = false,
+					OutputAssembly = Path.Combine(Path.GetTempPath(), $"___{_random.Next().ToString()}.dll")
 				};
-				if (isInMemory)
-					options.GenerateInMemory = true;
-				else
-					options.OutputAssembly = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".dll");
 				assembly = new CodeCompileUnit();
 				@namespace = new CodeNamespace("ns1");
 				assembly.Namespaces.Add(@namespace);
-				@namespace.Types.Add(new CodeTypeDeclaration("class1"));
+				// write namespace
+				@class = new CodeTypeDeclaration("class1");
+				@namespace.Types.Add(@class);
+				// write class
+				@class.Members.Add(new CodeMemberMethod() {
+					Name = "method1"
+				});
+				// write method
 				results = provider.CompileAssemblyFromDom(options, assembly);
-				compiledAssembly = isInMemory ? results.CompiledAssembly : Assembly.LoadFile(results.PathToAssembly);
+				compiledAssembly = isInMemory ? Assembly.Load(File.ReadAllBytes(results.PathToAssembly)) : Assembly.LoadFile(results.PathToAssembly);
 				return compiledAssembly;
 			}
 		}
 
-		private static Pointer GetFirstValidTemplate(List<Pointer> templates, Predicate<IntPtr> verifier) {
+		private static Pointer GetFirstValidTemplate(List<Pointer> templates, Predicate<IntPtr> checker) {
 			foreach (Pointer template in templates) {
 				foreach (void* moduleHandle in TestModuleHandles) {
 					void* address;
 					IntPtr value;
 
-					if (!TryToAddress(MakePointer(template, moduleHandle), out address) || !TryReadIntPtr(address, out value) || !verifier(value))
+					if (!TryToAddress(MakePointer(template, moduleHandle), out address) || !TryReadIntPtr(address, out value) || !checker(value))
 						goto next;
 				}
 				foreach (void* moduleHandle in TestMemoryModuleHandles) {
 					void* address;
 					IntPtr value;
 
-					if (!TryToAddress(MakePointer(template, moduleHandle), out address) || !TryReadIntPtr(address, out value) || !verifier(value))
+					if (!TryToAddress(MakePointer(template, moduleHandle), out address) || !TryReadIntPtr(address, out value) || !checker(value))
 						goto next;
 				}
 				return template;
@@ -257,7 +263,7 @@ namespace ExtremeDumper.AntiAntiDump {
 
 							if (!TryReadIntPtr((byte*)unknown1 + m_pCorHeaderOffset, out pCorHeader))
 								continue;
-							if (!VerifyCor20HeaderAddressPointer((void*)pCorHeader))
+							if (!CheckCor20HeaderAddressPointer((void*)pCorHeader))
 								continue;
 							pointers.Add(new Pointer((void*)m_fileOffset, m_identityOffset, unknownOffset1, m_pCorHeaderOffset));
 						}
@@ -267,7 +273,7 @@ namespace ExtremeDumper.AntiAntiDump {
 			return pointers;
 		}
 
-		private static bool VerifyCor20HeaderAddressPointer(void* pCorHeader) {
+		private static bool CheckCor20HeaderAddressPointer(void* pCorHeader) {
 			uint cb;
 
 			if (!TryReadUInt32(pCorHeader, out cb))
@@ -307,7 +313,7 @@ namespace ExtremeDumper.AntiAntiDump {
 
 						if (!TryReadIntPtr((byte*)unknown1 + unknownOffset2, out pMetadata))
 							continue;
-						if (!VerifyMetadataAddressPointer((void*)pMetadata))
+						if (!CheckMetadataAddressPointer((void*)pMetadata))
 							continue;
 						pointers.Add(new Pointer((void*)m_fileOffset, unknownOffset1, unknownOffset2));
 					}
@@ -316,7 +322,7 @@ namespace ExtremeDumper.AntiAntiDump {
 			return pointers;
 		}
 
-		private static bool VerifyMetadataAddressPointer(void* pMetadata) {
+		private static bool CheckMetadataAddressPointer(void* pMetadata) {
 			uint signature;
 
 			if (!TryReadUInt32(pMetadata, out signature))

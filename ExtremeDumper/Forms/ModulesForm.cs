@@ -19,16 +19,16 @@ namespace ExtremeDumper.Forms {
 		private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
 		private readonly NativeProcess _process;
 		private readonly bool _isDotNetProcess;
-		private readonly DumperCoreWrapper _dumperCore;
+		private readonly DumperTypeWrapper _dumperType;
 		private readonly ResourceManager _resources = new ResourceManager(typeof(ModulesForm));
 
-		public ModulesForm(uint processId, string processName, bool isDotNetProcess, DumperCoreWrapper dumperCore) {
+		public ModulesForm(uint processId, string processName, bool isDotNetProcess, DumperTypeWrapper dumperType) {
 			InitializeComponent();
 			_process = NativeProcess.Open(processId);
 			if (_process == NativeProcess.InvalidProcess)
 				throw new InvalidOperationException();
 			_isDotNetProcess = isDotNetProcess;
-			_dumperCore = dumperCore;
+			_dumperType = dumperType;
 			Text = $"{_resources.GetString("StrModules")} {processName}(ID={processId.ToString()})";
 			typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwModules, new object[] { true });
 			lvwModules.ListViewItemSorter = new ListViewItemSorter(lvwModules, new List<TypeCode> {
@@ -176,7 +176,7 @@ namespace ExtremeDumper.Forms {
 		private void DumpModule(IntPtr moduleHandle, ImageLayout imageLayout, string filePath) {
 			bool result;
 
-			using (IDumper dumper = DumperFactory.GetDumper(_process.Id, _dumperCore.Value))
+			using (IDumper dumper = DumperFactory.GetDumper(_process.Id, _dumperType.Value))
 				result = dumper.DumpModule(moduleHandle, imageLayout, filePath);
 			MessageBoxStub.Show(result ? $"{_resources.GetString("StrDumpModuleSuccessfully")}{Environment.NewLine}{filePath}" : _resources.GetString("StrFailToDumpModule"), result ? MessageBoxIcon.Information : MessageBoxIcon.Error);
 		}

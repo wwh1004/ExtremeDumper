@@ -12,10 +12,8 @@ build:
   project: ExtremeDumper.sln
   verbosity: normal
 artifacts:
-- path: bin\x64\Release\
-  name: ExtremeDumper-x64
-- path: bin\x86\Release\
-  name: ExtremeDumper-x86
+- path: bin\Release\
+  name: ExtremeDumper
 deploy:
 - provider: GitHub
   tag: $(APPVEYOR_REPO_TAG_NAME)

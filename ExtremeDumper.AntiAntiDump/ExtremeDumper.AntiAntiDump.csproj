@@ -39,11 +39,14 @@
     <Compile Include="AntiAntiDumpInfo.cs" />
     <Compile Include="AntiAntiDumpService.cs" />
     <Compile Include="Injection.cs" />
+    <Compile Include="InjectionOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\XmlSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Libraries\MetadataLocator\MetadataLocator\MetadataLocator.csproj">

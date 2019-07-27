@@ -135,7 +135,7 @@
   <data name="mnuDebugPrivilege.Text" xml:space="preserve">
     <value>提升Debug权限</value>
   </data>
-  <data name="mnuDumperCore.Text" xml:space="preserve">
+  <data name="mnuDumperType.Text" xml:space="preserve">
     <value>转储方式</value>
   </data>
   <data name="mnuDumpProcess.Text" xml:space="preserve">
