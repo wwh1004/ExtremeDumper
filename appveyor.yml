@@ -1,9 +1,7 @@
 version: '{build}'
 image: Visual Studio 2019 Preview
 configuration: Release
-platform:
-- x64
-- x86
+platform: Any CPU
 install:
 - cmd: git submodule update --init --recursive
 before_build:
