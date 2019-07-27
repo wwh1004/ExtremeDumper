@@ -167,6 +167,10 @@
       <Project>{104cac47-92e9-4634-a70e-17b3e697b1d1}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Libraries\MetadataLocator\MetadataLocator\MetadataLocator.csproj">
+      <Project>{AED69D77-8C7B-41BA-9967-AC9B522430F9}</Project>
+      <Name>MetadataLocator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\NativeSharp\NativeSharp\NativeSharp.csproj">
       <Project>{2cd47f09-b324-4b20-8c8b-38fc4a037e37}</Project>
       <Name>NativeSharp</Name>

@@ -15,7 +15,7 @@ namespace ExtremeDumper.AntiAntiDump.Serialization {
 		public static string Serialize<T>(T obj) {
 			using (MemoryStream stream = new MemoryStream()) {
 				Serializer<T>.Instance.Serialize(stream, obj);
-				return Encoding.Unicode.GetString(stream.ToArray());
+				return Encoding.UTF8.GetString(stream.ToArray());
 			}
 		}
 

@@ -84,8 +84,7 @@ namespace ExtremeDumper.Dumper {
 			ClrModule dacModule;
 			InjectionClrVersion clrVersion;
 			InjectionOptions injectionOptions;
-			AntiAntiDumpService antiAntiDumpService;
-			AntiAntiDumpInfo antiAntiDumpInfo;
+			MetadataInfoService metadataInfoService;
 			MetadataInfo metadataInfo;
 			byte[] peImageData;
 
@@ -108,17 +107,17 @@ namespace ExtremeDumper.Dumper {
 				ObjectName = Guid.NewGuid().ToString()
 			};
 			using (NativeProcess process = NativeProcess.Open(_processId))
-				if (!process.InjectManaged(typeof(AntiAntiDumpService).Assembly.Location, typeof(Injection).FullName, "Main", XmlSerializer.Serialize(injectionOptions), clrVersion, out int result) || result != 0)
+				if (!process.InjectManaged(typeof(MetadataInfoService).Assembly.Location, typeof(Injection).FullName, "Main", XmlSerializer.Serialize(injectionOptions), clrVersion, out int result) || result != 0)
 					return false;
-			antiAntiDumpService = (AntiAntiDumpService)Activator.GetObject(typeof(AntiAntiDumpService), $"Ipc://{injectionOptions.PortName}/{injectionOptions.ObjectName}");
-			// 注入DLL，通过.NET Remoting获取AntiAntiDumpService实例
-			antiAntiDumpInfo = XmlSerializer.Deserialize<AntiAntiDumpInfo>(antiAntiDumpService.GetAntiAntiDumpInfo(moduleHandle));
-			if (!antiAntiDumpInfo.CanAntiAntiDump)
+			metadataInfoService = (MetadataInfoService)Activator.GetObject(typeof(MetadataInfoService), $"Ipc://{injectionOptions.PortName}/{injectionOptions.ObjectName}");
+			// 注入DLL，通过.NET Remoting获取MetadataInfoService实例
+			metadataInfo = XmlSerializer.Deserialize<MetadataInfo>(metadataInfoService.GetMetadataInfo(moduleHandle));
+			if (!metadataInfo.PEInfo.IsValid)
 				return false;
-			imageLayout = (ImageLayout)antiAntiDumpInfo.ImageLayout;
+			imageLayout = (ImageLayout)metadataInfo.PEInfo.ImageLayout;
 			// 覆盖通过DAC获取的，不确定DAC获取的是否准确，毕竟DAC的bug还不少
 			peImageData = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout);
-			FixHeader(ref peImageData, antiAntiDumpInfo);
+			FixHeader(ref peImageData, metadataInfo);
 			//peImageData = PEImageHelper.ConvertImageLayout(peImageData, imageLayout, ImageLayout.File);
 			File.WriteAllBytes(filePath, peImageData);
 			return true;
@@ -128,23 +127,21 @@ namespace ExtremeDumper.Dumper {
 			throw new NotSupportedException();
 		}
 
-		private void FixHeader(ref byte[] peImageData, AntiAntiDumpInfo antiAntiDumpInfo) {
+		private void FixHeader(ref byte[] peImageData, MetadataInfo metadataInfo) {
 			ImageLayout imageLayout;
 			uint cor20HeaderRva;
 			uint metadataRva;
 			uint metadataSize;
-			MetadataInfo metadataInfo;
 			MetadataStreamInfo tableStreamInfo;
 			MetadataStreamInfo stringHeapInfo;
 			MetadataStreamInfo userStringHeapInfo;
 			MetadataStreamInfo guidHeapInfo;
 			MetadataStreamInfo blobHeapInfo;
 
-			imageLayout = (ImageLayout)antiAntiDumpInfo.ImageLayout;
-			cor20HeaderRva = antiAntiDumpInfo.Cor20HeaderRva;
-			metadataRva = antiAntiDumpInfo.MetadataRva;
-			metadataSize = antiAntiDumpInfo.MetadataSize;
-			metadataInfo = antiAntiDumpInfo.MetadataInfo;
+			imageLayout = (ImageLayout)metadataInfo.PEInfo.ImageLayout;
+			cor20HeaderRva = metadataInfo.PEInfo.Cor20HeaderRva;
+			metadataRva = metadataInfo.PEInfo.MetadataRva;
+			metadataSize = metadataInfo.PEInfo.MetadataSize;
 			tableStreamInfo = metadataInfo.TableStream;
 			stringHeapInfo = metadataInfo.StringHeap;
 			userStringHeapInfo = metadataInfo.UserStringHeap;

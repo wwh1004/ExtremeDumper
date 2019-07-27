@@ -8,12 +8,12 @@ namespace ExtremeDumper.AntiAntiDump {
 		public static int Main(string arg) {
 			try {
 				InjectionOptions options;
-				AntiAntiDumpService antiAntiDumpService;
+				MetadataInfoService metadataInfoService;
 
 				options = XmlSerializer.Deserialize<InjectionOptions>(arg);
-				antiAntiDumpService = new AntiAntiDumpService();
+				metadataInfoService = new MetadataInfoService();
 				ChannelServices.RegisterChannel(new IpcServerChannel(null, options.PortName), false);
-				RemotingServices.Marshal(antiAntiDumpService, options.ObjectName);
+				RemotingServices.Marshal(metadataInfoService, options.ObjectName);
 			}
 			catch {
 				return -1;

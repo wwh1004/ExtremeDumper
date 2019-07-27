@@ -35,9 +35,8 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AntiAntiDumpImpl.cs" />
-    <Compile Include="AntiAntiDumpInfo.cs" />
-    <Compile Include="AntiAntiDumpService.cs" />
+    <Compile Include="MetadataInfo.cs" />
+    <Compile Include="MetadataInfoService.cs" />
     <Compile Include="Injection.cs" />
     <Compile Include="InjectionOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
