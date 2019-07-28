@@ -402,4 +402,76 @@
   <data name="lvwProcesses.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="chProcessId.Text" xml:space="preserve">
+    <value>PID</value>
+  </data>
+  <data name="chProcessName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="chProcessPath.Text" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="fbdlgDumped.Description" xml:space="preserve">
+    <value>Select a directory to save dumps</value>
+  </data>
+  <data name="mnuAbout.Text" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="mnuDebugPrivilege.Text" xml:space="preserve">
+    <value>Enable Debug Privilege</value>
+  </data>
+  <data name="mnuDumperType.Text" xml:space="preserve">
+    <value>DumperType</value>
+  </data>
+  <data name="mnuDumpProcess.Text" xml:space="preserve">
+    <value>Dump Selected Process</value>
+  </data>
+  <data name="mnuGotoLocation.Text" xml:space="preserve">
+    <value>Goto Location</value>
+  </data>
+  <data name="mnuHelp.Text" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="mnuInjectDll.Text" xml:space="preserve">
+    <value>Inject Dll</value>
+  </data>
+  <data name="mnuOnlyDotNetProcess.Text" xml:space="preserve">
+    <value>Only .Net Processes</value>
+  </data>
+  <data name="mnuOptions.Text" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="mnuRefreshProcessList.Text" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="mnuUseAntiAntiDumper.Text" xml:space="preserve">
+    <value>AntiAntiDumper</value>
+  </data>
+  <data name="mnuUseMegaDumper.Text" xml:space="preserve">
+    <value>MegaDumper</value>
+  </data>
+  <data name="mnuViewModules.Text" xml:space="preserve">
+    <value>View Modules</value>
+  </data>
+  <data name="Str32Bit" xml:space="preserve">
+    <value>(32 Bit)</value>
+  </data>
+  <data name="StrAdministrator" xml:space="preserve">
+    <value>, Administrator</value>
+  </data>
+  <data name="StrDumpFilesSuccess" xml:space="preserve">
+    <value>Images have been dumped to:</value>
+  </data>
+  <data name="StrFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="StrRunAsAdmin" xml:space="preserve">
+    <value>Please runas administator</value>
+  </data>
+  <data name="StrSuccess" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="StrViewModulesSwitchTo32Bit" xml:space="preserve">
+    <value>Please run x86 version</value>
+  </data>
 </root>

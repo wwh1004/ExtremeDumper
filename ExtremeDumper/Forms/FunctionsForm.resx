@@ -228,4 +228,19 @@
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="chFunctionAddress.Text" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="chFunctionName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="chOrdinal.Text" xml:space="preserve">
+    <value>Ordinal</value>
+  </data>
+  <data name="mnuRefreshFunctionList.Text" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="StrExportFunctions" xml:space="preserve">
+    <value>Export Functions</value>
+  </data>
 </root>

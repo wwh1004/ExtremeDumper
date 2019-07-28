@@ -276,34 +276,61 @@
   <data name="&gt;&gt;tbArgument.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <metadata name="tbArgument.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="tbArgument.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="btSelectAssembly.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="btSelectAssembly.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="cmbEntryPoint.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="cmbEntryPoint.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="$this.Localizable" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="tbAssemblyPath.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="tbAssemblyPath.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="chkWaitReturn.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="chkWaitReturn.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="$this.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="$this.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="btInject.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="btInject.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="odlgSelectAssembly.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="odlgSelectAssembly.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 17</value>
-  </metadata>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="$this.Language" type="System.Globalization.CultureInfo, mscorlib">
     <value>en-US</value>
-  </metadata>
+  </data>
+  <data name="btInject.Text" xml:space="preserve">
+    <value>Inject</value>
+  </data>
+  <data name="btSelectAssembly.Text" xml:space="preserve">
+    <value>Select Assembly...</value>
+  </data>
+  <data name="chkWaitReturn.Text" xml:space="preserve">
+    <value>Wait</value>
+  </data>
+  <data name="StrFailToInject" xml:space="preserve">
+    <value>Failed to inject</value>
+  </data>
+  <data name="StrInjectSuccessfully" xml:space="preserve">
+    <value>Inject successfully</value>
+  </data>
+  <data name="StrInvalidAssembly" xml:space="preserve">
+    <value>Invalid assembly</value>
+  </data>
+  <data name="StrReturnValue" xml:space="preserve">
+    <value>Return value:</value>
+  </data>
+  <data name="StrWaiting" xml:space="preserve">
+    <value>Waiting...</value>
+  </data>
+  <data name="tbArgument.Text" xml:space="preserve">
+    <value>&lt;Optional Argument&gt;</value>
+  </data>
 </root>

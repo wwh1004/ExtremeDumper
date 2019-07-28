@@ -93,17 +93,11 @@
     <Compile Include="GlobalExceptionCatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\AboutForm.en-US.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AboutForm.zh-CN.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FunctionsForm.en-US.resx">
-      <DependentUpon>FunctionsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FunctionsForm.resx">
       <DependentUpon>FunctionsForm.cs</DependentUpon>
@@ -111,21 +105,11 @@
     <EmbeddedResource Include="Forms\FunctionsForm.zh-CN.resx">
       <DependentUpon>FunctionsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\InjectingForm.en-US.resx">
-      <DependentUpon>InjectingForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\InjectingForm.resx">
       <DependentUpon>InjectingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\InjectingForm.zh-CN.resx">
       <DependentUpon>InjectingForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ModulesForm.en-US.resx">
-      <DependentUpon>ModulesForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ProcessesForm.en-US.resx">
-      <DependentUpon>ProcessesForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProcessesForm.resx">
       <DependentUpon>ProcessesForm.cs</DependentUpon>

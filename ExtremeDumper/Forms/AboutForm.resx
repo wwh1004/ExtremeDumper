@@ -369,4 +369,25 @@
   <data name="llblGithub.Locked" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="lblAuthor.Text" xml:space="preserve">
+    <value>wwh1004</value>
+  </data>
+  <data name="lblTextAuthor.Text" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="lblTextThanks.Text" xml:space="preserve">
+    <value>Thanks</value>
+  </data>
+  <data name="lblThanks.Text" xml:space="preserve">
+    <value>0xd4d - dnlib &amp; dndbg
+CodeCracker - MegaDumper
+ClrMD - Microsoft</value>
+  </data>
+  <data name="lblVersion.Text" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="llblGithub.Text" xml:space="preserve">
+    <value>https://github.com/wwh1004
+/ExtremeDumper</value>
+  </data>
 </root>

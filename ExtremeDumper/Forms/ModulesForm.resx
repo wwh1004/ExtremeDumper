@@ -309,4 +309,49 @@
   <data name="ofdlgDumped.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>193, 17</value>
   </data>
+  <data name="chCLRVersion.Text" xml:space="preserve">
+    <value>CLR Version</value>
+  </data>
+  <data name="chDomainName.Text" xml:space="preserve">
+    <value>Domain Name</value>
+  </data>
+  <data name="chModuleHandle.Text" xml:space="preserve">
+    <value>BaseAddress</value>
+  </data>
+  <data name="chModuleName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="chModulePath.Text" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="chModuleSize.Text" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="fbdlgDumped.Description" xml:space="preserve">
+    <value>Select a path to save dump</value>
+  </data>
+  <data name="mnuDumpModule.Text" xml:space="preserve">
+    <value>Dump Selected Module</value>
+  </data>
+  <data name="mnuGotoLocation.Text" xml:space="preserve">
+    <value>Goto Location</value>
+  </data>
+  <data name="mnuOnlyDotNetModule.Text" xml:space="preserve">
+    <value>Only .Net Modules</value>
+  </data>
+  <data name="mnuRefreshModuleList.Text" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="mnuViewFunctions.Text" xml:space="preserve">
+    <value>View Export Functions</value>
+  </data>
+  <data name="StrDumpModuleSuccessfully" xml:space="preserve">
+    <value>Dump module successfully. Dump was saved in </value>
+  </data>
+  <data name="StrFailToDumpModule" xml:space="preserve">
+    <value>Fail to dump module.</value>
+  </data>
+  <data name="StrModules" xml:space="preserve">
+    <value>Modules</value>
+  </data>
 </root>
