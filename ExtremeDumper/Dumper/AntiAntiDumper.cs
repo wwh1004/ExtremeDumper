@@ -116,11 +116,21 @@ namespace ExtremeDumper.Dumper {
 				return false;
 			imageLayout = (ImageLayout)metadataInfo.PEInfo.ImageLayout;
 			try {
-				peImageData = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout);
+				peImageData = DumpModule(moduleHandle, imageLayout, metadataInfo, null);
+				// 尝试不使用文件中的节头
 			}
 			catch {
-				peImageData = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout, true, dacModule.FileName);
+				peImageData = DumpModule(moduleHandle, imageLayout, metadataInfo, dacModule.FileName);
+				// 如果出错，使用文件中的节头
 			}
+			File.WriteAllBytes(filePath, peImageData);
+			return true;
+		}
+
+		private byte[] DumpModule(IntPtr moduleHandle, ImageLayout imageLayout, MetadataInfo metadataInfo, string imagePath) {
+			byte[] peImageData;
+
+			peImageData = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout, !(imagePath is null), imagePath);
 			if (imageLayout == ImageLayout.File)
 				// 统一为内存格式，方便修复
 				FileLayoutToMemoryLayout(ref peImageData, metadataInfo);
@@ -128,8 +138,7 @@ namespace ExtremeDumper.Dumper {
 			// 修复.NET头
 			peImageData = PEImageHelper.ConvertImageLayout(peImageData, ImageLayout.Memory, ImageLayout.File);
 			// 转换回文件格式用于保存
-			File.WriteAllBytes(filePath, peImageData);
-			return true;
+			return peImageData;
 		}
 
 		private static void FileLayoutToMemoryLayout(ref byte[] peImageData, MetadataInfo metadataInfo) {
