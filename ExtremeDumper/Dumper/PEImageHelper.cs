@@ -13,37 +13,49 @@ namespace ExtremeDumper.Dumper {
 		/// <param name="processId">进程ID</param>
 		/// <param name="moduleHandle">模块句柄</param>
 		/// <param name="imageLayout">模块在内存中的格式</param>
-		/// <param name="alternativeToImagePath">如果无法正常获取模块路径，可提供备选模块路径</param>
-		/// <param name="fixSectionHeaders">是否修复节头</param>
 		/// <returns></returns>
-		public static byte[] DirectCopy(uint processId, void* moduleHandle, ImageLayout imageLayout, string alternativeToImagePath, bool fixSectionHeaders) {
+		public static byte[] DirectCopy(uint processId, void* moduleHandle, ImageLayout imageLayout) {
+			return DirectCopy(processId, moduleHandle, imageLayout, false, null);
+		}
+
+		/// <summary>
+		/// 直接从内存中复制模块，不执行格式转换操作
+		/// </summary>
+		/// <param name="processId">进程ID</param>
+		/// <param name="moduleHandle">模块句柄</param>
+		/// <param name="imageLayout">模块在内存中的格式</param>
+		/// <param name="useSectionHeadersInFile">是否使用文件中的节头</param>
+		/// <param name="alternativeToImagePath">如果无法正常获取模块路径，可提供备选模块路径</param>
+		/// <returns></returns>
+		public static byte[] DirectCopy(uint processId, void* moduleHandle, ImageLayout imageLayout, bool useSectionHeadersInFile, string alternativeToImagePath) {
 			if (processId == 0)
 				throw new ArgumentNullException(nameof(processId));
 			if (moduleHandle is null)
 				throw new ArgumentNullException(nameof(moduleHandle));
-			if (string.IsNullOrEmpty(alternativeToImagePath))
-				alternativeToImagePath = null;
-			else {
-				if (!File.Exists(alternativeToImagePath))
-					throw new FileNotFoundException(nameof(alternativeToImagePath));
-			}
+			if (useSectionHeadersInFile)
+				if (string.IsNullOrEmpty(alternativeToImagePath))
+					alternativeToImagePath = null;
+				else {
+					if (!File.Exists(alternativeToImagePath))
+						throw new FileNotFoundException(nameof(alternativeToImagePath));
+				}
 
 			using (NativeProcess process = NativeProcess.Open(processId)) {
-				NativeModule module;
-				string imagePath;
-				bool hasPhysicalImage;
 				PageInfo firstPageInfo;
+				string imagePath;
 				byte[] peImageData;
 				uint imageSize;
 
-				module = process.UnsafeGetModule(moduleHandle);
-				imagePath = module.ImagePath;
-				if (string.IsNullOrEmpty(imagePath))
-					imagePath = alternativeToImagePath;
-				hasPhysicalImage = !string.IsNullOrEmpty(imagePath);
-				// 获取模块路径
 				firstPageInfo = process.EnumeratePageInfos(moduleHandle, moduleHandle).First();
-				if (hasPhysicalImage)
+				if (useSectionHeadersInFile) {
+					imagePath = process.UnsafeGetModule(moduleHandle).ImagePath;
+					if (string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))
+						imagePath = alternativeToImagePath;
+				}
+				else
+					imagePath = default;
+				// 获取模块路径（如果需要使用文件中的节头）
+				if (useSectionHeadersInFile)
 					imageSize = GetImageSize(File.ReadAllBytes(imagePath), imageLayout);
 				else {
 					byte[] peHeaderData;
@@ -70,7 +82,8 @@ namespace ExtremeDumper.Dumper {
 				default:
 					throw new NotSupportedException();
 				}
-				if (fixSectionHeaders && hasPhysicalImage)
+				// 转储
+				if (useSectionHeadersInFile)
 					using (PEImage peHeader = new PEImage(imagePath, false)) {
 						int startOffset;
 						int endOffset;
@@ -81,6 +94,7 @@ namespace ExtremeDumper.Dumper {
 						sectionHeadersData = peHeader.CreateReader((FileOffset)startOffset).ReadBytes(endOffset - startOffset);
 						Buffer.BlockCopy(sectionHeadersData, 0, peImageData, startOffset, endOffset - startOffset);
 					}
+				// 替换节头（如果需要使用文件中的节头）
 				return peImageData;
 			}
 		}
