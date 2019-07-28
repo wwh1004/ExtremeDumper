@@ -115,7 +115,7 @@ namespace ExtremeDumper.Dumper {
 			if (!metadataInfo.PEInfo.IsValid)
 				return false;
 			imageLayout = (ImageLayout)metadataInfo.PEInfo.ImageLayout;
-			peImageData = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout);
+			peImageData = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout, dacModule.FileName, true);
 			if (imageLayout == ImageLayout.File)
 				// 统一为内存格式，方便修复
 				FileLayoutToMemoryLayout(ref peImageData, metadataInfo);

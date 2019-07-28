@@ -1,30 +1,58 @@
 using System;
+using System.IO;
 using System.Linq;
+using dnlib.IO;
 using dnlib.PE;
 using NativeSharp;
 
 namespace ExtremeDumper.Dumper {
 	internal static unsafe class PEImageHelper {
-		public static byte[] DirectCopy(uint processId, void* moduleHandle, ImageLayout imageLayout, string alternativeToImagePath = null) {
+		/// <summary>
+		/// 直接从内存中复制模块，不执行格式转换操作
+		/// </summary>
+		/// <param name="processId">进程ID</param>
+		/// <param name="moduleHandle">模块句柄</param>
+		/// <param name="imageLayout">模块在内存中的格式</param>
+		/// <param name="alternativeToImagePath">如果无法正常获取模块路径，可提供备选模块路径</param>
+		/// <param name="fixSectionHeaders">是否修复节头</param>
+		/// <returns></returns>
+		public static byte[] DirectCopy(uint processId, void* moduleHandle, ImageLayout imageLayout, string alternativeToImagePath, bool fixSectionHeaders) {
 			if (processId == 0)
 				throw new ArgumentNullException(nameof(processId));
 			if (moduleHandle is null)
 				throw new ArgumentNullException(nameof(moduleHandle));
+			if (string.IsNullOrEmpty(alternativeToImagePath))
+				alternativeToImagePath = null;
+			else {
+				if (!File.Exists(alternativeToImagePath))
+					throw new FileNotFoundException(nameof(alternativeToImagePath));
+			}
 
 			using (NativeProcess process = NativeProcess.Open(processId)) {
 				NativeModule module;
 				string imagePath;
+				bool hasPhysicalImage;
 				PageInfo firstPageInfo;
 				byte[] peImageData;
 				uint imageSize;
 
 				module = process.UnsafeGetModule(moduleHandle);
-				module.
-				imagePath =process.GetModule()
+				imagePath = module.ImagePath;
+				if (string.IsNullOrEmpty(imagePath))
+					imagePath = alternativeToImagePath;
+				hasPhysicalImage = !string.IsNullOrEmpty(imagePath);
+				// 获取模块路径
 				firstPageInfo = process.EnumeratePageInfos(moduleHandle, moduleHandle).First();
-				peImageData = new byte[(uint)firstPageInfo.Size];
-				process.ReadBytes(moduleHandle, peImageData);
-				imageSize = GetImageSize(peImageData, imageLayout);
+				if (hasPhysicalImage)
+					imageSize = GetImageSize(File.ReadAllBytes(imagePath), imageLayout);
+				else {
+					byte[] peHeaderData;
+
+					peHeaderData = new byte[(uint)firstPageInfo.Size];
+					process.ReadBytes(moduleHandle, peHeaderData);
+					imageSize = GetImageSize(peHeaderData, imageLayout);
+				}
+				// 获取模块在内存中的大小
 				peImageData = new byte[imageSize];
 				switch (imageLayout) {
 				case ImageLayout.File:
@@ -42,6 +70,17 @@ namespace ExtremeDumper.Dumper {
 				default:
 					throw new NotSupportedException();
 				}
+				if (fixSectionHeaders && hasPhysicalImage)
+					using (PEImage peHeader = new PEImage(imagePath, false)) {
+						int startOffset;
+						int endOffset;
+						byte[] sectionHeadersData;
+
+						startOffset = (int)peHeader.ImageSectionHeaders.First().StartOffset;
+						endOffset = (int)peHeader.ImageSectionHeaders.Last().EndOffset;
+						sectionHeadersData = peHeader.CreateReader((FileOffset)startOffset).ReadBytes(endOffset - startOffset);
+						Buffer.BlockCopy(sectionHeadersData, 0, peImageData, startOffset, endOffset - startOffset);
+					}
 				return peImageData;
 			}
 		}

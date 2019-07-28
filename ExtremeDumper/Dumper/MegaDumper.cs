@@ -29,7 +29,7 @@ namespace ExtremeDumper.Dumper {
 
 			if (imageLayout == ImageLayout.Memory)
 				return _is64 ? MegaDumperPrivate64.DumpModule(_processId, filePath, (long)moduleHandle) : MegaDumperPrivate32.DumpModule(_processId, filePath, (int)moduleHandle);
-			peImage = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout);
+			peImage = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout, null, false);
 			File.WriteAllBytes(filePath, peImage);
 			return true;
 		}
