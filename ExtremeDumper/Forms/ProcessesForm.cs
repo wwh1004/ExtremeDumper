@@ -155,7 +155,7 @@ namespace ExtremeDumper.Forms {
 
 			lvwProcesses.Items.Clear();
 			processIds = NativeProcess.GetAllProcessIds();
-			if (processIds == null)
+			if (processIds is null)
 				return;
 			moduleEntry32 = MODULEENTRY32.Default;
 			foreach (uint processId in processIds) {

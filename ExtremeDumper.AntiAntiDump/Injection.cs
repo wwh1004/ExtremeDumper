@@ -1,6 +1,3 @@
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
 using ExtremeDumper.AntiAntiDump.Serialization;
 
 namespace ExtremeDumper.AntiAntiDump {
@@ -8,12 +5,9 @@ namespace ExtremeDumper.AntiAntiDump {
 		public static int Main(string arg) {
 			try {
 				InjectionOptions options;
-				MetadataInfoService metadataInfoService;
 
 				options = XmlSerializer.Deserialize<InjectionOptions>(arg);
-				metadataInfoService = new MetadataInfoService();
-				ChannelServices.RegisterChannel(new IpcServerChannel(null, options.PortName), false);
-				RemotingServices.Marshal(metadataInfoService, options.ObjectName);
+				new MetadataInfoService().Start(options.PortName, options.ObjectName);
 			}
 			catch {
 				return -1;

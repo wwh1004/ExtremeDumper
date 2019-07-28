@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
 using ExtremeDumper.AntiAntiDump.Serialization;
 using InternalMetadataInfo = MetadataLocator.MetadataInfo;
 
@@ -12,6 +15,16 @@ namespace ExtremeDumper.AntiAntiDump {
 	/// </summary>
 	public sealed unsafe class MetadataInfoService : MarshalByRefObject {
 		private static readonly Dictionary<IntPtr, Module> _cachedModules = new Dictionary<IntPtr, Module>();
+
+		public void Start(string portName, string objectName) {
+			if (string.IsNullOrEmpty(portName))
+				throw new ArgumentNullException(nameof(portName));
+			if (string.IsNullOrEmpty(objectName))
+				throw new ArgumentNullException(nameof(objectName));
+
+			ChannelServices.RegisterChannel(new IpcServerChannel(null, portName), false);
+			RemotingServices.Marshal(this, objectName);
+		}
 
 		/// <summary>
 		/// Get metadata info

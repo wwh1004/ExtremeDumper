@@ -43,9 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dumper\AntiAntiDumper.cs" />
-    <Compile Include="Dumper\AssemblyDetector.cs" />
     <Compile Include="Dumper\DumperType.cs" />
-    <Compile Include="Dumper\EnvironmentCache.cs" />
     <Compile Include="Dumper\IDumper.cs" />
     <Compile Include="Dumper\MegaDumper.cs" />
     <Compile Include="Dumper\NativeMethods.cs" />

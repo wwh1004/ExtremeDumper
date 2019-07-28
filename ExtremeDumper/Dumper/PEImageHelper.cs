@@ -5,12 +5,22 @@ using NativeSharp;
 
 namespace ExtremeDumper.Dumper {
 	internal static unsafe class PEImageHelper {
-		public static byte[] DirectCopy(uint processId, void* moduleHandle, ImageLayout imageLayout) {
+		public static byte[] DirectCopy(uint processId, void* moduleHandle, ImageLayout imageLayout, string alternativeToImagePath = null) {
+			if (processId == 0)
+				throw new ArgumentNullException(nameof(processId));
+			if (moduleHandle is null)
+				throw new ArgumentNullException(nameof(moduleHandle));
+
 			using (NativeProcess process = NativeProcess.Open(processId)) {
+				NativeModule module;
+				string imagePath;
 				PageInfo firstPageInfo;
 				byte[] peImageData;
 				uint imageSize;
 
+				module = process.UnsafeGetModule(moduleHandle);
+				module.
+				imagePath =process.GetModule()
 				firstPageInfo = process.EnumeratePageInfos(moduleHandle, moduleHandle).First();
 				peImageData = new byte[(uint)firstPageInfo.Size];
 				process.ReadBytes(moduleHandle, peImageData);

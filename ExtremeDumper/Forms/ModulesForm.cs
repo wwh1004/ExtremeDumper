@@ -53,13 +53,21 @@ namespace ExtremeDumper.Forms {
 			if (lvwModules.SelectedIndices.Count == 0)
 				return;
 
+			string filePath;
+			string directoryPath;
 			IntPtr moduleHandle;
 
-			sfdlgDumped.FileName = PathInsertPostfix(EnsureValidFileName(lvwModules.GetFirstSelectedSubItem(chModuleName.Index).Text), ".dump");
+			filePath = PathInsertPostfix(EnsureValidFileName(lvwModules.GetFirstSelectedSubItem(chModuleName.Index).Text), ".dump");
+			if (filePath.EndsWith(".dump", StringComparison.Ordinal))
+				filePath += ".dll";
+			sfdlgDumped.FileName = filePath;
+			directoryPath = lvwModules.GetFirstSelectedSubItem(chModulePath.Index).Text;
+			if (directoryPath != "InMemory" && Directory.Exists(directoryPath))
+				sfdlgDumped.InitialDirectory = directoryPath;
 			if (sfdlgDumped.ShowDialog() != DialogResult.OK)
 				return;
 			moduleHandle = (IntPtr)ulong.Parse(lvwModules.GetFirstSelectedSubItem(chModuleHandle.Index).Text.Substring(2), NumberStyles.HexNumber, null);
-			DumpModule(moduleHandle, lvwModules.GetFirstSelectedSubItem(chModulePath.Index).Text == "InMemory" ? ImageLayout.File : ImageLayout.Memory, sfdlgDumped.FileName);
+			DumpModule(moduleHandle, directoryPath == "InMemory" ? ImageLayout.File : ImageLayout.Memory, sfdlgDumped.FileName);
 		}
 
 		private void mnuRefreshModuleList_Click(object sender, EventArgs e) {

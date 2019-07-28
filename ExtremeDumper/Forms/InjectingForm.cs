@@ -58,7 +58,7 @@ namespace ExtremeDumper.Forms {
 
 			if (!File.Exists(_assemblyPath))
 				return;
-			if (cmbEntryPoint.SelectedItem == null)
+			if (cmbEntryPoint.SelectedItem is null)
 				return;
 			typeName = _entryPoint.FullName.Substring(_entryPoint.FullName.IndexOf(' ') + 1);
 			typeName = typeName.Substring(0, typeName.IndexOf(':'));
