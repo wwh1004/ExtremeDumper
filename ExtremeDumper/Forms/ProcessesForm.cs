@@ -171,7 +171,7 @@ namespace ExtremeDumper.Forms {
 				listViewItem.SubItems.Add(moduleEntry32.szExePath);
 				isDotNetProcess = false;
 				while (Module32Next(snapshotHandle, ref moduleEntry32))
-					if ((t = moduleEntry32.szModule.ToUpperInvariant()) == "MSCORJIT.DLL" || t == "MSCOREE.DLL" || t == "MSCORWKS.DLL" || t == "CLR.DLL" || t == "CLRJIT.DLL") {
+					if ((t = moduleEntry32.szModule.ToUpperInvariant()) == "MSCOREE.DLL" || t == "MSCORWKS.DLL" || t == "MSCORJIT.DLL" || t == "CLR.DLL" || t == "CLRJIT.DLL") {
 						listViewItem.BackColor = Cache.DotNetColor;
 						isDotNetProcess = true;
 						if (Cache.Is64BitProcess && Is64BitPE(moduleEntry32.szExePath, out is64) && !is64)
