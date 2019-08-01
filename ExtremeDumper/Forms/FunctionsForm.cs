@@ -16,7 +16,7 @@ namespace ExtremeDumper.Forms {
 
 			InitializeComponent();
 			_module = module;
-			Text = $"{_resources.GetString("StrExportFunctions")} {_module.Name}(0x{_module.Handle.ToString(Cache.Is64BitProcess ? "X16" : "X8")})";
+			Text = $"{_resources.GetString("StrExportFunctions")} {_module.Name}(0x{((IntPtr)_module.Handle).ToString(Cache.Is64BitProcess ? "X16" : "X8")})";
 			typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwFunctions, new object[] { true });
 			lvwFunctions.ListViewItemSorter = new ListViewItemSorter(lvwFunctions, new List<TypeCode> {
 				TypeCode.String,
