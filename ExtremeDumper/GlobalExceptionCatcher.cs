@@ -8,31 +8,36 @@ namespace ExtremeDumper {
 	/// 全局错误捕获
 	/// </summary>
 	internal static class GlobalExceptionCatcher {
-		/// <summary>
-		/// 指示是否使用过
-		/// </summary>
-		private static bool _used;
+		private static bool _isStarted;
 
 		/// <summary>
 		/// 自动捕获所有异常
 		/// </summary>
 		public static void Catch() {
-			if (!_used) {
-				_used = true;
+			if (!_isStarted) {
 				Application.ThreadException += (object sender, System.Threading.ThreadExceptionEventArgs e) => ShowDetailException(e.Exception);
 				AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => ShowDetailException((Exception)e.ExceptionObject);
+				_isStarted = true;
 			}
 		}
 
-		private static void ShowDetailException(Exception ex) {
-			StringBuilder message;
+		private static void ShowDetailException(Exception exception) {
+			StringBuilder sb;
 
-			message = new StringBuilder();
-			message.AppendLine("Message：\n" + ex.Message);
-			message.AppendLine("Source：\n" + ex.Source);
-			message.AppendLine("StackTrace：\n" + ex.StackTrace);
-			message.AppendLine("TargetSite：\n" + ex.TargetSite.ToString());
-			MessageBoxStub.Show(message.ToString(), MessageBoxIcon.Error);
+			sb = new StringBuilder();
+			DumpException(exception, sb);
+			MessageBoxStub.Show(sb.ToString(), MessageBoxIcon.Error);
+		}
+
+		private static void DumpException(Exception exception, StringBuilder sb) {
+			sb.AppendLine("Type: " + Environment.NewLine + exception.GetType().FullName);
+			sb.AppendLine("Message: " + Environment.NewLine + exception.Message);
+			sb.AppendLine("Source: " + Environment.NewLine + exception.Source);
+			sb.AppendLine("StackTrace: " + Environment.NewLine + exception.StackTrace);
+			sb.AppendLine("TargetSite: " + Environment.NewLine + exception.TargetSite.ToString());
+			sb.AppendLine("----------------------------------------");
+			if (exception.InnerException != null)
+				DumpException(exception.InnerException, sb);
 		}
 	}
 }
