@@ -69,10 +69,10 @@ namespace ExtremeDumper.Dumper {
 		}
 		#endregion
 
-		private readonly uint _processId;
+		private readonly NativeProcess _process;
 
 		private AntiAntiDumper(uint processId) {
-			_processId = processId;
+			_process = NativeProcess.Open(processId);
 		}
 
 		public static IDumper Create(uint processId) {
@@ -81,6 +81,7 @@ namespace ExtremeDumper.Dumper {
 
 		public bool DumpModule(IntPtr moduleHandle, ImageLayout imageLayout, string filePath) {
 			try {
+				NativeModule module;
 				ClrModule dacModule;
 				InjectionClrVersion clrVersion;
 				InjectionOptions injectionOptions;
@@ -88,7 +89,8 @@ namespace ExtremeDumper.Dumper {
 				MetadataInfo metadataInfo;
 				byte[] peImageData;
 
-				dacModule = TryGetDacModule(moduleHandle);
+				module = _process.UnsafeGetModule((void*)moduleHandle);
+				dacModule = TryGetDacModule(module);
 				if (dacModule is null)
 					return false;
 				switch (dacModule.Runtime.ClrInfo.Version.Major) {
@@ -106,9 +108,8 @@ namespace ExtremeDumper.Dumper {
 					PortName = Guid.NewGuid().ToString(),
 					ObjectName = Guid.NewGuid().ToString()
 				};
-				using (NativeProcess process = NativeProcess.Open(_processId))
-					if (!process.InjectManaged(typeof(MetadataInfoService).Assembly.Location, typeof(Injection).FullName, "Main", XmlSerializer.Serialize(injectionOptions), clrVersion, out int result) || result != 0)
-						return false;
+				if (!_process.InjectManaged(typeof(MetadataInfoService).Assembly.Location, typeof(Injection).FullName, "Main", XmlSerializer.Serialize(injectionOptions), clrVersion, out int result) || result != 0)
+					return false;
 				metadataInfoService = (MetadataInfoService)Activator.GetObject(typeof(MetadataInfoService), $"Ipc://{injectionOptions.PortName}/{injectionOptions.ObjectName}");
 				// 注入DLL，通过.NET Remoting获取MetadataInfoService实例
 				metadataInfo = XmlSerializer.Deserialize<MetadataInfo>(metadataInfoService.GetMetadataInfo(moduleHandle));
@@ -116,11 +117,11 @@ namespace ExtremeDumper.Dumper {
 					return false;
 				imageLayout = (ImageLayout)metadataInfo.PEInfo.ImageLayout;
 				try {
-					peImageData = DumpModule(moduleHandle, imageLayout, metadataInfo, null);
+					peImageData = DumpModule(module, imageLayout, metadataInfo, null);
 					// 尝试不使用文件中的节头
 				}
 				catch {
-					peImageData = DumpModule(moduleHandle, imageLayout, metadataInfo, dacModule.FileName);
+					peImageData = DumpModule(module, imageLayout, metadataInfo, dacModule.FileName);
 					// 如果出错，使用文件中的节头
 				}
 				File.WriteAllBytes(filePath, peImageData);
@@ -131,10 +132,10 @@ namespace ExtremeDumper.Dumper {
 			}
 		}
 
-		private byte[] DumpModule(IntPtr moduleHandle, ImageLayout imageLayout, MetadataInfo metadataInfo, string imagePath) {
+		private static byte[] DumpModule(NativeModule module, ImageLayout imageLayout, MetadataInfo metadataInfo, string imagePath) {
 			byte[] peImageData;
 
-			peImageData = PEImageHelper.DirectCopy(_processId, (void*)moduleHandle, imageLayout, !(imagePath is null), imagePath);
+			peImageData = PEImageHelper.DirectCopy(module, imageLayout, !(imagePath is null), imagePath);
 			if (imageLayout == ImageLayout.File)
 				// 统一为内存格式，方便修复
 				FileLayoutToMemoryLayout(ref peImageData, metadataInfo);
@@ -289,16 +290,14 @@ namespace ExtremeDumper.Dumper {
 				}
 		}
 
-		private ClrModule TryGetDacModule(IntPtr moduleHandle) {
-			DataTarget dataTarget;
-
+		private static ClrModule TryGetDacModule(NativeModule module) {
 			try {
-				using (dataTarget = DataTarget.AttachToProcess((int)_processId, 3000, AttachFlag.Passive))
-					return dataTarget.ClrVersions.SelectMany(t => t.CreateRuntime().Modules).First(t => (IntPtr)t.ImageBase == moduleHandle);
+				using (DataTarget dataTarget = DataTarget.AttachToProcess((int)module.Process.Id, 3000, AttachFlag.Passive))
+					return dataTarget.ClrVersions.SelectMany(t => t.CreateRuntime().Modules).First(t => (void*)t.ImageBase == module.Handle);
 			}
 			catch {
+				return null;
 			}
-			return null;
 		}
 
 		public int DumpProcess(string directoryPath) {
@@ -306,6 +305,7 @@ namespace ExtremeDumper.Dumper {
 		}
 
 		public void Dispose() {
+			_process.Dispose();
 		}
 	}
 }

@@ -10,28 +10,24 @@ namespace ExtremeDumper.Dumper {
 		/// <summary>
 		/// 直接从内存中复制模块，不执行格式转换操作
 		/// </summary>
-		/// <param name="processId">进程ID</param>
-		/// <param name="moduleHandle">模块句柄</param>
+		/// <param name="module">模块</param>
 		/// <param name="imageLayout">模块在内存中的格式</param>
 		/// <returns></returns>
-		public static byte[] DirectCopy(uint processId, void* moduleHandle, ImageLayout imageLayout) {
-			return DirectCopy(processId, moduleHandle, imageLayout, false, null);
+		public static byte[] DirectCopy(NativeModule module, ImageLayout imageLayout) {
+			return DirectCopy(module, imageLayout, false, null);
 		}
 
 		/// <summary>
 		/// 直接从内存中复制模块，不执行格式转换操作
 		/// </summary>
-		/// <param name="processId">进程ID</param>
-		/// <param name="moduleHandle">模块句柄</param>
+		/// <param name="module">模块</param>
 		/// <param name="imageLayout">模块在内存中的格式</param>
 		/// <param name="useSectionHeadersInFile">是否使用文件中的节头</param>
 		/// <param name="alternativeToImagePath">如果无法正常获取模块路径，可提供备选模块路径</param>
 		/// <returns></returns>
-		public static byte[] DirectCopy(uint processId, void* moduleHandle, ImageLayout imageLayout, bool useSectionHeadersInFile, string alternativeToImagePath) {
-			if (processId == 0)
-				throw new ArgumentNullException(nameof(processId));
-			if (moduleHandle is null)
-				throw new ArgumentNullException(nameof(moduleHandle));
+		public static byte[] DirectCopy(NativeModule module, ImageLayout imageLayout, bool useSectionHeadersInFile, string alternativeToImagePath) {
+			if (module is null)
+				throw new ArgumentNullException(nameof(module));
 			if (useSectionHeadersInFile)
 				if (string.IsNullOrEmpty(alternativeToImagePath))
 					alternativeToImagePath = null;
@@ -40,63 +36,64 @@ namespace ExtremeDumper.Dumper {
 						throw new FileNotFoundException(nameof(alternativeToImagePath));
 				}
 
-			using (NativeProcess process = NativeProcess.Open(processId)) {
-				PageInfo firstPageInfo;
-				string imagePath;
-				byte[] peImageData;
-				uint imageSize;
+			NativeProcess process;
+			PageInfo firstPageInfo;
+			string imagePath;
+			byte[] peImageData;
+			uint imageSize;
 
-				firstPageInfo = process.EnumeratePageInfos(moduleHandle, moduleHandle).First();
-				if (useSectionHeadersInFile) {
-					imagePath = process.UnsafeGetModule(moduleHandle).ImagePath;
-					if (string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))
-						imagePath = alternativeToImagePath;
-				}
-				else
-					imagePath = default;
-				// 获取模块路径（如果需要使用文件中的节头）
-				if (useSectionHeadersInFile)
-					imageSize = GetImageSize(File.ReadAllBytes(imagePath), imageLayout);
-				else {
-					byte[] peHeaderData;
-
-					peHeaderData = new byte[(uint)firstPageInfo.Size];
-					process.ReadBytes(moduleHandle, peHeaderData);
-					imageSize = GetImageSize(peHeaderData, imageLayout);
-				}
-				// 获取模块在内存中的大小
-				peImageData = new byte[imageSize];
-				switch (imageLayout) {
-				case ImageLayout.File:
-					if (!process.TryReadBytes(firstPageInfo.Address, peImageData, 0, imageSize))
-						throw new InvalidOperationException();
-					break;
-				case ImageLayout.Memory:
-					foreach (PageInfo pageInfo in process.EnumeratePageInfos(moduleHandle, (byte*)moduleHandle + imageSize)) {
-						uint offset;
-
-						offset = (uint)((ulong)pageInfo.Address - (ulong)moduleHandle);
-						process.TryReadBytes(pageInfo.Address, peImageData, offset, (uint)pageInfo.Size);
-					}
-					break;
-				default:
-					throw new NotSupportedException();
-				}
-				// 转储
-				if (useSectionHeadersInFile)
-					using (PEImage peHeader = new PEImage(imagePath, false)) {
-						int startOffset;
-						int endOffset;
-						byte[] sectionHeadersData;
-
-						startOffset = (int)peHeader.ImageSectionHeaders.First().StartOffset;
-						endOffset = (int)peHeader.ImageSectionHeaders.Last().EndOffset;
-						sectionHeadersData = peHeader.CreateReader((FileOffset)startOffset).ReadBytes(endOffset - startOffset);
-						Buffer.BlockCopy(sectionHeadersData, 0, peImageData, startOffset, endOffset - startOffset);
-					}
-				// 替换节头（如果需要使用文件中的节头）
-				return peImageData;
+			process = module.Process;
+			process.QuickDemand(ProcessAccess.MemoryRead | ProcessAccess.QueryInformation);
+			firstPageInfo = process.EnumeratePageInfos(module.Handle, module.Handle).First();
+			if (useSectionHeadersInFile) {
+				imagePath = module.ImagePath;
+				if (string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))
+					imagePath = alternativeToImagePath;
 			}
+			else
+				imagePath = default;
+			// 获取模块路径（如果需要使用文件中的节头）
+			if (useSectionHeadersInFile)
+				imageSize = GetImageSize(File.ReadAllBytes(imagePath), imageLayout);
+			else {
+				byte[] peHeaderData;
+
+				peHeaderData = new byte[(uint)firstPageInfo.Size];
+				process.ReadBytes(module.Handle, peHeaderData);
+				imageSize = GetImageSize(peHeaderData, imageLayout);
+			}
+			// 获取模块在内存中的大小
+			peImageData = new byte[imageSize];
+			switch (imageLayout) {
+			case ImageLayout.File:
+				if (!process.TryReadBytes(firstPageInfo.Address, peImageData, 0, imageSize))
+					throw new InvalidOperationException();
+				break;
+			case ImageLayout.Memory:
+				foreach (PageInfo pageInfo in process.EnumeratePageInfos(module.Handle, (byte*)module.Handle + imageSize)) {
+					uint offset;
+
+					offset = (uint)((ulong)pageInfo.Address - (ulong)module.Handle);
+					process.TryReadBytes(pageInfo.Address, peImageData, offset, (uint)pageInfo.Size);
+				}
+				break;
+			default:
+				throw new NotSupportedException();
+			}
+			// 转储
+			if (useSectionHeadersInFile)
+				using (PEImage peHeader = new PEImage(imagePath, false)) {
+					int startOffset;
+					int endOffset;
+					byte[] sectionHeadersData;
+
+					startOffset = (int)peHeader.ImageSectionHeaders.First().StartOffset;
+					endOffset = (int)peHeader.ImageSectionHeaders.Last().EndOffset;
+					sectionHeadersData = peHeader.CreateReader((FileOffset)startOffset).ReadBytes(endOffset - startOffset);
+					Buffer.BlockCopy(sectionHeadersData, 0, peImageData, startOffset, endOffset - startOffset);
+				}
+			// 替换节头（如果需要使用文件中的节头）
+			return peImageData;
 		}
 
 		public static byte[] ConvertImageLayout(byte[] peImageData, ImageLayout fromImageLayout, ImageLayout toImageLayout) {

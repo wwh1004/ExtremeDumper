@@ -1,5 +1,5 @@
 # ExtremeDumper
-.NET Assembly Dumper based on MegaDumper
+.NET Assembly Dumper
 
 ## Downloads
 GitHub: [Latest release](https://github.com/wwh1004/ExtremeDumper/releases/latest/download/ExtremeDumper.zip)
