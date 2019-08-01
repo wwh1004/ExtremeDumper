@@ -49,8 +49,6 @@ namespace ExtremeDumper.Forms
             this.mnuDebugPrivilege = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuDumperType = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuUseMegaDumper = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuUseAntiAntiDumper = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.fbdlgDumped = new System.Windows.Forms.FolderBrowserDialog();
@@ -186,24 +184,7 @@ namespace ExtremeDumper.Forms
             // mnuDumperType
             // 
             resources.ApplyResources(this.mnuDumperType, "mnuDumperType");
-            this.mnuDumperType.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuUseMegaDumper,
-            this.mnuUseAntiAntiDumper});
             this.mnuDumperType.Name = "mnuDumperType";
-            // 
-            // mnuUseMegaDumper
-            // 
-            resources.ApplyResources(this.mnuUseMegaDumper, "mnuUseMegaDumper");
-            this.mnuUseMegaDumper.Checked = true;
-            this.mnuUseMegaDumper.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.mnuUseMegaDumper.Name = "mnuUseMegaDumper";
-            this.mnuUseMegaDumper.Click += new System.EventHandler(this.mnuUseMegaDumper_Click);
-            // 
-            // mnuUseAntiAntiDumper
-            // 
-            resources.ApplyResources(this.mnuUseAntiAntiDumper, "mnuUseAntiAntiDumper");
-            this.mnuUseAntiAntiDumper.Name = "mnuUseAntiAntiDumper";
-            this.mnuUseAntiAntiDumper.Click += new System.EventHandler(this.mnuUseAntiAntiDumper_Click);
             // 
             // mnuHelp
             // 
@@ -248,7 +229,6 @@ namespace ExtremeDumper.Forms
         private System.Windows.Forms.ToolStripMenuItem mnuAbout;
         private System.Windows.Forms.ToolStripMenuItem mnuDebugPrivilege;
         private System.Windows.Forms.ToolStripMenuItem mnuDumperType;
-        private System.Windows.Forms.ToolStripMenuItem mnuUseMegaDumper;
         private System.Windows.Forms.ColumnHeader chProcessName;
         private System.Windows.Forms.ColumnHeader chProcessId;
         private System.Windows.Forms.ColumnHeader chProcessPath;
@@ -264,7 +244,6 @@ namespace ExtremeDumper.Forms
         private System.Windows.Forms.ToolStripMenuItem mnuInjectDll;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem mnuGotoLocation;
-        private System.Windows.Forms.ToolStripMenuItem mnuUseAntiAntiDumper;
     }
 }
 

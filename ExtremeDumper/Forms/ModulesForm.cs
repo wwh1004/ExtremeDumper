@@ -83,7 +83,6 @@ namespace ExtremeDumper.Forms {
 #pragma warning disable IDE0067
 			functionsForm = new FunctionsForm(_process.UnsafeGetModule((void*)ulong.Parse(lvwModules.GetFirstSelectedSubItem(chModuleHandle.Index).Text.Substring(2), NumberStyles.HexNumber, null)));
 #pragma warning restore IDE0067
-			functionsForm.FormClosed += (v1, v2) => functionsForm.Dispose();
 			functionsForm.Show();
 		}
 

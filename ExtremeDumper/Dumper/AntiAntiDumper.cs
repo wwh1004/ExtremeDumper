@@ -13,7 +13,7 @@ using NativeSharp;
 using ImageLayout = dnlib.PE.ImageLayout;
 
 namespace ExtremeDumper.Dumper {
-	public sealed unsafe class AntiAntiDumper : IDumper {
+	internal sealed unsafe class AntiAntiDumper : IDumper {
 		#region .net structs
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		private struct IMAGE_DATA_DIRECTORY {
@@ -69,62 +69,66 @@ namespace ExtremeDumper.Dumper {
 		}
 		#endregion
 
-		private uint _processId;
+		private readonly uint _processId;
 
-		private AntiAntiDumper() {
+		private AntiAntiDumper(uint processId) {
+			_processId = processId;
 		}
 
 		public static IDumper Create(uint processId) {
-			return new AntiAntiDumper() {
-				_processId = processId
-			};
+			return new AntiAntiDumper(processId);
 		}
 
 		public bool DumpModule(IntPtr moduleHandle, ImageLayout imageLayout, string filePath) {
-			ClrModule dacModule;
-			InjectionClrVersion clrVersion;
-			InjectionOptions injectionOptions;
-			MetadataInfoService metadataInfoService;
-			MetadataInfo metadataInfo;
-			byte[] peImageData;
-
-			dacModule = TryGetDacModule(moduleHandle);
-			if (dacModule is null)
-				return false;
-			switch (dacModule.Runtime.ClrInfo.Version.Major) {
-			case 2:
-				clrVersion = InjectionClrVersion.V2;
-				break;
-			case 4:
-				clrVersion = InjectionClrVersion.V4;
-				break;
-			default:
-				return false;
-			}
-			// 判断要dump的模块的CLR版本
-			injectionOptions = new InjectionOptions {
-				PortName = Guid.NewGuid().ToString(),
-				ObjectName = Guid.NewGuid().ToString()
-			};
-			using (NativeProcess process = NativeProcess.Open(_processId))
-				if (!process.InjectManaged(typeof(MetadataInfoService).Assembly.Location, typeof(Injection).FullName, "Main", XmlSerializer.Serialize(injectionOptions), clrVersion, out int result) || result != 0)
-					return false;
-			metadataInfoService = (MetadataInfoService)Activator.GetObject(typeof(MetadataInfoService), $"Ipc://{injectionOptions.PortName}/{injectionOptions.ObjectName}");
-			// 注入DLL，通过.NET Remoting获取MetadataInfoService实例
-			metadataInfo = XmlSerializer.Deserialize<MetadataInfo>(metadataInfoService.GetMetadataInfo(moduleHandle));
-			if (!metadataInfo.PEInfo.IsValid)
-				return false;
-			imageLayout = (ImageLayout)metadataInfo.PEInfo.ImageLayout;
 			try {
-				peImageData = DumpModule(moduleHandle, imageLayout, metadataInfo, null);
-				// 尝试不使用文件中的节头
+				ClrModule dacModule;
+				InjectionClrVersion clrVersion;
+				InjectionOptions injectionOptions;
+				MetadataInfoService metadataInfoService;
+				MetadataInfo metadataInfo;
+				byte[] peImageData;
+
+				dacModule = TryGetDacModule(moduleHandle);
+				if (dacModule is null)
+					return false;
+				switch (dacModule.Runtime.ClrInfo.Version.Major) {
+				case 2:
+					clrVersion = InjectionClrVersion.V2;
+					break;
+				case 4:
+					clrVersion = InjectionClrVersion.V4;
+					break;
+				default:
+					return false;
+				}
+				// 判断要dump的模块的CLR版本
+				injectionOptions = new InjectionOptions {
+					PortName = Guid.NewGuid().ToString(),
+					ObjectName = Guid.NewGuid().ToString()
+				};
+				using (NativeProcess process = NativeProcess.Open(_processId))
+					if (!process.InjectManaged(typeof(MetadataInfoService).Assembly.Location, typeof(Injection).FullName, "Main", XmlSerializer.Serialize(injectionOptions), clrVersion, out int result) || result != 0)
+						return false;
+				metadataInfoService = (MetadataInfoService)Activator.GetObject(typeof(MetadataInfoService), $"Ipc://{injectionOptions.PortName}/{injectionOptions.ObjectName}");
+				// 注入DLL，通过.NET Remoting获取MetadataInfoService实例
+				metadataInfo = XmlSerializer.Deserialize<MetadataInfo>(metadataInfoService.GetMetadataInfo(moduleHandle));
+				if (!metadataInfo.PEInfo.IsValid)
+					return false;
+				imageLayout = (ImageLayout)metadataInfo.PEInfo.ImageLayout;
+				try {
+					peImageData = DumpModule(moduleHandle, imageLayout, metadataInfo, null);
+					// 尝试不使用文件中的节头
+				}
+				catch {
+					peImageData = DumpModule(moduleHandle, imageLayout, metadataInfo, dacModule.FileName);
+					// 如果出错，使用文件中的节头
+				}
+				File.WriteAllBytes(filePath, peImageData);
+				return true;
 			}
 			catch {
-				peImageData = DumpModule(moduleHandle, imageLayout, metadataInfo, dacModule.FileName);
-				// 如果出错，使用文件中的节头
+				return false;
 			}
-			File.WriteAllBytes(filePath, peImageData);
-			return true;
 		}
 
 		private byte[] DumpModule(IntPtr moduleHandle, ImageLayout imageLayout, MetadataInfo metadataInfo, string imagePath) {

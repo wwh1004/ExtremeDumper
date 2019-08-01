@@ -159,12 +159,6 @@
   <data name="mnuRefreshProcessList.Text" xml:space="preserve">
     <value>刷新进程列表</value>
   </data>
-  <data name="mnuUseAntiAntiDumper.Text" xml:space="preserve">
-    <value>AntiAntiDumper</value>
-  </data>
-  <data name="mnuUseMegaDumper.Text" xml:space="preserve">
-    <value>MegaDumper</value>
-  </data>
   <data name="mnuViewModules.Text" xml:space="preserve">
     <value>查看模块列表</value>
   </data>

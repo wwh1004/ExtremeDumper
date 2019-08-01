@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -15,7 +14,7 @@ namespace ExtremeDumper.Forms {
 	internal partial class ProcessesForm : Form {
 		private static readonly bool _isAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 		private static readonly AboutForm _aboutForm = new AboutForm();
-		private readonly DumperTypeWrapper _dumperType = new DumperTypeWrapper { Value = DumperType.MegaDumper };
+		private readonly DumperTypeWrapper _dumperType = new DumperTypeWrapper();
 		private readonly ResourceManager _resources = new ResourceManager(typeof(ProcessesForm));
 		private static bool _hasSeDebugPrivilege;
 
@@ -28,6 +27,16 @@ namespace ExtremeDumper.Forms {
 				TypeCode.Int32,
 				TypeCode.String
 			});
+			for (DumperType dumperType = DumperType.Normal; dumperType <= DumperType.AntiAntiDump; dumperType++) {
+				ToolStripMenuItem item;
+				DumperType currentDumperType;
+
+				item = new ToolStripMenuItem(dumperType.ToString());
+				currentDumperType = dumperType;
+				item.Click += (object sender, EventArgs e) => SwitchDumperType(currentDumperType);
+				mnuDumperType.DropDownItems.Add(item);
+			}
+			SwitchDumperType(DumperType.Normal);
 			RefreshProcessList();
 		}
 
@@ -51,14 +60,6 @@ namespace ExtremeDumper.Forms {
 			catch {
 				MessageBoxStub.Show(_resources.GetString("StrFailed"), MessageBoxIcon.Error);
 			}
-		}
-
-		private void mnuUseMegaDumper_Click(object sender, EventArgs e) {
-			SwitchDumperType(DumperType.MegaDumper);
-		}
-
-		private void mnuUseAntiAntiDumper_Click(object sender, EventArgs e) {
-			SwitchDumperType(DumperType.AntiAntiDumper);
 		}
 
 		private void mnuAbout_Click(object sender, EventArgs e) {
@@ -93,7 +94,6 @@ namespace ExtremeDumper.Forms {
 #pragma warning disable IDE0067
 				modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Cache.DotNetColor, _dumperType);
 #pragma warning restore IDE0067
-				modulesForm.FormClosed += (v1, v2) => modulesForm.Dispose();
 				modulesForm.Show();
 			}
 		}
@@ -115,7 +115,6 @@ namespace ExtremeDumper.Forms {
 #pragma warning disable IDE0067
 			injectingForm = new InjectingForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text));
 #pragma warning restore IDE0067
-			injectingForm.FormClosed += (v1, v2) => injectingForm.Dispose();
 			injectingForm.Show();
 		}
 
@@ -128,20 +127,12 @@ namespace ExtremeDumper.Forms {
 		#endregion
 
 		private void SwitchDumperType(DumperType dumperType) {
-			mnuUseMegaDumper.Checked = false;
-			mnuUseAntiAntiDumper.Checked = false;
-			switch (dumperType) {
-			case DumperType.MegaDumper:
-				_dumperType.Value = DumperType.MegaDumper;
-				mnuUseMegaDumper.Checked = true;
-				break;
-			case DumperType.AntiAntiDumper:
-				_dumperType.Value = DumperType.AntiAntiDumper;
-				mnuUseAntiAntiDumper.Checked = true;
-				break;
-			default:
-				throw new InvalidEnumArgumentException();
-			}
+			string name;
+
+			name = dumperType.ToString();
+			foreach (ToolStripMenuItem item in mnuDumperType.DropDownItems)
+				item.Checked = item.Text == name;
+			_dumperType.Value = dumperType;
 		}
 
 		private void RefreshProcessList() {
@@ -212,6 +203,8 @@ namespace ExtremeDumper.Forms {
 		}
 
 		private void DumpProcess(uint processId, string directoryPath) {
+			if (!Directory.Exists(directoryPath))
+				Directory.CreateDirectory(directoryPath);
 			using (IDumper dumper = DumperFactory.GetDumper(processId, _dumperType.Value))
 				MessageBoxStub.Show($"{dumper.DumpProcess(directoryPath).ToString()} {_resources.GetString("StrDumpFilesSuccess")}{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
 		}

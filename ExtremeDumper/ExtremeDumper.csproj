@@ -43,10 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dumper\AntiAntiDumper.cs" />
-    <Compile Include="Dumper\DumperType.cs" />
+    <Compile Include="Dumper\DumperFactory.cs" />
+    <Compile Include="Dumper\Extensions.cs" />
     <Compile Include="Dumper\IDumper.cs" />
-    <Compile Include="Dumper\MegaDumper.cs" />
     <Compile Include="Dumper\NativeMethods.cs" />
+    <Compile Include="Dumper\NormalDumper.cs" />
     <Compile Include="Dumper\PEImageHelper.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
@@ -55,7 +56,6 @@
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Cache.cs" />
-    <Compile Include="Forms\DumperFactory.cs" />
     <Compile Include="Forms\DumperTypeWrapper.cs" />
     <Compile Include="Forms\FunctionsForm.cs">
       <SubType>Form</SubType>
