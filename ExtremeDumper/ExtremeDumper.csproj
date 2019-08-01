@@ -46,7 +46,6 @@
     <Compile Include="Dumper\DumperFactory.cs" />
     <Compile Include="Dumper\Extensions.cs" />
     <Compile Include="Dumper\IDumper.cs" />
-    <Compile Include="Dumper\NativeMethods.cs" />
     <Compile Include="Dumper\NormalDumper.cs" />
     <Compile Include="Dumper\PEImageHelper.cs" />
     <Compile Include="Forms\AboutForm.cs">
