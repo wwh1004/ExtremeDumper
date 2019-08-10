@@ -4,5 +4,5 @@ using System.Reflection;
 [assembly: AssemblyDescription(".NET Assemblies Dumper")]
 [assembly: AssemblyProduct("ExtremeDumper")]
 [assembly: AssemblyCopyright("Copyright © 2018-2019 Wwh")]
-[assembly: AssemblyVersion("2.9.3.2")]
-[assembly: AssemblyFileVersion("2.9.3.2")]
+[assembly: AssemblyVersion("2.9.3.3")]
+[assembly: AssemblyFileVersion("2.9.3.3")]

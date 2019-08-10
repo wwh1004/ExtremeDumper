@@ -119,8 +119,8 @@ namespace ExtremeDumper.Forms {
 		}
 
 		protected override void Dispose(bool disposing) {
-			if (disposing && (components != null)) {
-				components.Dispose();
+			if (disposing) {
+				components?.Dispose();
 				_manifestModule?.Dispose();
 				_process.Dispose();
 			}
