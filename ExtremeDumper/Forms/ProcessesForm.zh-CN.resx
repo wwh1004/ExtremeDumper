@@ -151,7 +151,7 @@
     <value>注入DLL</value>
   </data>
   <data name="mnuOnlyDotNetProcess.Text" xml:space="preserve">
-    <value>仅显示.Net进程</value>
+    <value>仅显示.NET进程</value>
   </data>
   <data name="mnuOptions.Text" xml:space="preserve">
     <value>选项</value>
@@ -181,6 +181,6 @@
     <value>成功</value>
   </data>
   <data name="StrViewModulesSwitchTo32Bit" xml:space="preserve">
-    <value>要查看32位.Net进程的模块请切换到32位模式</value>
+    <value>要查看32位.NET进程的模块请切换到32位模式</value>
   </data>
 </root>

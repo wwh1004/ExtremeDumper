@@ -298,7 +298,7 @@
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="mnuOnlyDotNetProcess.Text" xml:space="preserve">
-    <value>Only .Net Processes</value>
+    <value>Only .NET Processes</value>
   </data>
   <data name="&gt;&gt;mnuOnlyDotNetProcess.Name" xml:space="preserve">
     <value>mnuOnlyDotNetProcess</value>

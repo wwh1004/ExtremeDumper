@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -337,7 +337,7 @@
     <value>Goto Location</value>
   </data>
   <data name="mnuOnlyDotNetModule.Text" xml:space="preserve">
-    <value>Only .Net Modules</value>
+    <value>Only .NET Modules</value>
   </data>
   <data name="mnuRefreshModuleList.Text" xml:space="preserve">
     <value>Refresh</value>
