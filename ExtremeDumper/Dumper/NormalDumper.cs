@@ -24,7 +24,7 @@ namespace ExtremeDumper.Dumper {
 			try {
 				byte[] peImageData;
 
-				peImageData = PEImageHelper.DirectCopy(_process.UnsafeGetModule((void*)moduleHandle), imageLayout);
+				peImageData = PEImageHelper.DirectCopy(_process.UnsafeGetModule((void*)moduleHandle), imageLayout, false);
 				peImageData = PEImageHelper.ConvertImageLayout(peImageData, imageLayout, ImageLayout.File);
 				File.WriteAllBytes(filePath, peImageData);
 				return true;
@@ -98,7 +98,7 @@ namespace ExtremeDumper.Dumper {
 				byte[] peImageData;
 				bool isDotNet;
 
-				peImageData = PEImageHelper.DirectCopy(module, imageLayout);
+				peImageData = PEImageHelper.DirectCopy(module, imageLayout, false);
 				peImageData = PEImageHelper.ConvertImageLayout(peImageData, imageLayout, ImageLayout.File);
 				using (PEImage peImage = new PEImage(peImageData, true)) {
 					// 确保为有效PE文件

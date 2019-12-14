@@ -1,20 +1,28 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using dnlib.IO;
 using dnlib.PE;
 using NativeSharp;
 
 namespace ExtremeDumper.Dumper {
 	internal static unsafe class PEImageHelper {
-		/// <summary>
-		/// 直接从内存中复制模块，不执行格式转换操作
-		/// </summary>
-		/// <param name="module">模块</param>
-		/// <param name="imageLayout">模块在内存中的格式</param>
-		/// <returns></returns>
-		public static byte[] DirectCopy(NativeModule module, ImageLayout imageLayout) {
-			return DirectCopy(module, imageLayout, false, null);
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		private struct IMAGE_SECTION_HEADER {
+			public static readonly uint UnmanagedSize = (uint)sizeof(IMAGE_SECTION_HEADER);
+
+			public ulong Name;
+			public uint VirtualSize;
+			public uint VirtualAddress;
+			public uint SizeOfRawData;
+			public uint PointerToRawData;
+			public uint PointerToRelocations;
+			public uint PointerToLinenumbers;
+			public ushort NumberOfRelocations;
+			public ushort NumberOfLinenumbers;
+			public uint Characteristics;
 		}
 
 		/// <summary>
@@ -22,45 +30,49 @@ namespace ExtremeDumper.Dumper {
 		/// </summary>
 		/// <param name="module">模块</param>
 		/// <param name="imageLayout">模块在内存中的格式</param>
-		/// <param name="useSectionHeadersInFile">是否使用文件中的节头</param>
-		/// <param name="alternativeToImagePath">如果无法正常获取模块路径，可提供备选模块路径</param>
+		/// <param name="rebuildSectionHeaders">是否重建节表</param>
 		/// <returns></returns>
-		public static byte[] DirectCopy(NativeModule module, ImageLayout imageLayout, bool useSectionHeadersInFile, string alternativeToImagePath) {
+		public static byte[] DirectCopy(NativeModule module, ImageLayout imageLayout, bool rebuildSectionHeaders) {
 			if (module is null)
 				throw new ArgumentNullException(nameof(module));
-			if (useSectionHeadersInFile)
-				if (string.IsNullOrEmpty(alternativeToImagePath))
-					alternativeToImagePath = null;
-				else {
-					if (!File.Exists(alternativeToImagePath))
-						throw new FileNotFoundException(nameof(alternativeToImagePath));
-				}
 
 			NativeProcess process;
 			PageInfo firstPageInfo;
-			string imagePath;
 			byte[] peImageData;
 			uint imageSize;
+			List<IMAGE_SECTION_HEADER> sectionHeaders;
 
 			process = module.Process;
 			process.QuickDemand(ProcessAccess.MemoryRead | ProcessAccess.QueryInformation);
 			firstPageInfo = process.EnumeratePageInfos(module.Handle, module.Handle).First();
-			if (useSectionHeadersInFile) {
-				imagePath = module.ImagePath;
-				if (string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))
-					imagePath = alternativeToImagePath;
+			if (rebuildSectionHeaders) {
+				imageSize = 0;
+				sectionHeaders = new List<IMAGE_SECTION_HEADER>();
+				foreach (PageInfo pageInfo in process.EnumeratePageInfos(module.Handle, (void*)-1)) {
+					uint pageSize;
+
+					if (pageInfo.Protection == MemoryProtection.NoAccess)
+						break;
+					pageSize = (uint)pageInfo.Size;
+					if (imageSize != 0)
+						// 跳过PE头
+						sectionHeaders.Add(new IMAGE_SECTION_HEADER {
+							Name = 0, // TODO 自动获取
+							VirtualSize = pageSize,
+							VirtualAddress = imageSize,
+							SizeOfRawData = pageSize,
+							PointerToRawData = imageSize
+						});
+					imageSize += pageSize;
+				}
 			}
-			else
-				imagePath = default;
-			// 获取模块路径（如果需要使用文件中的节头）
-			if (useSectionHeadersInFile)
-				imageSize = GetImageSize(File.ReadAllBytes(imagePath), imageLayout);
 			else {
 				byte[] peHeaderData;
 
 				peHeaderData = new byte[(uint)firstPageInfo.Size];
 				process.ReadBytes(module.Handle, peHeaderData);
 				imageSize = GetImageSize(peHeaderData, imageLayout);
+				sectionHeaders = null;
 			}
 			// 获取模块在内存中的大小
 			peImageData = new byte[imageSize];
@@ -81,17 +93,24 @@ namespace ExtremeDumper.Dumper {
 				throw new NotSupportedException();
 			}
 			// 转储
-			if (useSectionHeadersInFile)
-				using (PEImage peHeader = new PEImage(imagePath, false)) {
-					int startOffset;
-					int endOffset;
-					byte[] sectionHeadersData;
+			if (rebuildSectionHeaders) {
+				int sectionAlignmentOffset;
+				int fileAlignmentOffset;
+				int sectionHeadersOffset;
 
-					startOffset = (int)peHeader.ImageSectionHeaders.First().StartOffset;
-					endOffset = (int)peHeader.ImageSectionHeaders.Last().EndOffset;
-					sectionHeadersData = peHeader.CreateReader((FileOffset)startOffset).ReadBytes(endOffset - startOffset);
-					Buffer.BlockCopy(sectionHeadersData, 0, peImageData, startOffset, endOffset - startOffset);
+				using (PEImage peHeader = new PEImage(peImageData, false)) {
+					sectionAlignmentOffset = (int)(peHeader.ImageNTHeaders.OptionalHeader.StartOffset + 32);
+					fileAlignmentOffset = sectionAlignmentOffset + 4;
+					sectionHeadersOffset = (int)(peHeader.ImageNTHeaders.OptionalHeader.StartOffset + peHeader.ImageNTHeaders.FileHeader.SizeOfOptionalHeader);
 				}
+				fixed (byte* p = peImageData) {
+					*(uint*)(p + sectionAlignmentOffset) = 0x2000;
+					*(uint*)(p + fileAlignmentOffset) = 0x2000;
+					// TODO
+					for (int i = 0; i < sectionHeaders.Count; i++)
+						*((IMAGE_SECTION_HEADER*)(p + sectionHeadersOffset) + i) = sectionHeaders[i];
+				}
+			}
 			// 替换节头（如果需要使用文件中的节头）
 			return peImageData;
 		}
