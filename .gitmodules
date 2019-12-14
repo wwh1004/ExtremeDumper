@@ -1,9 +1,6 @@
 [submodule "Libraries/clrmd"]
 	path = Libraries/clrmd
 	url = https://github.com/Microsoft/clrmd.git
-[submodule "Libraries/NativeSharp"]
-	path = Libraries/NativeSharp
-	url = https://github.com/wwh1004/NativeSharp.git
 [submodule "Libraries/dnlib"]
 	path = Libraries/dnlib
 	url = https://github.com/0xd4d/dnlib.git

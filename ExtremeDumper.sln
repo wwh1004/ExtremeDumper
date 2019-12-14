@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtremeDumper", "ExtremeDum
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Diagnostics.Runtime.v2", "Libraries\clrmd\src\Microsoft.Diagnostics.Runtime\v2\Microsoft.Diagnostics.Runtime.v2.csproj", "{935D33C5-62F1-40FE-8DB0-46B6E01342FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeSharp", "Libraries\NativeSharp\NativeSharp\NativeSharp.csproj", "{2CD47F09-B324-4B20-8C8B-38FC4A037E37}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtremeDumper.AntiAntiDump", "ExtremeDumper.AntiAntiDump\ExtremeDumper.AntiAntiDump.csproj", "{DFFAB16F-40BE-46B2-AA4A-0FD49C1CCCAA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnlib", "Libraries\dnlib\src\dnlib.csproj", "{104CAC47-92E9-4634-A70E-17B3E697B1D1}"
@@ -33,10 +31,6 @@ Global
 		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{935D33C5-62F1-40FE-8DB0-46B6E01342FB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2CD47F09-B324-4B20-8C8B-38FC4A037E37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2CD47F09-B324-4B20-8C8B-38FC4A037E37}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2CD47F09-B324-4B20-8C8B-38FC4A037E37}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2CD47F09-B324-4B20-8C8B-38FC4A037E37}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DFFAB16F-40BE-46B2-AA4A-0FD49C1CCCAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DFFAB16F-40BE-46B2-AA4A-0FD49C1CCCAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFFAB16F-40BE-46B2-AA4A-0FD49C1CCCAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,7 +53,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{935D33C5-62F1-40FE-8DB0-46B6E01342FB} = {B6C797F4-3545-48E4-AC52-6551B6CF4EEA}
-		{2CD47F09-B324-4B20-8C8B-38FC4A037E37} = {B6C797F4-3545-48E4-AC52-6551B6CF4EEA}
 		{104CAC47-92E9-4634-A70E-17B3E697B1D1} = {B6C797F4-3545-48E4-AC52-6551B6CF4EEA}
 		{AED69D77-8C7B-41BA-9967-AC9B522430F9} = {B6C797F4-3545-48E4-AC52-6551B6CF4EEA}
 	EndGlobalSection

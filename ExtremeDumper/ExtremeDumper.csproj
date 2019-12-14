@@ -152,10 +152,11 @@
       <Project>{AED69D77-8C7B-41BA-9967-AC9B522430F9}</Project>
       <Name>MetadataLocator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Libraries\NativeSharp\NativeSharp\NativeSharp.csproj">
-      <Project>{2cd47f09-b324-4b20-8c8b-38fc4a037e37}</Project>
-      <Name>NativeSharp</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NativeSharp-lib">
+      <Version>3.0.0</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

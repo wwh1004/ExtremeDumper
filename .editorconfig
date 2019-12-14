@@ -134,3 +134,5 @@ csharp_space_between_square_brackets = false
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
 
+# IDE0063: Use simple 'using' statement
+csharp_prefer_simple_using_statement = true:none
