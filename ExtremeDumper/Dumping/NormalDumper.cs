@@ -37,7 +37,7 @@ namespace ExtremeDumper.Dumping {
 		public int DumpProcess(string directoryPath) {
 			int count = 0;
 			foreach (var pageInfo in _process.EnumeratePageInfos()) {
-				if ((ulong)pageInfo.Size > int.MaxValue)
+				if ((pageInfo.Protection & MemoryProtection.NoAccess) == MemoryProtection.NoAccess)
 					continue;
 				byte[] page = new byte[(int)pageInfo.Size];
 				if (!_process.TryReadBytes(pageInfo.Address, page))
