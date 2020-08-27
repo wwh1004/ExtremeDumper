@@ -159,6 +159,9 @@
   <data name="StrFailToDumpModule" xml:space="preserve">
     <value>失败！</value>
   </data>
+  <data name="StrFailToGetDotNetModules" xml:space="preserve">
+    <value>获取.NET模块列表失败</value>
+  </data>
   <data name="StrModules" xml:space="preserve">
     <value>模块列表</value>
   </data>

@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using ExtremeDumper.Forms;
@@ -22,22 +23,24 @@ namespace ExtremeDumper {
 		}
 
 		private static void ShowDetailException(Exception exception) {
-			StringBuilder sb;
-
-			sb = new StringBuilder();
+			var sb = new StringBuilder();
 			DumpException(exception, sb);
 			MessageBoxStub.Show(sb.ToString(), MessageBoxIcon.Error);
 		}
 
 		private static void DumpException(Exception exception, StringBuilder sb) {
-			sb.AppendLine("Type: " + Environment.NewLine + exception.GetType().FullName);
-			sb.AppendLine("Message: " + Environment.NewLine + exception.Message);
-			sb.AppendLine("Source: " + Environment.NewLine + exception.Source);
-			sb.AppendLine("StackTrace: " + Environment.NewLine + exception.StackTrace);
-			sb.AppendLine("TargetSite: " + Environment.NewLine + exception.TargetSite.ToString());
+			sb.AppendLine($"Type: {Environment.NewLine}{exception.GetType().FullName}");
+			sb.AppendLine($"Message: {Environment.NewLine}{exception.Message}");
+			sb.AppendLine($"Source: {Environment.NewLine}{exception.Source}");
+			sb.AppendLine($"StackTrace: {Environment.NewLine}{exception.StackTrace}");
+			sb.AppendLine($"TargetSite: {Environment.NewLine}{exception.TargetSite}");
 			sb.AppendLine("----------------------------------------");
-			if (exception.InnerException != null)
+			if (!(exception.InnerException is null))
 				DumpException(exception.InnerException, sb);
+			if (exception is ReflectionTypeLoadException reflectionTypeLoadException) {
+				foreach (var loaderException in reflectionTypeLoadException.LoaderExceptions)
+					DumpException(loaderException, sb);
+			}
 		}
 	}
 }

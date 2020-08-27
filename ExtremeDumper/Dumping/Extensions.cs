@@ -3,19 +3,16 @@ using System.Linq;
 using dnlib.PE;
 using dnlib.W32Resources;
 
-namespace ExtremeDumper.Dumper {
+namespace ExtremeDumper.Dumping {
 	internal static unsafe class Extensions {
 		public static string GetOriginalFilename(this IPEImage peImage) {
 			if (peImage is null)
 				throw new ArgumentNullException(nameof(peImage));
 
-			ResourceData resourceData;
-			byte[] data;
-
-			resourceData = peImage.Win32Resources.Find(new ResourceName(16), new ResourceName(1))?.Data?.FirstOrDefault();
+			var resourceData = peImage.Win32Resources?.Find(new ResourceName(16), new ResourceName(1))?.Data?.FirstOrDefault();
 			if (resourceData is null)
 				return null;
-			data = resourceData.CreateReader().ReadRemainingBytes();
+			byte[] data = resourceData.CreateReader().ReadRemainingBytes();
 			fixed (byte* p = data)
 				return new FileVersionInfo(p, data.Length).OriginalFilename;
 		}

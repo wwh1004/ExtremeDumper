@@ -9,23 +9,20 @@ namespace ExtremeDumper.Forms {
 			if (listView is null)
 				throw new ArgumentNullException(nameof(listView));
 
-			SCROLLBARINFO scrollBarInfo;
-			int sumWidths;
-			int[] minWidths;
-
-			scrollBarInfo = SCROLLBARINFO.Default;
+			var scrollBarInfo = SCROLLBARINFO.Default;
 			GetScrollBarInfo(listView.Handle, OBJID_VSCROLL, ref scrollBarInfo);
-			sumWidths = scrollBarInfo.dxyLineButton;
+			int sumWidths = scrollBarInfo.dxyLineButton;
 			if (onlyLastColumn) {
 				foreach (ColumnHeader columnHeader in listView.Columns)
 					sumWidths += columnHeader.Width;
 				listView.Columns[listView.Columns.Count - 1].Width += listView.Width - sumWidths - 4;
 			}
 			else {
-				minWidths = new int[listView.Columns.Count];
-				using (Graphics g = listView.CreateGraphics())
+				int[] minWidths = new int[listView.Columns.Count];
+				using (var g = listView.CreateGraphics()) {
 					for (int i = 0; i < minWidths.Length; i++)
 						minWidths[i] = (int)g.MeasureString(listView.Columns[i].Text, listView.Font).Width + 10;
+				}
 				listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 				for (int i = 0; i < minWidths.Length; i++) {
 					if (listView.Columns[i].Width < minWidths[i])

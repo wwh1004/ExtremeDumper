@@ -49,8 +49,6 @@ namespace ExtremeDumper.Forms
             this.mnuDebugPrivilege = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuDumperType = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.fbdlgDumped = new System.Windows.Forms.FolderBrowserDialog();
             this.mnuProcessContext.SuspendLayout();
             this.mnuMain.SuspendLayout();
@@ -66,6 +64,7 @@ namespace ExtremeDumper.Forms
             this.chProcessPath});
             this.lvwProcesses.ContextMenuStrip = this.mnuProcessContext;
             this.lvwProcesses.FullRowSelect = true;
+            this.lvwProcesses.HideSelection = false;
             this.lvwProcesses.Name = "lvwProcesses";
             this.lvwProcesses.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvwProcesses.UseCompatibleStateImageBehavior = false;
@@ -157,8 +156,7 @@ namespace ExtremeDumper.Forms
             // 
             resources.ApplyResources(this.mnuMain, "mnuMain");
             this.mnuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuOptions,
-            this.mnuHelp});
+            this.mnuOptions});
             this.mnuMain.Name = "mnuMain";
             // 
             // mnuOptions
@@ -186,19 +184,6 @@ namespace ExtremeDumper.Forms
             resources.ApplyResources(this.mnuDumperType, "mnuDumperType");
             this.mnuDumperType.Name = "mnuDumperType";
             // 
-            // mnuHelp
-            // 
-            resources.ApplyResources(this.mnuHelp, "mnuHelp");
-            this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuAbout});
-            this.mnuHelp.Name = "mnuHelp";
-            // 
-            // mnuAbout
-            // 
-            resources.ApplyResources(this.mnuAbout, "mnuAbout");
-            this.mnuAbout.Name = "mnuAbout";
-            this.mnuAbout.Click += new System.EventHandler(this.mnuAbout_Click);
-            // 
             // fbdlgDumped
             // 
             resources.ApplyResources(this.fbdlgDumped, "fbdlgDumped");
@@ -225,8 +210,6 @@ namespace ExtremeDumper.Forms
         private System.Windows.Forms.ListView lvwProcesses;
         private System.Windows.Forms.MenuStrip mnuMain;
         private System.Windows.Forms.ToolStripMenuItem mnuOptions;
-        private System.Windows.Forms.ToolStripMenuItem mnuHelp;
-        private System.Windows.Forms.ToolStripMenuItem mnuAbout;
         private System.Windows.Forms.ToolStripMenuItem mnuDebugPrivilege;
         private System.Windows.Forms.ToolStripMenuItem mnuDumperType;
         private System.Windows.Forms.ColumnHeader chProcessName;

@@ -201,7 +201,7 @@
     <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微软雅黑, 9pt</value>
+    <value>Microsoft YaHei, 9pt</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
     <value>181, 6</value>
@@ -353,5 +353,8 @@
   </data>
   <data name="StrModules" xml:space="preserve">
     <value>Modules</value>
+  </data>
+  <data name="StrFailToGetDotNetModules" xml:space="preserve">
+    <value>Fail to get .NET modules</value>
   </data>
 </root>

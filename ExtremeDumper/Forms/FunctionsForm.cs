@@ -40,10 +40,8 @@ namespace ExtremeDumper.Forms {
 
 		private void RefreshFunctionList() {
 			lvwFunctions.Items.Clear();
-			foreach (ExportFunctionInfo functionInfo in _module.EnumerateFunctionInfos()) {
-				ListViewItem listViewItem;
-
-				listViewItem = new ListViewItem(functionInfo.Name);
+			foreach (var functionInfo in _module.EnumerateFunctionInfos()) {
+				var listViewItem = new ListViewItem(functionInfo.Name);
 				listViewItem.SubItems.Add("0x" + ((IntPtr)functionInfo.Address).ToString(Cache.Is64BitProcess ? "X16" : "X8"));
 				listViewItem.SubItems.Add(functionInfo.Ordinal.ToString());
 				lvwFunctions.Items.Add(listViewItem);

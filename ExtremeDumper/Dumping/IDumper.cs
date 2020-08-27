@@ -1,7 +1,7 @@
 using System;
 using dnlib.PE;
 
-namespace ExtremeDumper.Dumper {
+namespace ExtremeDumper.Dumping {
 	/// <summary>
 	/// 转储器的接口类
 	/// </summary>

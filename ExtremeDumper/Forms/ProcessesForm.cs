@@ -6,14 +6,13 @@ using System.Reflection;
 using System.Resources;
 using System.Security.Principal;
 using System.Windows.Forms;
-using ExtremeDumper.Dumper;
+using ExtremeDumper.Dumping;
 using NativeSharp;
 using static ExtremeDumper.Forms.NativeMethods;
 
 namespace ExtremeDumper.Forms {
 	internal partial class ProcessesForm : Form {
 		private static readonly bool _isAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
-		private static readonly AboutForm _aboutForm = new AboutForm();
 		private readonly DumperTypeWrapper _dumperType = new DumperTypeWrapper();
 		private readonly ResourceManager _resources = new ResourceManager(typeof(ProcessesForm));
 		private static bool _hasSeDebugPrivilege;
@@ -27,12 +26,9 @@ namespace ExtremeDumper.Forms {
 				TypeCode.Int32,
 				TypeCode.String
 			});
-			for (DumperType dumperType = DumperType.Normal; dumperType <= DumperType.AntiAntiDump; dumperType++) {
-				ToolStripMenuItem item;
-				DumperType currentDumperType;
-
-				item = new ToolStripMenuItem(dumperType.ToString());
-				currentDumperType = dumperType;
+			for (var dumperType = DumperType.Normal; dumperType <= DumperType.Normal; dumperType++) {
+				var item = new ToolStripMenuItem(dumperType.ToString());
+				var currentDumperType = dumperType;
 				item.Click += (object sender, EventArgs e) => SwitchDumperType(currentDumperType);
 				mnuDumperType.DropDownItems.Add(item);
 			}
@@ -62,10 +58,6 @@ namespace ExtremeDumper.Forms {
 			}
 		}
 
-		private void mnuAbout_Click(object sender, EventArgs e) {
-			_aboutForm.ShowDialog();
-		}
-
 		private void lvwProcesses_Resize(object sender, EventArgs e) {
 			lvwProcesses.AutoResizeColumns(true);
 		}
@@ -74,26 +66,24 @@ namespace ExtremeDumper.Forms {
 			if (lvwProcesses.SelectedIndices.Count == 0)
 				return;
 
+			uint processId = uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text);
+			using (var process = NativeProcess.Open(processId))
+				fbdlgDumped.SelectedPath = Path.GetDirectoryName(process.ImagePath);
 			if (fbdlgDumped.ShowDialog() != DialogResult.OK)
 				return;
-			DumpProcess(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), Path.Combine(fbdlgDumped.SelectedPath, "Dumps"));
+			DumpProcess(processId, Path.Combine(fbdlgDumped.SelectedPath, "Dumps"));
 		}
 
 		private void mnuViewModules_Click(object sender, EventArgs e) {
 			if (lvwProcesses.SelectedIndices.Count == 0)
 				return;
 
-			ListViewItem.ListViewSubItem processNameItem;
-
-			processNameItem = lvwProcesses.GetFirstSelectedSubItem(chProcessName.Index);
-			if (Environment.Is64BitProcess && processNameItem.BackColor == Cache.DotNetColor && processNameItem.Text.EndsWith(_resources.GetString("Str32Bit"), StringComparison.Ordinal))
+			var processNameItem = lvwProcesses.GetFirstSelectedSubItem(chProcessName.Index);
+			if (Environment.Is64BitProcess && processNameItem.BackColor == Cache.DotNetColor && processNameItem.Text.EndsWith(_resources.GetString("Str32Bit"), StringComparison.Ordinal)) {
 				MessageBoxStub.Show(_resources.GetString("StrViewModulesSwitchTo32Bit"), MessageBoxIcon.Error);
+			}
 			else {
-				ModulesForm modulesForm;
-
-#pragma warning disable IDE0067
-				modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Cache.DotNetColor, _dumperType);
-#pragma warning restore IDE0067
+				var modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Cache.DotNetColor, _dumperType);
 				modulesForm.Show();
 			}
 		}
@@ -110,11 +100,7 @@ namespace ExtremeDumper.Forms {
 			if (lvwProcesses.SelectedIndices.Count == 0)
 				return;
 
-			InjectingForm injectingForm;
-
-#pragma warning disable IDE0067
-			injectingForm = new InjectingForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text));
-#pragma warning restore IDE0067
+			var injectingForm = new InjectingForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text));
 			injectingForm.Show();
 		}
 
@@ -127,49 +113,44 @@ namespace ExtremeDumper.Forms {
 		#endregion
 
 		private void SwitchDumperType(DumperType dumperType) {
-			string name;
-
-			name = dumperType.ToString();
+			string name = dumperType.ToString();
 			foreach (ToolStripMenuItem item in mnuDumperType.DropDownItems)
 				item.Checked = item.Text == name;
 			_dumperType.Value = dumperType;
 		}
 
 		private void RefreshProcessList() {
-			uint[] processIds;
-			IntPtr snapshotHandle;
-			MODULEENTRY32 moduleEntry32;
-			ListViewItem listViewItem;
-			string t;
-			bool isDotNetProcess;
-			bool is64;
-
 			lvwProcesses.Items.Clear();
-			processIds = NativeProcess.GetAllProcessIds();
+			uint[] processIds = NativeProcess.GetAllProcessIds();
 			if (processIds is null)
 				return;
-			moduleEntry32 = MODULEENTRY32.Default;
+
+			var moduleEntry = MODULEENTRY32.Default;
 			foreach (uint processId in processIds) {
 				if (processId == 0)
 					continue;
-				snapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, processId);
+				var snapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, processId);
 				if (snapshotHandle == INVALID_HANDLE_VALUE)
 					continue;
-				if (!Module32First(snapshotHandle, ref moduleEntry32))
+				if (!Module32First(snapshotHandle, ref moduleEntry))
 					continue;
-				listViewItem = new ListViewItem(moduleEntry32.szModule);
+
+				var listViewItem = new ListViewItem(moduleEntry.szModule);
 				listViewItem.SubItems.Add(processId.ToString());
-				listViewItem.SubItems.Add(moduleEntry32.szExePath);
-				isDotNetProcess = false;
-				while (Module32Next(snapshotHandle, ref moduleEntry32))
-					if ((t = moduleEntry32.szModule.ToUpperInvariant()) == "MSCOREE.DLL" || t == "MSCORWKS.DLL" || t == "MSCORJIT.DLL" || t == "CLR.DLL" || t == "CLRJIT.DLL") {
+				listViewItem.SubItems.Add(moduleEntry.szExePath);
+				bool isDotNetProcess = false;
+				bool is64;
+				while (Module32Next(snapshotHandle, ref moduleEntry)) {
+					string t;
+					if ((t = moduleEntry.szModule.ToUpperInvariant()) == "MSCOREE.DLL" || t == "MSCORWKS.DLL" || t == "CLR.DLL" || t == "CORECLR.DLL") {
 						listViewItem.BackColor = Cache.DotNetColor;
 						isDotNetProcess = true;
-						if (Cache.Is64BitProcess && Is64BitPE(moduleEntry32.szExePath, out is64) && !is64)
+						if (Cache.Is64BitProcess && Is64BitPE(moduleEntry.szExePath, out is64) && !is64)
 							listViewItem.Text += _resources.GetString("Str32Bit");
 						break;
 					}
-				if (Cache.Is64BitProcess && !isDotNetProcess && Is64BitPE(listViewItem.SubItems[2].Text, out is64) && !is64)
+				}
+				if (!isDotNetProcess && Cache.Is64BitProcess && Is64BitPE(listViewItem.SubItems[2].Text, out is64) && !is64)
 					listViewItem.Text += _resources.GetString("Str32Bit");
 				if (!mnuOnlyDotNetProcess.Checked || isDotNetProcess)
 					lvwProcesses.Items.Add(listViewItem);
@@ -178,18 +159,13 @@ namespace ExtremeDumper.Forms {
 		}
 
 		private static bool Is64BitPE(string filePath, out bool is64) {
-			FileStream fileStream;
-			BinaryReader binaryReader;
-			uint peOffset;
-			ushort machine;
-
 			try {
-				using (fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-				using (binaryReader = new BinaryReader(fileStream)) {
-					binaryReader.BaseStream.Position = 0x3C;
-					peOffset = binaryReader.ReadUInt32();
-					binaryReader.BaseStream.Position = peOffset + 0x4;
-					machine = binaryReader.ReadUInt16();
+				using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (var reader = new BinaryReader(stream)) {
+					reader.BaseStream.Position = 0x3C;
+					uint peOffset = reader.ReadUInt32();
+					reader.BaseStream.Position = peOffset + 0x4;
+					ushort machine = reader.ReadUInt16();
 					if (machine != 0x14C && machine != 0x8664)
 						throw new InvalidDataException();
 					is64 = machine == 0x8664;
@@ -205,8 +181,8 @@ namespace ExtremeDumper.Forms {
 		private void DumpProcess(uint processId, string directoryPath) {
 			if (!Directory.Exists(directoryPath))
 				Directory.CreateDirectory(directoryPath);
-			using (IDumper dumper = DumperFactory.GetDumper(processId, _dumperType.Value))
-				MessageBoxStub.Show($"{dumper.DumpProcess(directoryPath).ToString()} {_resources.GetString("StrDumpFilesSuccess")}{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
+			using (var dumper = DumperFactory.GetDumper(processId, _dumperType.Value))
+				MessageBoxStub.Show($"{dumper.DumpProcess(directoryPath)} {_resources.GetString("StrDumpFilesSuccess")}{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
 		}
 	}
 }

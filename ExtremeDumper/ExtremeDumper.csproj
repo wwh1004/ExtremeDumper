@@ -1,162 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BA1D5A3E-330E-4D82-BFF5-58B6CF52726C}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>ExtremeDumper</RootNamespace>
-    <AssemblyName>ExtremeDumper</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Forms\Resources\Icon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>IDE0001;IDE1006</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <NoWarn>IDE0001;IDE1006</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Dumper\AntiAntiDumper.cs" />
-    <Compile Include="Dumper\DumperFactory.cs" />
-    <Compile Include="Dumper\Extensions.cs" />
-    <Compile Include="Dumper\IDumper.cs" />
-    <Compile Include="Dumper\NormalDumper.cs" />
-    <Compile Include="Dumper\PEImageHelper.cs" />
-    <Compile Include="Forms\AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\AboutForm.Designer.cs">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Cache.cs" />
-    <Compile Include="Forms\DumperTypeWrapper.cs" />
-    <Compile Include="Forms\FunctionsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FunctionsForm.Designer.cs">
-      <DependentUpon>FunctionsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\InjectingForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\InjectingForm.Designer.cs">
-      <DependentUpon>InjectingForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ListViewExtesion.cs" />
-    <Compile Include="Forms\ListViewItemSorter.cs" />
-    <Compile Include="Forms\MessageBoxStub.cs" />
-    <Compile Include="Forms\ModulesForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ModulesForm.Designer.cs">
-      <DependentUpon>ModulesForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\NativeMethods.cs" />
-    <Compile Include="Forms\ProcessesForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ProcessesForm.Designer.cs">
-      <DependentUpon>ProcessesForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="GlobalExceptionCatcher.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\AboutForm.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\AboutForm.zh-CN.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FunctionsForm.resx">
-      <DependentUpon>FunctionsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FunctionsForm.zh-CN.resx">
-      <DependentUpon>FunctionsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\InjectingForm.resx">
-      <DependentUpon>InjectingForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\InjectingForm.zh-CN.resx">
-      <DependentUpon>InjectingForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ProcessesForm.resx">
-      <DependentUpon>ProcessesForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ProcessesForm.zh-CN.resx">
-      <DependentUpon>ProcessesForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ModulesForm.resx">
-      <DependentUpon>ModulesForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ModulesForm.zh-CN.resx">
-      <DependentUpon>ModulesForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Forms\Resources\Avatar.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Forms\Resources\Icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ExtremeDumper.AntiAntiDump\ExtremeDumper.AntiAntiDump.csproj">
-      <Project>{dffab16f-40be-46b2-aa4a-0fd49c1cccaa}</Project>
-      <Name>ExtremeDumper.AntiAntiDump</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\clrmd\src\Microsoft.Diagnostics.Runtime\v2\Microsoft.Diagnostics.Runtime.v2.csproj">
-      <Project>{935d33c5-62f1-40fe-8db0-46b6e01342fb}</Project>
-      <Name>Microsoft.Diagnostics.Runtime.v2</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\dnlib\src\dnlib.csproj">
-      <Project>{104cac47-92e9-4634-a70e-17b3e697b1d1}</Project>
-      <Name>dnlib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\MetadataLocator\MetadataLocator\MetadataLocator.csproj">
-      <Project>{AED69D77-8C7B-41BA-9967-AC9B522430F9}</Project>
-      <Name>MetadataLocator</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NativeSharp-lib">
-      <Version>3.0.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	<PropertyGroup>
+		<UseWindowsForms>true</UseWindowsForms>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Costura.Fody" Version="4.1.0" />
+		<PackageReference Include="dnlib" Version="3.3.2" />
+		<PackageReference Include="Microsoft.Diagnostics.Runtime" Version="1.1.142101" />
+		<PackageReference Include="NativeSharp-lib" Version="3.0.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Forms\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Forms\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+	<Import Project="..\ExtremeDumper.Common.props" />
 </Project>

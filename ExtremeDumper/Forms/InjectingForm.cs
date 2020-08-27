@@ -20,7 +20,7 @@ namespace ExtremeDumper.Forms {
 			_process = NativeProcess.Open(processId);
 			if (_process == NativeProcess.InvalidProcess)
 				throw new InvalidOperationException();
-			Text = $"Injector - {_process.Name}(ID={_process.Id.ToString()})";
+			Text = $"Injector - {_process.Name}(ID={_process.Id})";
 		}
 
 		#region Events
@@ -54,31 +54,26 @@ namespace ExtremeDumper.Forms {
 		}
 
 		private void btInject_Click(object sender, EventArgs e) {
-			string typeName;
-
 			if (!File.Exists(_assemblyPath))
 				return;
 			if (cmbEntryPoint.SelectedItem is null)
 				return;
-			typeName = _entryPoint.FullName.Substring(_entryPoint.FullName.IndexOf(' ') + 1);
+
+			string typeName = _entryPoint.FullName.Substring(_entryPoint.FullName.IndexOf(' ') + 1);
 			typeName = typeName.Substring(0, typeName.IndexOf(':'));
 			if (chkWaitReturn.Checked) {
 				btInject.Enabled = false;
 				Text += _resources.GetString("StrWaiting");
 				new Thread(() => {
-					int ret;
-
-					if (_process.InjectManaged(_assemblyPath, typeName, _entryPoint.Name, _argument, out ret))
-						Invoke((Action)(() => MessageBoxStub.Show($"{_resources.GetString("StrInjectSuccessfully")}\n{_resources.GetString("StrReturnValue")} {ret.ToString()}", MessageBoxIcon.Information)));
+					if (_process.InjectManaged(_assemblyPath, typeName, _entryPoint.Name, _argument, out int ret))
+						Invoke((Action)(() => MessageBoxStub.Show($"{_resources.GetString("StrInjectSuccessfully")}\n{_resources.GetString("StrReturnValue")} {ret}", MessageBoxIcon.Information)));
 					else
 						Invoke((Action)(() => MessageBoxStub.Show(_resources.GetString("StrFailToInject"), MessageBoxIcon.Error)));
 					Invoke((Action)(() => {
 						btInject.Enabled = true;
 						Text = Text.Substring(0, Text.Length - 6);
 					}));
-				}) {
-					IsBackground = true
-				}.Start();
+				}) { IsBackground = true }.Start();
 			}
 			else {
 				if (_process.InjectManaged(_assemblyPath, typeName, _entryPoint.Name, _argument))
@@ -90,8 +85,6 @@ namespace ExtremeDumper.Forms {
 		#endregion
 
 		private void LoadAssembly() {
-			MethodSig methodSig;
-
 			try {
 				_manifestModule = ModuleDefMD.Load(_assemblyPath);
 			}
@@ -101,19 +94,22 @@ namespace ExtremeDumper.Forms {
 				return;
 			}
 			cmbEntryPoint.Items.Clear();
-			foreach (TypeDef typeDef in _manifestModule.GetTypes())
-				foreach (MethodDef methodDef in typeDef.Methods) {
+			foreach (var typeDef in _manifestModule.GetTypes()) {
+				foreach (var methodDef in typeDef.Methods) {
 					if (!methodDef.IsStatic)
 						continue;
 					if (methodDef.IsGetter || methodDef.IsSetter)
 						continue;
-					methodSig = (MethodSig)methodDef.Signature;
+
+					var methodSig = (MethodSig)methodDef.Signature;
 					if (methodSig.Params.Count != 1 || methodSig.Params[0].FullName != "System.String")
 						continue;
 					if (methodSig.RetType.FullName != "System.Int32")
 						continue;
+
 					cmbEntryPoint.Items.Add(methodDef);
 				}
+			}
 			if (cmbEntryPoint.Items.Count == 1)
 				cmbEntryPoint.SelectedIndex = 0;
 		}

@@ -1,4 +1,4 @@
-using ExtremeDumper.Dumper;
+using ExtremeDumper.Dumping;
 
 namespace ExtremeDumper.Forms {
 	internal class DumperTypeWrapper {

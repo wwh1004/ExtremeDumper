@@ -129,9 +129,6 @@
   <data name="fbdlgDumped.Description" xml:space="preserve">
     <value>选择转储文件保存位置</value>
   </data>
-  <data name="mnuAbout.Text" xml:space="preserve">
-    <value>关于</value>
-  </data>
   <data name="mnuDebugPrivilege.Text" xml:space="preserve">
     <value>提升Debug权限</value>
   </data>
@@ -143,9 +140,6 @@
   </data>
   <data name="mnuGotoLocation.Text" xml:space="preserve">
     <value>打开文件所在的位置</value>
-  </data>
-  <data name="mnuHelp.Text" xml:space="preserve">
-    <value>帮助</value>
   </data>
   <data name="mnuInjectDll.Text" xml:space="preserve">
     <value>注入DLL</value>

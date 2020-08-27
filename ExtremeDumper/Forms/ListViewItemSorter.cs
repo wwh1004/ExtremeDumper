@@ -96,10 +96,7 @@ namespace ExtremeDumper.Forms {
 		}
 
 		private int IntegerComparer<T>(string x, string y, Parser<T> parser) where T : IComparable<T> {
-			T xParsed;
-			T yParsed;
-
-			if (parser(x, NumberStyles.Integer, null, out xParsed) && parser(y, NumberStyles.Integer, null, out yParsed))
+			if (parser(x, NumberStyles.Integer, null, out var xParsed) && parser(y, NumberStyles.Integer, null, out var yParsed))
 				return xParsed.CompareTo(yParsed);
 			else if (parser(AllowHexLeading ? CleanHexLeading(x) : x, NumberStyles.HexNumber, null, out xParsed) && parser(AllowHexLeading ? CleanHexLeading(y) : y, NumberStyles.HexNumber, null, out yParsed))
 				return xParsed.CompareTo(yParsed);
@@ -118,6 +115,7 @@ namespace ExtremeDumper.Forms {
 		public void Dispose() {
 			if (_isDisposed)
 				return;
+
 			_listView.ColumnClick -= ListView_ColumnClick;
 			_columnTypes = null;
 			_isDisposed = true;
