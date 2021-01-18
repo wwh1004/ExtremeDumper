@@ -1,8 +1,8 @@
 <Project>
 	<PropertyGroup>
 		<Title>ExtremeDumper</Title>
-		<Version>3.0.0.1</Version>
-		<Copyright>Copyright © 2018-2020 Wwh</Copyright>
+		<Version>3.0.0.2</Version>
+		<Copyright>Copyright © 2018-2021 Wwh</Copyright>
 		<Description>.NET Assemblies Dumper</Description>
 		<ApplicationIcon>..\ExtremeDumper\Images\ExtremeDumper.ico</ApplicationIcon>
 	</PropertyGroup>

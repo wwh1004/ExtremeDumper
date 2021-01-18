@@ -7,9 +7,11 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExtremeDumper.Dumping;
 using Microsoft.Diagnostics.Runtime;
+using Microsoft.Diagnostics.Runtime.Utilities;
 using NativeSharp;
 using static ExtremeDumper.Forms.NativeMethods;
 using ImageLayout = dnlib.PE.ImageLayout;
@@ -114,6 +116,7 @@ namespace ExtremeDumper.Forms {
 			if (_isDotNetProcess) {
 				try {
 					using (var dataTarget = DataTarget.AttachToProcess((int)_process.Id, 1000, AttachFlag.Passive)) {
+						dataTarget.SymbolLocator = DummySymbolLocator.Instance;
 						foreach (var clrModule in dataTarget.ClrVersions.Select(t => t.CreateRuntime()).SelectMany(t => t.AppDomains).SelectMany(t => t.Modules)) {
 							string name = clrModule.Name;
 							bool inMemory;
@@ -178,6 +181,33 @@ namespace ExtremeDumper.Forms {
 				_process.Dispose();
 			}
 			base.Dispose(disposing);
+		}
+
+		private sealed class DummySymbolLocator : SymbolLocator {
+			public static DummySymbolLocator Instance { get; } = new DummySymbolLocator();
+
+			private DummySymbolLocator() {
+			}
+
+			public override string FindBinary(string fileName, int buildTimeStamp, int imageSize, bool checkProperties = true) {
+				return string.Empty;
+			}
+
+			public override Task<string> FindBinaryAsync(string fileName, int buildTimeStamp, int imageSize, bool checkProperties = true) {
+				return Task.FromResult(string.Empty);
+			}
+
+			public override string FindPdb(string pdbName, Guid pdbIndexGuid, int pdbIndexAge) {
+				return string.Empty;
+			}
+
+			public override Task<string> FindPdbAsync(string pdbName, Guid pdbIndexGuid, int pdbIndexAge) {
+				return Task.FromResult(string.Empty);
+			}
+
+			protected override Task CopyStreamToFileAsync(Stream input, string fullSrcPath, string fullDestPath, long size) {
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

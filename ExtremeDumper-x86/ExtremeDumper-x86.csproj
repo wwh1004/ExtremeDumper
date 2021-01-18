@@ -2,5 +2,13 @@
 	<PropertyGroup>
 		<PlatformTarget>x86</PlatformTarget>
 	</PropertyGroup>
+	<Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
+		<ItemGroup>
+			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
+		</ItemGroup>
+	</Target>
 	<Import Project="..\ExtremeDumper.Common.props" />
+	<ItemGroup>
+	  <ProjectReference Include="..\ExtremeDumper\ExtremeDumper.csproj" />
+	</ItemGroup>
 </Project>
