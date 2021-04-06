@@ -123,7 +123,7 @@ namespace ExtremeDumper.Forms {
 							inMemory = name.Contains(",");
 						}
 						else {
-							name = "EmptyName";
+							name = "<<EmptyName>>";
 							inMemory = true;
 						}
 						string moduleName = !inMemory ? Path.GetFileName(name) : name.Split(',')[0];
@@ -131,7 +131,7 @@ namespace ExtremeDumper.Forms {
 						// Name
 						listViewItem.SubItems.Add(clrModule.AppDomain.Name);
 						// Domain Name
-						listViewItem.SubItems.Add(clrModule.AppDomain.Runtime.ClrInfo.Version.ToString());
+						listViewItem.SubItems.Add($"v{clrModule.AppDomain.Runtime.ClrInfo.Version}");
 						// CLR Version
 						listViewItem.SubItems.Add(Utils.FormatPointer(clrModule.ImageBase));
 						// BaseAddress
