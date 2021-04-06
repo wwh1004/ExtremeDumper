@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Resources;
 using System.Threading;
 using System.Windows.Forms;
 using dnlib.DotNet;
@@ -10,10 +9,9 @@ namespace ExtremeDumper.Forms {
 	internal partial class InjectingForm : Form {
 		private readonly NativeProcess _process;
 		private string _assemblyPath;
-		private ModuleDef _manifestModule;
+		private ModuleDef _module;
 		private MethodDef _entryPoint;
 		private string _argument;
-		private readonly ResourceManager _resources = new ResourceManager(typeof(InjectingForm));
 
 		public InjectingForm(uint processId) {
 			InitializeComponent();
@@ -63,12 +61,12 @@ namespace ExtremeDumper.Forms {
 			typeName = typeName.Substring(0, typeName.IndexOf(':'));
 			if (chkWaitReturn.Checked) {
 				btInject.Enabled = false;
-				Text += _resources.GetString("StrWaiting");
+				Text += "Waiting...";
 				new Thread(() => {
 					if (_process.InjectManaged(_assemblyPath, typeName, _entryPoint.Name, _argument, out int ret))
-						Invoke((Action)(() => MessageBoxStub.Show($"{_resources.GetString("StrInjectSuccessfully")}\n{_resources.GetString("StrReturnValue")} {ret}", MessageBoxIcon.Information)));
+						Invoke((Action)(() => MessageBoxStub.Show($"Inject successfully and return value is {ret}", MessageBoxIcon.Information)));
 					else
-						Invoke((Action)(() => MessageBoxStub.Show(_resources.GetString("StrFailToInject"), MessageBoxIcon.Error)));
+						Invoke((Action)(() => MessageBoxStub.Show("Failed to inject", MessageBoxIcon.Error)));
 					Invoke((Action)(() => {
 						btInject.Enabled = true;
 						Text = Text.Substring(0, Text.Length - 6);
@@ -77,24 +75,24 @@ namespace ExtremeDumper.Forms {
 			}
 			else {
 				if (_process.InjectManaged(_assemblyPath, typeName, _entryPoint.Name, _argument))
-					MessageBoxStub.Show(_resources.GetString("StrInjectSuccessfully"), MessageBoxIcon.Information);
+					MessageBoxStub.Show("Inject successfully", MessageBoxIcon.Information);
 				else
-					MessageBoxStub.Show(_resources.GetString("StrFailToInject"), MessageBoxIcon.Error);
+					MessageBoxStub.Show("Failed to inject", MessageBoxIcon.Error);
 			}
 		}
 		#endregion
 
 		private void LoadAssembly() {
 			try {
-				_manifestModule = ModuleDefMD.Load(_assemblyPath);
+				_module = ModuleDefMD.Load(File.ReadAllBytes(_assemblyPath));
 			}
 			catch {
-				MessageBoxStub.Show(_resources.GetString("StrInvalidAssembly"), MessageBoxIcon.Error);
-				_manifestModule = null;
+				MessageBoxStub.Show("Invalid assembly", MessageBoxIcon.Error);
+				_module = null;
 				return;
 			}
 			cmbEntryPoint.Items.Clear();
-			foreach (var typeDef in _manifestModule.GetTypes()) {
+			foreach (var typeDef in _module.GetTypes()) {
 				foreach (var methodDef in typeDef.Methods) {
 					if (!methodDef.IsStatic)
 						continue;
@@ -117,7 +115,7 @@ namespace ExtremeDumper.Forms {
 		protected override void Dispose(bool disposing) {
 			if (disposing) {
 				components?.Dispose();
-				_manifestModule?.Dispose();
+				_module?.Dispose();
 				_process.Dispose();
 			}
 			base.Dispose(disposing);

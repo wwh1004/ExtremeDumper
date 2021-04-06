@@ -139,9 +139,6 @@
   <data name="&gt;&gt;mnuDebugPrivilege.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="StrAdministrator" xml:space="preserve">
-    <value>, Administrator</value>
-  </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
     <value>181, 6</value>
   </data>
@@ -154,18 +151,8 @@
   <data name="mnuDumpProcess.Size" type="System.Drawing.Size, System.Drawing">
     <value>184, 22</value>
   </data>
-  <data name="&gt;&gt;chProcessId.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;lvwProcesses.Type" xml:space="preserve">
     <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="mnuMain.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="Str32Bit" xml:space="preserve">
-    <value>(32 Bit)</value>
   </data>
   <data name="mnuMain.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -188,17 +175,8 @@
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>7, 17</value>
   </data>
-  <data name="mnuUseMetaDumper.Size" type="System.Drawing.Size, System.Drawing">
-    <value>157, 22</value>
-  </data>
-  <data name="&gt;&gt;mnuRefreshProcessList.Name" xml:space="preserve">
-    <value>mnuRefreshProcessList</value>
-  </data>
   <data name="&gt;&gt;mnuGotoLocation.Name" xml:space="preserve">
     <value>mnuGotoLocation</value>
-  </data>
-  <data name="StrDumpFilesSuccess" xml:space="preserve">
-    <value>Images have been dumped to:</value>
   </data>
   <data name="&gt;&gt;mnuOptions.Name" xml:space="preserve">
     <value>mnuOptions</value>
@@ -209,20 +187,14 @@
   <data name="&gt;&gt;chProcessPath.Name" xml:space="preserve">
     <value>chProcessPath</value>
   </data>
-  <data name="StrViewModulesSwitchTo32Bit" xml:space="preserve">
-    <value>Please run x86 version</value>
-  </data>
-  <data name="StrFailed" xml:space="preserve">
-    <value>Failed</value>
-  </data>
   <data name="fbdlgDumped.Description" xml:space="preserve">
     <value>Select a directory to save dumps</value>
   </data>
   <data name="mnuInjectDll.Text" xml:space="preserve">
     <value>Inject Dll</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator4.Name" xml:space="preserve">
-    <value>toolStripSeparator4</value>
+  <data name="&gt;&gt;mnuOnlyDotNetProcess.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lvwProcesses.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -231,23 +203,20 @@
   <data name="&gt;&gt;chProcessName.Name" xml:space="preserve">
     <value>chProcessName</value>
   </data>
-  <data name="chProcessPath.Text" xml:space="preserve">
-    <value>Path</value>
-  </data>
-  <data name="&gt;&gt;mnuProcessContext.Name" xml:space="preserve">
-    <value>mnuProcessContext</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>ProcessesForm</value>
-  </data>
   <data name="mnuAbout.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 22</value>
+  </data>
+  <data name="mnuMain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>933, 27</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator4.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="mnuMain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>7, 3, 0, 3</value>
+  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
+    <value>toolStripSeparator1</value>
+  </data>
+  <data name="mnuDumperType.Text" xml:space="preserve">
+    <value>DumperType</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>
@@ -260,6 +229,12 @@
   </data>
   <data name="&gt;&gt;lvwProcesses.Name" xml:space="preserve">
     <value>lvwProcesses</value>
+  </data>
+  <data name="&gt;&gt;mnuRefreshProcessList.Name" xml:space="preserve">
+    <value>mnuRefreshProcessList</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
+    <value>toolStripSeparator2</value>
   </data>
   <data name="chProcessName.Text" xml:space="preserve">
     <value>Name</value>
@@ -279,6 +254,9 @@
   <data name="&gt;&gt;mnuDumperType.Name" xml:space="preserve">
     <value>mnuDumperType</value>
   </data>
+  <data name="chProcessId.Text" xml:space="preserve">
+    <value>PID</value>
+  </data>
   <data name="&gt;&gt;mnuInjectDll.Name" xml:space="preserve">
     <value>mnuInjectDll</value>
   </data>
@@ -288,17 +266,14 @@
   <data name="mnuDumpProcess.Text" xml:space="preserve">
     <value>Dump Selected Process</value>
   </data>
-  <data name="&gt;&gt;chProcessPath.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="mnuOnlyDotNetProcess.Text" xml:space="preserve">
     <value>Only .NET Processes</value>
   </data>
   <data name="&gt;&gt;mnuOnlyDotNetProcess.Name" xml:space="preserve">
     <value>mnuOnlyDotNetProcess</value>
   </data>
-  <data name="&gt;&gt;mnuOnlyDotNetProcess.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuMain.Name" xml:space="preserve">
     <value>mnuMain</value>
@@ -309,17 +284,23 @@
   <data name="mnuInjectDll.Size" type="System.Drawing.Size, System.Drawing">
     <value>184, 22</value>
   </data>
+  <data name="&gt;&gt;toolStripSeparator4.Name" xml:space="preserve">
+    <value>toolStripSeparator4</value>
+  </data>
   <data name="&gt;&gt;mnuDumpProcess.Name" xml:space="preserve">
     <value>mnuDumpProcess</value>
   </data>
   <data name="&gt;&gt;fbdlgDumped.Type" xml:space="preserve">
     <value>System.Windows.Forms.FolderBrowserDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="mnuRefreshProcessList.Size" type="System.Drawing.Size, System.Drawing">
     <value>184, 22</value>
   </data>
-  <data name="&gt;&gt;mnuMain.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="mnuUseMetaDumper.Size" type="System.Drawing.Size, System.Drawing">
+    <value>157, 22</value>
   </data>
   <data name="&gt;&gt;mnuDumpProcess.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -330,14 +311,11 @@
   <data name="mnuOnlyDotNetProcess.Size" type="System.Drawing.Size, System.Drawing">
     <value>184, 22</value>
   </data>
-  <data name="mnuDumperType.Text" xml:space="preserve">
-    <value>DumperType</value>
+  <data name="&gt;&gt;mnuMain.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="StrSuccess" xml:space="preserve">
-    <value>Success</value>
-  </data>
-  <data name="chProcessId.Text" xml:space="preserve">
-    <value>PID</value>
+  <data name="&gt;&gt;chProcessId.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;fbdlgDumped.Name" xml:space="preserve">
     <value>fbdlgDumped</value>
@@ -351,15 +329,16 @@
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
     <value>160, 6</value>
   </data>
-  <data name="&gt;&gt;mnuMain.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="&gt;&gt;mnuProcessContext.Name" xml:space="preserve">
+    <value>mnuProcessContext</value>
   </data>
   <data name="&gt;&gt;mnuViewModules.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
-    <value>toolStripSeparator1</value>
+  <data name="mnuMain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 3, 0, 3</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lvwProcesses.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -375,20 +354,20 @@
   <data name="mnuDebugPrivilege.Size" type="System.Drawing.Size, System.Drawing">
     <value>163, 22</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
-    <value>toolStripSeparator2</value>
+  <data name="mnuMain.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
   <data name="mnuOptions.Text" xml:space="preserve">
     <value>Options</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;chProcessPath.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="mnuMain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>933, 27</value>
+  <data name="chProcessPath.Text" xml:space="preserve">
+    <value>Path</value>
   </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>ProcessesForm</value>
   </data>
   <data name="mnuUseMegaDumper.Size" type="System.Drawing.Size, System.Drawing">
     <value>157, 22</value>
@@ -405,26 +384,20 @@
   <data name="mnuDumperType.Size" type="System.Drawing.Size, System.Drawing">
     <value>163, 22</value>
   </data>
+  <data name="&gt;&gt;mnuMain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuOptions.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator3.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="StrRunAsAdmin" xml:space="preserve">
-    <value>Please runas administator</value>
-  </data>
   <data name="mnuProcessContext.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 17</value>
   </data>
-  <data name="$this.Language" type="System.Globalization.CultureInfo, mscorlib">
-    <value>en-US</value>
-  </data>
   <data name="mnuMain.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>186, 17</value>
-  </data>
-  <data name="$this.Localizable" type="System.Boolean, mscorlib">
-    <value>True</value>
   </data>
   <data name="mnuMain.Locked" type="System.Boolean, mscorlib">
     <value>True</value>

@@ -18,8 +18,8 @@ namespace ExtremeDumper.Dumping {
 			if (address == null)
 				throw new ArgumentNullException(nameof(address));
 
-			using (var process = NativeProcess.Open(processId))
-				return Dump(process, address, ref imageLayout);
+			using var process = NativeProcess.Open(processId);
+			return Dump(process, address, ref imageLayout);
 		}
 
 		/// <summary>
@@ -30,11 +30,21 @@ namespace ExtremeDumper.Dumping {
 		/// <param name="imageLayout"></param>
 		/// <returns></returns>
 		public static byte[] Dump(NativeProcess process, void* address, ref ImageLayout imageLayout) {
-			var firstPageInfo = process.EnumeratePageInfos(address, address).First();
+			var pageInfos = process.EnumeratePageInfos(address, address).ToArray();
+			if (pageInfos.Length == 0)
+				return null;
+
+			var firstPageInfo = pageInfos[0];
+			if (!IsValidPage(firstPageInfo))
+				return null;
+			// 判断内存页是否有效
+
 			bool atPageHeader = address == firstPageInfo.Address;
 			if (!atPageHeader)
 				imageLayout = ImageLayout.File;
-			byte[] peHeader = new byte[atPageHeader ? (int)firstPageInfo.Size : (int)((byte*)firstPageInfo.Address + (uint)firstPageInfo.Size - (byte*)address)];
+			// 如果不在内存页头部，只可能是文件布局
+
+			byte[] peHeader = new byte[(int)((byte*)firstPageInfo.Address + (int)firstPageInfo.Size - (byte*)address)];
 			process.ReadBytes(address, peHeader);
 			uint imageSize = GetImageSize(peHeader, imageLayout);
 			// 获取模块在内存中的大小
@@ -43,12 +53,17 @@ namespace ExtremeDumper.Dumping {
 			switch (imageLayout) {
 			case ImageLayout.File:
 				if (!process.TryReadBytes(address, peImage, 0, imageSize))
-					throw new InvalidOperationException();
+					return null;
 				break;
 			case ImageLayout.Memory:
-				foreach (var pageInfo in process.EnumeratePageInfos(address, (byte*)address + imageSize)) {
+				pageInfos = process.EnumeratePageInfos(address, (byte*)address + imageSize).Where(t => IsValidPage(t)).ToArray();
+				if (pageInfos.Length == 0)
+					return null;
+
+				foreach (var pageInfo in pageInfos) {
 					uint offset = (uint)((ulong)pageInfo.Address - (ulong)address);
-					process.TryReadBytes(pageInfo.Address, peImage, offset, (uint)pageInfo.Size);
+					if (!process.TryReadBytes(pageInfo.Address, peImage, offset, (uint)pageInfo.Size))
+						return null;
 				}
 				break;
 			default:
@@ -57,6 +72,10 @@ namespace ExtremeDumper.Dumping {
 			// 转储
 
 			return peImage;
+		}
+
+		private static bool IsValidPage(PageInfo pageInfo) {
+			return pageInfo.Protection != 0 && (pageInfo.Protection & MemoryProtection.NoAccess) == 0 && (ulong)pageInfo.Size <= int.MaxValue;
 		}
 
 		/// <summary>
@@ -87,22 +106,21 @@ namespace ExtremeDumper.Dumping {
 			if (fromImageLayout == toImageLayout)
 				return peImage;
 			byte[] newPEImageData = new byte[GetImageSize(peImage, toImageLayout)];
-			using (var peHeader = new PEImage(peImage, false)) {
-				Buffer.BlockCopy(peImage, 0, newPEImageData, 0, (int)peHeader.ImageSectionHeaders.Last().EndOffset);
-				// 复制PE头
-				foreach (var sectionHeader in peHeader.ImageSectionHeaders) {
-					switch (toImageLayout) {
-					case ImageLayout.File:
-						// ImageLayout.Memory -> ImageLayout.File
-						Buffer.BlockCopy(peImage, (int)sectionHeader.VirtualAddress, newPEImageData, (int)sectionHeader.PointerToRawData, (int)sectionHeader.SizeOfRawData);
-						break;
-					case ImageLayout.Memory:
-						// ImageLayout.File -> ImageLayout.Memory
-						Buffer.BlockCopy(peImage, (int)sectionHeader.PointerToRawData, newPEImageData, (int)sectionHeader.VirtualAddress, (int)sectionHeader.SizeOfRawData);
-						break;
-					default:
-						throw new NotSupportedException();
-					}
+			using var peHeader = new PEImage(peImage, false);
+			Buffer.BlockCopy(peImage, 0, newPEImageData, 0, (int)peHeader.ImageSectionHeaders.Last().EndOffset);
+			// 复制PE头
+			foreach (var sectionHeader in peHeader.ImageSectionHeaders) {
+				switch (toImageLayout) {
+				case ImageLayout.File:
+					// ImageLayout.Memory -> ImageLayout.File
+					Buffer.BlockCopy(peImage, (int)sectionHeader.VirtualAddress, newPEImageData, (int)sectionHeader.PointerToRawData, (int)sectionHeader.SizeOfRawData);
+					break;
+				case ImageLayout.Memory:
+					// ImageLayout.File -> ImageLayout.Memory
+					Buffer.BlockCopy(peImage, (int)sectionHeader.PointerToRawData, newPEImageData, (int)sectionHeader.VirtualAddress, (int)sectionHeader.SizeOfRawData);
+					break;
+				default:
+					throw new NotSupportedException();
 				}
 			}
 			return newPEImageData;
@@ -118,8 +136,8 @@ namespace ExtremeDumper.Dumping {
 			if (peHeader is null)
 				throw new ArgumentNullException(nameof(peHeader));
 
-			using (var peImage = new PEImage(peHeader, false))
-				return GetImageSize(peImage, imageLayout);
+			using var peImage = new PEImage(peHeader, false);
+			return GetImageSize(peImage, imageLayout);
 			// PEImage构造器中的imageLayout参数无关紧要，因为只需要解析PEHeader
 		}
 

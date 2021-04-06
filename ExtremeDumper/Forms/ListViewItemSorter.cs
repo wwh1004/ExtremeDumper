@@ -37,12 +37,10 @@ namespace ExtremeDumper.Forms {
 				return;
 
 			_column = e.Column;
-#pragma warning disable IDE0045
 			if (_column == _lastColumn)
 				_listView.Sorting = _listView.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
 			else
 				_listView.Sorting = SortOrder.Ascending;
-#pragma warning restore IDE0045
 			_listView.Sort();
 			_lastColumn = _column;
 		}

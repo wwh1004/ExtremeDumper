@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
-using System.Resources;
+using System.Runtime.CompilerServices;
 using System.Security.Principal;
 using System.Windows.Forms;
 using ExtremeDumper.Dumping;
@@ -13,14 +12,13 @@ using static ExtremeDumper.Forms.NativeMethods;
 namespace ExtremeDumper.Forms {
 	internal partial class ProcessesForm : Form {
 		private static readonly bool _isAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
-		private readonly DumperTypeWrapper _dumperType = new DumperTypeWrapper();
-		private readonly ResourceManager _resources = new ResourceManager(typeof(ProcessesForm));
+		private readonly StrongBox<DumperType> _dumperType = new();
 		private static bool _hasSeDebugPrivilege;
 
 		public ProcessesForm() {
 			InitializeComponent();
-			Text = $"{Application.ProductName} v{Application.ProductVersion} ({(Environment.Is64BitProcess ? "x64" : "x86")}{(_isAdministrator ? _resources.GetString("StrAdministrator") : string.Empty)})";
-			typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, lvwProcesses, new object[] { true });
+			Text = $"{Application.ProductName} v{Application.ProductVersion} ({(Environment.Is64BitProcess ? "x64" : "x86")}{(_isAdministrator ? ", Administrator" : string.Empty)})";
+			Utils.EnableDoubleBuffer(lvwProcesses);
 			lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new List<TypeCode> {
 				TypeCode.String,
 				TypeCode.Int32,
@@ -42,7 +40,7 @@ namespace ExtremeDumper.Forms {
 				return;
 
 			if (!_isAdministrator) {
-				MessageBoxStub.Show(_resources.GetString("StrRunAsAdmin") + Application.ProductName, MessageBoxIcon.Error);
+				MessageBoxStub.Show("Please run as administator", MessageBoxIcon.Error);
 				return;
 			}
 			try {
@@ -51,10 +49,10 @@ namespace ExtremeDumper.Forms {
 				mnuDebugPrivilege.Checked = true;
 				mnuDebugPrivilege.Enabled = false;
 				Text = Text.Substring(0, Text.Length - 1) + ", SeDebugPrivilege)";
-				MessageBoxStub.Show(_resources.GetString("StrSuccess"), MessageBoxIcon.Information);
+				MessageBoxStub.Show("Succeed", MessageBoxIcon.Information);
 			}
 			catch {
-				MessageBoxStub.Show(_resources.GetString("StrFailed"), MessageBoxIcon.Error);
+				MessageBoxStub.Show("Failed", MessageBoxIcon.Error);
 			}
 		}
 
@@ -67,8 +65,8 @@ namespace ExtremeDumper.Forms {
 				return;
 
 			uint processId = uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text);
-			using (var process = NativeProcess.Open(processId))
-				fbdlgDumped.SelectedPath = Path.GetDirectoryName(process.ImagePath);
+			using var process = NativeProcess.Open(processId);
+			fbdlgDumped.SelectedPath = Path.GetDirectoryName(process.ImagePath);
 			if (fbdlgDumped.ShowDialog() != DialogResult.OK)
 				return;
 			DumpProcess(processId, Path.Combine(fbdlgDumped.SelectedPath, "Dumps"));
@@ -79,11 +77,11 @@ namespace ExtremeDumper.Forms {
 				return;
 
 			var processNameItem = lvwProcesses.GetFirstSelectedSubItem(chProcessName.Index);
-			if (Environment.Is64BitProcess && processNameItem.BackColor == Cache.DotNetColor && processNameItem.Text.EndsWith(_resources.GetString("Str32Bit"), StringComparison.Ordinal)) {
-				MessageBoxStub.Show(_resources.GetString("StrViewModulesSwitchTo32Bit"), MessageBoxIcon.Error);
+			if (Environment.Is64BitProcess && processNameItem.BackColor == Utils.DotNetColor && processNameItem.Text.EndsWith("(32 Bit)", StringComparison.Ordinal)) {
+				MessageBoxStub.Show("Please run x86 version", MessageBoxIcon.Error);
 			}
 			else {
-				var modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Cache.DotNetColor, _dumperType);
+				var modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Utils.DotNetColor, _dumperType);
 				modulesForm.Show();
 			}
 		}
@@ -142,16 +140,16 @@ namespace ExtremeDumper.Forms {
 				bool is64;
 				while (Module32Next(snapshotHandle, ref moduleEntry)) {
 					string t;
-					if ((t = moduleEntry.szModule.ToUpperInvariant()) == "MSCOREE.DLL" || t == "MSCORWKS.DLL" || t == "CLR.DLL" || t == "CORECLR.DLL") {
-						listViewItem.BackColor = Cache.DotNetColor;
+					if ((t = moduleEntry.szModule.ToUpperInvariant()) == "MSCORWKS.DLL" || t == "CLR.DLL" || t == "CORECLR.DLL") {
+						listViewItem.BackColor = Utils.DotNetColor;
 						isDotNetProcess = true;
-						if (Cache.Is64BitProcess && Is64BitPE(moduleEntry.szExePath, out is64) && !is64)
-							listViewItem.Text += _resources.GetString("Str32Bit");
+						if (Utils.Is64BitProcess && Is64BitPE(moduleEntry.szExePath, out is64) && !is64)
+							listViewItem.Text += "(32 Bit)";
 						break;
 					}
 				}
-				if (!isDotNetProcess && Cache.Is64BitProcess && Is64BitPE(listViewItem.SubItems[2].Text, out is64) && !is64)
-					listViewItem.Text += _resources.GetString("Str32Bit");
+				if (!isDotNetProcess && Utils.Is64BitProcess && Is64BitPE(listViewItem.SubItems[2].Text, out is64) && !is64)
+					listViewItem.Text += "(32 Bit)";
 				if (!mnuOnlyDotNetProcess.Checked || isDotNetProcess)
 					lvwProcesses.Items.Add(listViewItem);
 			}
@@ -160,16 +158,15 @@ namespace ExtremeDumper.Forms {
 
 		private static bool Is64BitPE(string filePath, out bool is64) {
 			try {
-				using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-				using (var reader = new BinaryReader(stream)) {
-					reader.BaseStream.Position = 0x3C;
-					uint peOffset = reader.ReadUInt32();
-					reader.BaseStream.Position = peOffset + 0x4;
-					ushort machine = reader.ReadUInt16();
-					if (machine != 0x14C && machine != 0x8664)
-						throw new InvalidDataException();
-					is64 = machine == 0x8664;
-				}
+				using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+				using var reader = new BinaryReader(stream);
+				reader.BaseStream.Position = 0x3C;
+				uint peOffset = reader.ReadUInt32();
+				reader.BaseStream.Position = peOffset + 0x4;
+				ushort machine = reader.ReadUInt16();
+				if (machine != 0x14C && machine != 0x8664)
+					throw new InvalidDataException();
+				is64 = machine == 0x8664;
 				return true;
 			}
 			catch {
@@ -181,8 +178,9 @@ namespace ExtremeDumper.Forms {
 		private void DumpProcess(uint processId, string directoryPath) {
 			if (!Directory.Exists(directoryPath))
 				Directory.CreateDirectory(directoryPath);
-			using (var dumper = DumperFactory.GetDumper(processId, _dumperType.Value))
-				MessageBoxStub.Show($"{dumper.DumpProcess(directoryPath)} {_resources.GetString("StrDumpFilesSuccess")}{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
+			using var dumper = DumperFactory.GetDumper(processId, _dumperType.Value);
+			int count = dumper.DumpProcess(directoryPath);
+			MessageBoxStub.Show($"{count} images have been dumped to:{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
 		}
 	}
 }

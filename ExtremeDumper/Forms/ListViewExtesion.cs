@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using static ExtremeDumper.Forms.NativeMethods;
 
@@ -18,11 +17,7 @@ namespace ExtremeDumper.Forms {
 				listView.Columns[listView.Columns.Count - 1].Width += listView.Width - sumWidths - 4;
 			}
 			else {
-				int[] minWidths = new int[listView.Columns.Count];
-				using (var g = listView.CreateGraphics()) {
-					for (int i = 0; i < minWidths.Length; i++)
-						minWidths[i] = (int)g.MeasureString(listView.Columns[i].Text, listView.Font).Width + 10;
-				}
+				int[] minWidths = CalculateMinimumWidths(listView);
 				listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 				for (int i = 0; i < minWidths.Length; i++) {
 					if (listView.Columns[i].Width < minWidths[i])
@@ -31,6 +26,14 @@ namespace ExtremeDumper.Forms {
 				}
 				listView.Columns[minWidths.Length - 1].Width += listView.Width - sumWidths;
 			}
+		}
+
+		private static int[] CalculateMinimumWidths(ListView listView) {
+			int[] minWidths = new int[listView.Columns.Count];
+			using var g = listView.CreateGraphics();
+			for (int i = 0; i < minWidths.Length; i++)
+				minWidths[i] = (int)g.MeasureString(listView.Columns[i].Text, listView.Font).Width + 10;
+			return minWidths;
 		}
 
 		public static ListViewItem.ListViewSubItem GetFirstSelectedSubItem(this ListView listView, int index) {

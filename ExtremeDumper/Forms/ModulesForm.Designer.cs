@@ -16,9 +16,10 @@ namespace ExtremeDumper.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModulesForm));
             this.lvwModules = new System.Windows.Forms.ListView();
             this.chModuleName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chDomainName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chCLRVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chModuleHandle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chModuleSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chModulePath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -31,14 +32,11 @@ namespace ExtremeDumper.Forms
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuGotoLocation = new System.Windows.Forms.ToolStripMenuItem();
             this.sfdlgDumped = new System.Windows.Forms.SaveFileDialog();
-            this.chDomainName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chCLRVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.mnuModulesContext.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvwModules
             // 
-            resources.ApplyResources(this.lvwModules, "lvwModules");
             this.lvwModules.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lvwModules.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chModuleName,
@@ -48,32 +46,44 @@ namespace ExtremeDumper.Forms
             this.chModuleSize,
             this.chModulePath});
             this.lvwModules.ContextMenuStrip = this.mnuModulesContext;
+            this.lvwModules.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvwModules.FullRowSelect = true;
+            this.lvwModules.HideSelection = false;
+            this.lvwModules.Location = new System.Drawing.Point(0, 0);
             this.lvwModules.Name = "lvwModules";
+            this.lvwModules.Size = new System.Drawing.Size(933, 637);
             this.lvwModules.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvwModules.TabIndex = 0;
             this.lvwModules.UseCompatibleStateImageBehavior = false;
             this.lvwModules.View = System.Windows.Forms.View.Details;
             this.lvwModules.Resize += new System.EventHandler(this.lvwModules_Resize);
             // 
             // chModuleName
             // 
-            resources.ApplyResources(this.chModuleName, "chModuleName");
+            this.chModuleName.Text = "Name";
+            // 
+            // chDomainName
+            // 
+            this.chDomainName.Text = "Domain Name";
+            // 
+            // chCLRVersion
+            // 
+            this.chCLRVersion.Text = "CLR Version";
             // 
             // chModuleHandle
             // 
-            resources.ApplyResources(this.chModuleHandle, "chModuleHandle");
+            this.chModuleHandle.Text = "BaseAddress";
             // 
             // chModuleSize
             // 
-            resources.ApplyResources(this.chModuleSize, "chModuleSize");
+            this.chModuleSize.Text = "Size";
             // 
             // chModulePath
             // 
-            resources.ApplyResources(this.chModulePath, "chModulePath");
+            this.chModulePath.Text = "Path";
             // 
             // mnuModulesContext
             // 
-            resources.ApplyResources(this.mnuModulesContext, "mnuModulesContext");
             this.mnuModulesContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuDumpModule,
             this.mnuRefreshModuleList,
@@ -83,65 +93,61 @@ namespace ExtremeDumper.Forms
             this.toolStripSeparator2,
             this.mnuGotoLocation});
             this.mnuModulesContext.Name = "mnuModulesContext";
+            this.mnuModulesContext.Size = new System.Drawing.Size(214, 126);
             // 
             // mnuDumpModule
             // 
-            resources.ApplyResources(this.mnuDumpModule, "mnuDumpModule");
             this.mnuDumpModule.Name = "mnuDumpModule";
+            this.mnuDumpModule.Size = new System.Drawing.Size(213, 22);
+            this.mnuDumpModule.Text = "Dump Selected Module";
             this.mnuDumpModule.Click += new System.EventHandler(this.mnuDumpModule_Click);
             // 
             // mnuRefreshModuleList
             // 
-            resources.ApplyResources(this.mnuRefreshModuleList, "mnuRefreshModuleList");
             this.mnuRefreshModuleList.Name = "mnuRefreshModuleList";
+            this.mnuRefreshModuleList.Size = new System.Drawing.Size(213, 22);
+            this.mnuRefreshModuleList.Text = "Refresh";
             this.mnuRefreshModuleList.Click += new System.EventHandler(this.mnuRefreshModuleList_Click);
             // 
             // mnuViewFunctions
             // 
-            resources.ApplyResources(this.mnuViewFunctions, "mnuViewFunctions");
             this.mnuViewFunctions.Name = "mnuViewFunctions";
+            this.mnuViewFunctions.Size = new System.Drawing.Size(213, 22);
+            this.mnuViewFunctions.Text = "View Export Functions";
             this.mnuViewFunctions.Click += new System.EventHandler(this.mnuViewFunctions_Click);
             // 
             // toolStripSeparator1
             // 
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(210, 6);
             // 
             // mnuOnlyDotNetModule
             // 
-            resources.ApplyResources(this.mnuOnlyDotNetModule, "mnuOnlyDotNetModule");
             this.mnuOnlyDotNetModule.CheckOnClick = true;
             this.mnuOnlyDotNetModule.Name = "mnuOnlyDotNetModule";
+            this.mnuOnlyDotNetModule.Size = new System.Drawing.Size(213, 22);
+            this.mnuOnlyDotNetModule.Text = "Only .NET Modules";
             this.mnuOnlyDotNetModule.Click += new System.EventHandler(this.mnuOnlyDotNetModule_Click);
             // 
             // toolStripSeparator2
             // 
-            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(210, 6);
             // 
             // mnuGotoLocation
             // 
-            resources.ApplyResources(this.mnuGotoLocation, "mnuGotoLocation");
             this.mnuGotoLocation.Name = "mnuGotoLocation";
+            this.mnuGotoLocation.Size = new System.Drawing.Size(213, 22);
+            this.mnuGotoLocation.Text = "Goto Location";
             this.mnuGotoLocation.Click += new System.EventHandler(this.mnuGotoLocation_Click);
-            // 
-            // sfdlgDumped
-            // 
-            resources.ApplyResources(this.sfdlgDumped, "sfdlgDumped");
-            // 
-            // chDomainName
-            // 
-            resources.ApplyResources(this.chDomainName, "chDomainName");
-            // 
-            // chCLRVersion
-            // 
-            resources.ApplyResources(this.chCLRVersion, "chCLRVersion");
             // 
             // ModulesForm
             // 
-            resources.ApplyResources(this, "$this");
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(933, 637);
             this.Controls.Add(this.lvwModules);
+            this.Font = new System.Drawing.Font("Microsoft YaHei", 9F);
             this.Icon = global::ExtremeDumper.Forms.Resources.Icon;
             this.Name = "ModulesForm";
             this.mnuModulesContext.ResumeLayout(false);

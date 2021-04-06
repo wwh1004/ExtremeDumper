@@ -29,7 +29,6 @@ namespace ExtremeDumper.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FunctionsForm));
             this.lvwFunctions = new System.Windows.Forms.ListView();
             this.chFunctionName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chFunctionAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -48,25 +47,29 @@ namespace ExtremeDumper.Forms
             this.chFunctionAddress,
             this.chOrdinal});
             this.lvwFunctions.ContextMenuStrip = this.mnuFunctionsContext;
-            resources.ApplyResources(this.lvwFunctions, "lvwFunctions");
+            this.lvwFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvwFunctions.FullRowSelect = true;
+            this.lvwFunctions.HideSelection = false;
+            this.lvwFunctions.Location = new System.Drawing.Point(0, 0);
             this.lvwFunctions.Name = "lvwFunctions";
+            this.lvwFunctions.Size = new System.Drawing.Size(933, 637);
             this.lvwFunctions.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvwFunctions.TabIndex = 0;
             this.lvwFunctions.UseCompatibleStateImageBehavior = false;
             this.lvwFunctions.View = System.Windows.Forms.View.Details;
             this.lvwFunctions.Resize += new System.EventHandler(this.lvwFunctions_Resize);
             // 
             // chFunctionName
             // 
-            resources.ApplyResources(this.chFunctionName, "chFunctionName");
+            this.chFunctionName.Text = "Name";
             // 
             // chFunctionAddress
             // 
-            resources.ApplyResources(this.chFunctionAddress, "chFunctionAddress");
+            this.chFunctionAddress.Text = "Address";
             // 
             // chOrdinal
             // 
-            resources.ApplyResources(this.chOrdinal, "chOrdinal");
+            this.chOrdinal.Text = "Ordinal";
             // 
             // mnuFunctionsContext
             // 
@@ -74,24 +77,27 @@ namespace ExtremeDumper.Forms
             this.mnuRefreshFunctionList,
             this.toolStripSeparator1});
             this.mnuFunctionsContext.Name = "mnuModulesContext";
-            resources.ApplyResources(this.mnuFunctionsContext, "mnuFunctionsContext");
+            this.mnuFunctionsContext.Size = new System.Drawing.Size(121, 32);
             // 
             // mnuRefreshFunctionList
             // 
             this.mnuRefreshFunctionList.Name = "mnuRefreshFunctionList";
-            resources.ApplyResources(this.mnuRefreshFunctionList, "mnuRefreshFunctionList");
+            this.mnuRefreshFunctionList.Size = new System.Drawing.Size(120, 22);
+            this.mnuRefreshFunctionList.Text = "Refresh";
             this.mnuRefreshFunctionList.Click += new System.EventHandler(this.mnuRefreshFunctionList_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            this.toolStripSeparator1.Size = new System.Drawing.Size(117, 6);
             // 
             // FunctionsForm
             // 
-            resources.ApplyResources(this, "$this");
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(933, 637);
             this.Controls.Add(this.lvwFunctions);
+            this.Font = new System.Drawing.Font("Microsoft YaHei", 9F);
             this.Icon = global::ExtremeDumper.Forms.Resources.Icon;
             this.Name = "FunctionsForm";
             this.mnuFunctionsContext.ResumeLayout(false);

@@ -15,7 +15,7 @@ namespace ExtremeDumper.Forms {
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 		public struct MODULEENTRY32 {
 			public static readonly uint UnmanagedSize = (uint)Marshal.SizeOf(typeof(MODULEENTRY32));
-			public static MODULEENTRY32 Default => new MODULEENTRY32 { dwSize = UnmanagedSize };
+			public static MODULEENTRY32 Default => new() { dwSize = UnmanagedSize };
 
 			public uint dwSize;
 			public uint th32ModuleID;
@@ -34,7 +34,7 @@ namespace ExtremeDumper.Forms {
 		[StructLayout(LayoutKind.Sequential)]
 		public unsafe struct SCROLLBARINFO {
 			public static readonly uint UnmanagedSize = (uint)Marshal.SizeOf(typeof(SCROLLBARINFO));
-			public static SCROLLBARINFO Default = new SCROLLBARINFO { cbSize = UnmanagedSize };
+			public static SCROLLBARINFO Default = new() { cbSize = UnmanagedSize };
 
 			public uint cbSize;
 			public Rectangle rcScrollBar;
