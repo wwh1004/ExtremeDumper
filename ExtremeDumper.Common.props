@@ -1,14 +1,15 @@
 <Project>
 	<PropertyGroup>
 		<Title>ExtremeDumper</Title>
-		<Version>3.0.0.3</Version>
+		<Version>3.0.1.0</Version>
 		<Copyright>Copyright © 2018-2021 Wwh</Copyright>
 		<Description>.NET Assemblies Dumper</Description>
 		<ApplicationIcon>..\ExtremeDumper\Images\ExtremeDumper.ico</ApplicationIcon>
 	</PropertyGroup>
 	<PropertyGroup>
-		<TargetFramework>net45</TargetFramework>
+		<TargetFramework>net46</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Nullable>enable</Nullable>
 		<LangVersion>9.0</LangVersion>
 		<OutputType>WinExe</OutputType>
 		<OutputPath>..\bin\$(Configuration)</OutputPath>

@@ -5,8 +5,8 @@
 	<ItemGroup>
 		<PackageReference Include="Costura.Fody" Version="4.1.0" />
 		<PackageReference Include="dnlib" Version="3.3.2" />
-		<PackageReference Include="Microsoft.Diagnostics.Runtime" Version="1.1.142101" />
 		<PackageReference Include="NativeSharp-lib" Version="3.0.0.1" />
+		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Forms\Resources.Designer.cs">
