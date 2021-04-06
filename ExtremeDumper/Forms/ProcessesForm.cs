@@ -78,7 +78,7 @@ namespace ExtremeDumper.Forms {
 				return;
 
 			var processNameItem = lvwProcesses.GetFirstSelectedSubItem(chProcessName.Index);
-			if (Environment.Is64BitProcess && processNameItem.BackColor == Utils.DotNetColor && processNameItem.Text.EndsWith("(32 Bit)", StringComparison.Ordinal)) {
+			if (Environment.Is64BitProcess && processNameItem.BackColor == Utils.DotNetColor && processNameItem.Text.EndsWith(" (32 Bit)", StringComparison.Ordinal)) {
 				MessageBoxStub.Show("Please run x86 version", MessageBoxIcon.Error);
 			}
 			else {
@@ -145,12 +145,12 @@ namespace ExtremeDumper.Forms {
 						listViewItem.BackColor = Utils.DotNetColor;
 						isDotNetProcess = true;
 						if (Utils.Is64BitProcess && Is64BitPE(moduleEntry.szExePath, out is64) && !is64)
-							listViewItem.Text += "(32 Bit)";
+							listViewItem.Text += " (32 Bit)";
 						break;
 					}
 				}
 				if (!isDotNetProcess && Utils.Is64BitProcess && Is64BitPE(listViewItem.SubItems[2].Text, out is64) && !is64)
-					listViewItem.Text += "(32 Bit)";
+					listViewItem.Text += " (32 Bit)";
 				if (!mnuOnlyDotNetProcess.Checked || isDotNetProcess)
 					lvwProcesses.Items.Add(listViewItem);
 			}

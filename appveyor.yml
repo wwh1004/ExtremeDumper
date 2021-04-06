@@ -8,7 +8,7 @@ build:
   project: ExtremeDumper.sln
   verbosity: normal
 artifacts:
-- path: bin\Release
+- path: bin\Release\*.exe
   name: ExtremeDumper
 deploy:
 - provider: GitHub
