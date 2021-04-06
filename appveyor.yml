@@ -10,6 +10,7 @@ build:
 artifacts:
 - path: bin\Release\*.exe
   name: ExtremeDumper
+  type: zip
 deploy:
 - provider: GitHub
   tag: $(APPVEYOR_REPO_TAG_NAME)
