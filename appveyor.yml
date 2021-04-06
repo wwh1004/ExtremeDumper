@@ -7,10 +7,11 @@ before_build:
 build:
   project: ExtremeDumper.sln
   verbosity: normal
+after_build:
+- cmd: 7z a bin\Release\ExtremeDumper.zip bin\Release\*.exe
 artifacts:
-- path: bin\Release\*.exe
+- path: bin\Release\ExtremeDumper.zip
   name: ExtremeDumper
-  type: zip
 deploy:
 - provider: GitHub
   tag: $(APPVEYOR_REPO_TAG_NAME)
