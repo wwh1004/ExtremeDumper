@@ -142,6 +142,12 @@ namespace ExtremeDumper.Dumping {
 			// PEImage构造器中的imageLayout参数无关紧要，因为只需要解析PEHeader
 		}
 
+		/// <summary>
+		/// 获取模块大小
+		/// </summary>
+		/// <param name="peHeader"></param>
+		/// <param name="imageLayout"></param>
+		/// <returns></returns>
 		public static uint GetImageSize(PEImage peHeader, ImageLayout imageLayout) {
 			var lastSectionHeader = peHeader.ImageSectionHeaders.Last();
 			uint alignment;
