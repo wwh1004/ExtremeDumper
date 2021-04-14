@@ -1,7 +1,7 @@
 <Project>
 	<PropertyGroup>
 		<Title>ExtremeDumper</Title>
-		<Version>3.0.1.0</Version>
+		<Version>3.0.1.1</Version>
 		<Copyright>Copyright © 2018-2021 Wwh</Copyright>
 		<Description>.NET Assemblies Dumper</Description>
 		<ApplicationIcon>..\ExtremeDumper\Images\ExtremeDumper.ico</ApplicationIcon>

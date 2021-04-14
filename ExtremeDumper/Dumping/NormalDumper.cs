@@ -45,7 +45,8 @@ namespace ExtremeDumper.Dumping {
 			foreach (var pageInfo in _process.EnumeratePageInfos()) {
 				if (!IsValidPage(pageInfo))
 					continue;
-				byte[] page = new byte[Math.Min((int)pageInfo.Size, 0x2000)];
+				byte[] page = new byte[Math.Min((int)pageInfo.Size, 0x40000000)];
+				// 0x40000000 bytes = 1 giga bytes
 				if (!_process.TryReadBytes(pageInfo.Address, page))
 					continue;
 
@@ -72,10 +73,11 @@ namespace ExtremeDumper.Dumping {
 						continue;
 
 					fileName = EnsureValidFileName(fileName);
-					if (!IsSameFile(directoryPath, fileName, peImage, originalFileCache)) {
-						string filePath = Path.Combine(directoryPath, EnsureNoRepeatFileName(directoryPath, fileName));
-						File.WriteAllBytes(filePath, peImage);
-					}
+					if (IsSameFile(directoryPath, fileName, peImage, originalFileCache))
+						continue;
+
+					string filePath = Path.Combine(directoryPath, EnsureNoRepeatFileName(directoryPath, fileName));
+					File.WriteAllBytes(filePath, peImage);
 					count++;
 				}
 			}
