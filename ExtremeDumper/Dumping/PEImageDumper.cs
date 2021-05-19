@@ -22,7 +22,20 @@ namespace ExtremeDumper.Dumping {
 			using var process = NativeProcess.Open(processId);
 			return Dump(process, address, ref imageLayout);
 		}
-
+		/// <summary>
+		/// 修改PE文件的SizeOfImage值
+		/// </summary>
+		/// <param name="peImage">PE文件数据</param>
+		/// <param name="newSizeOfImage">新的SizeOfImage值</param>
+		/// <param name="oldSizeOfImage">原始的SizeOfImage值</param>
+		public static void ChangeSizeOfImage(byte[] peImage, uint newSizeOfImage, out uint oldSizeOfImage) {
+			if (peImage == null) throw new ArgumentNullException("ChageSizeOfImage -> peImageBuff is null.");
+			if (peImage == null) throw new ArgumentNullException("ChageSizeOfImage -> the peImageBuff size must be greater than 0.");
+			fixed (byte* pSizeOfImage = &peImage[0xd0]) {
+				oldSizeOfImage = *(uint*)(pSizeOfImage);
+				*(uint*)(pSizeOfImage) = newSizeOfImage;
+			}
+		}
 		/// <summary>
 		/// 直接从内存中复制模块，不执行格式转换操作
 		/// </summary>
@@ -70,6 +83,8 @@ namespace ExtremeDumper.Dumping {
 			default:
 				throw new NotSupportedException();
 			}
+			//修正SizeOfImage
+			ChangeSizeOfImage(peImage, imageSize, out uint _);
 			// 转储
 
 			return peImage;
