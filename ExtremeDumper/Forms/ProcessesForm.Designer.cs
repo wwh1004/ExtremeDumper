@@ -48,7 +48,7 @@ namespace ExtremeDumper.Forms
             this.mnuDebugPrivilege = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuDumperType = new System.Windows.Forms.ToolStripMenuItem();
-            this.fbdlgDumped = new System.Windows.Forms.FolderBrowserDialog();
+            this.fbdlgDumped = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
             this.mnuProcessContext.SuspendLayout();
             this.mnuMain.SuspendLayout();
             this.SuspendLayout();
@@ -201,6 +201,7 @@ namespace ExtremeDumper.Forms
             // fbdlgDumped
             // 
             this.fbdlgDumped.Description = "Select a directory to save dumps";
+            this.fbdlgDumped.UseDescriptionForTitle = true;
             // 
             // ProcessesForm
             // 
@@ -239,7 +240,7 @@ namespace ExtremeDumper.Forms
         private System.Windows.Forms.ToolStripMenuItem mnuRefreshProcessList;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.FolderBrowserDialog fbdlgDumped;
+        private Ookii.Dialogs.WinForms.VistaFolderBrowserDialog fbdlgDumped;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem mnuInjectDll;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;

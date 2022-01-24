@@ -72,7 +72,7 @@ namespace ExtremeDumper.Forms
             // 
             // chModuleHandle
             // 
-            this.chModuleHandle.Text = "BaseAddress";
+            this.chModuleHandle.Text = "Address";
             // 
             // chModuleSize
             // 

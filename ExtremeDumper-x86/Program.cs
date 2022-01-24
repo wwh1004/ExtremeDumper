@@ -1,10 +1,10 @@
 using System;
 
-namespace ExtremeDumper_x86 {
-	internal static class Program {
-		[STAThread]
-		private static void Main() {
-			ExtremeDumper.Program.Main();
-		}
+namespace ExtremeDumper_x86;
+
+static class Program {
+	[STAThread]
+	static void Main() {
+		ExtremeDumper.Program.Main();
 	}
 }
