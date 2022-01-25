@@ -116,6 +116,7 @@ partial class ProcessesForm : Form {
 	}
 
 	void RefreshProcessList() {
+		lvwProcesses.SuspendLayout();
 		lvwProcesses.Items.Clear();
 		uint[] processIds = NativeProcess.GetAllProcessIds();
 		if (processIds is null)
@@ -138,6 +139,7 @@ partial class ProcessesForm : Form {
 				listViewItem.BackColor = Utils.DotNetColor;
 			lvwProcesses.Items.Add(listViewItem);
 		}
+		lvwProcesses.ResumeLayout();
 		lvwProcesses.AutoResizeColumns(false);
 	}
 
