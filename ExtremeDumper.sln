@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29006.145
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtremeDumper", "ExtremeDumper\ExtremeDumper.csproj", "{BA1D5A3E-330E-4D82-BFF5-58B6CF52726C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtremeDumper", "ExtremeDumper\ExtremeDumper.csproj", "{BA1D5A3E-330E-4D82-BFF5-58B6CF52726C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtremeDumper-x86", "ExtremeDumper-x86\ExtremeDumper-x86.csproj", "{F4ED1869-89DC-4A43-A2D7-0766533EB2BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtremeDumper-x86", "ExtremeDumper-x86\ExtremeDumper-x86.csproj", "{F4ED1869-89DC-4A43-A2D7-0766533EB2BA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtremeDumper.AntiAntiDump", "ExtremeDumper.AntiAntiDump\ExtremeDumper.AntiAntiDump.csproj", "{0F76706D-F95E-43DB-9ECE-4991AA537831}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F4ED1869-89DC-4A43-A2D7-0766533EB2BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4ED1869-89DC-4A43-A2D7-0766533EB2BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4ED1869-89DC-4A43-A2D7-0766533EB2BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F76706D-F95E-43DB-9ECE-4991AA537831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F76706D-F95E-43DB-9ECE-4991AA537831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F76706D-F95E-43DB-9ECE-4991AA537831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F76706D-F95E-43DB-9ECE-4991AA537831}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

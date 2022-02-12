@@ -28,6 +28,7 @@ partial class ModulesForm : Form {
 		this.isDotNet = isDotNet;
 		this.dumperType = dumperType;
 		Text = $"Modules {processName}(ID={processId})";
+		Text = Utils.ObfuscateTitle(Text);
 		Utils.EnableDoubleBuffer(lvwModules);
 		lvwModules.ListViewItemSorter = new ListViewItemSorter(lvwModules, new[] { TypeCode.String, TypeCode.String, TypeCode.String, TypeCode.UInt64, TypeCode.Int32, TypeCode.String }) { AllowHexLeading = true };
 		RefreshModuleList();

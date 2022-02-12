@@ -3,16 +3,11 @@
 		<Title>ExtremeDumper</Title>
 		<Version>3.1.0.0</Version>
 		<Copyright>Copyright © 2018-2022 Wwh</Copyright>
-		<Description>.NET Assemblies Dumper</Description>
-		<ApplicationIcon>..\ExtremeDumper\Images\ExtremeDumper.ico</ApplicationIcon>
 	</PropertyGroup>
 	<PropertyGroup>
-		<TargetFramework>net462</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Nullable>enable</Nullable>
 		<LangVersion>10.0</LangVersion>
-		<OutputType>WinExe</OutputType>
-		<OutputPath>..\bin\$(Configuration)</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 </Project>

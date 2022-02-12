@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net35</TargetFramework>
+	</PropertyGroup>
+	<Import Project="..\ExtremeDumper.Common.props" />
+	<ItemGroup>
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\Memory.cs" Link="MetadataLocator\Memory.cs" />
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\MetadataImport.cs" Link="MetadataLocator\MetadataImport.cs" />
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\MetadataInfo.cs" Link="MetadataLocator\MetadataInfo.cs" />
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\MetadataInfoImpl.cs" Link="MetadataLocator\MetadataInfoImpl.cs" />
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\PEInfo.cs" Link="MetadataLocator\PEInfo.cs" />
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\PEInfoImpl.cs" Link="MetadataLocator\PEInfoImpl.cs" />
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\ReflectionHelpers.cs" Link="MetadataLocator\ReflectionHelpers.cs" />
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\RuntimeDefinitions.cs" Link="MetadataLocator\RuntimeDefinitions.cs" />
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\RuntimeEnvironment.cs" Link="MetadataLocator\RuntimeEnvironment.cs" />
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\TestAssemblyManager.cs" Link="MetadataLocator\TestAssemblyManager.cs" />
+		<Compile Include="..\Libraries\MetadataLocator\MetadataLocator\Utils.cs" Link="MetadataLocator\Utils.cs" />
+	</ItemGroup>
+</Project>

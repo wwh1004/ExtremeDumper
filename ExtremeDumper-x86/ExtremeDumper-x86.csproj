@@ -1,6 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+		<UseWindowsForms>true</UseWindowsForms>
+		<Description>.NET Assemblies Dumper</Description>
+		<ApplicationIcon>..\ExtremeDumper\Images\ExtremeDumper.ico</ApplicationIcon>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net462</TargetFramework>
 		<PlatformTarget>x86</PlatformTarget>
+		<OutputType>Exe</OutputType>
+		<OutputPath>..\bin\$(Configuration)</OutputPath>
 	</PropertyGroup>
 	<Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
 		<ItemGroup>
@@ -9,6 +17,6 @@
 	</Target>
 	<Import Project="..\ExtremeDumper.Common.props" />
 	<ItemGroup>
-	  <ProjectReference Include="..\ExtremeDumper\ExtremeDumper.csproj" />
+		<ProjectReference Include="..\ExtremeDumper\ExtremeDumper.csproj" />
 	</ItemGroup>
 </Project>

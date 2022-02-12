@@ -20,6 +20,7 @@ partial class ProcessesForm : Form {
 	public ProcessesForm() {
 		InitializeComponent();
 		Text = $"{Application.ProductName} v{Application.ProductVersion} ({(Environment.Is64BitProcess ? "x64" : "x86")}{(IsAdministrator ? ", Administrator" : string.Empty)})";
+		Text = Utils.ObfuscateTitle(Text);
 		Utils.EnableDoubleBuffer(lvwProcesses);
 		lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new[] { TypeCode.String, TypeCode.Int32, TypeCode.String });
 		for (var dumperType = DumperType.Normal; dumperType <= DumperType.Normal; dumperType++) {
