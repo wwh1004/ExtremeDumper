@@ -1,0 +1,3 @@
+[submodule "Libraries/MetadataLocator"]
+	path = Libraries/MetadataLocator
+	url = https://github.com/wwh1004/MetadataLocator
