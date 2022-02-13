@@ -14,13 +14,20 @@ namespace ExtremeDumper.Forms;
 partial class ProcessesForm : Form {
 	static readonly bool IsAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
+	readonly TitleComposer title;
 	readonly StrongBox<DumperType> dumperType = new();
 	static bool hasSeDebugPrivilege;
 
 	public ProcessesForm() {
 		InitializeComponent();
-		Text = $"{Application.ProductName} v{Application.ProductVersion} ({(Environment.Is64BitProcess ? "x64" : "x86")}{(IsAdministrator ? ", Administrator" : string.Empty)})";
-		Text = Utils.ObfuscateTitle(Text);
+		title = new TitleComposer {
+			Title = Application.ProductName,
+			Version = $"v{Application.ProductVersion}"
+		};
+		title.Annotations["BITNESS"] = Environment.Is64BitProcess ? "x64" : "x86";
+		if (IsAdministrator)
+			title.Annotations["ADMIN"] = "Administrator";
+		Text = title.Compose(true);
 		Utils.EnableDoubleBuffer(lvwProcesses);
 		lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new[] { TypeCode.String, TypeCode.Int32, TypeCode.String });
 		for (var dumperType = DumperType.Normal; dumperType <= DumperType.Normal; dumperType++) {
@@ -47,7 +54,8 @@ partial class ProcessesForm : Form {
 			hasSeDebugPrivilege = true;
 			mnuDebugPrivilege.Checked = true;
 			mnuDebugPrivilege.Enabled = false;
-			Text = Text.Substring(0, Text.Length - 1) + ", SeDebugPrivilege)";
+			title.Annotations["SE_DEBUG"] = "SeDebugPrivilege";
+			Text = title.Compose(true);
 			MessageBoxStub.Show("Succeed", MessageBoxIcon.Information);
 		}
 		catch {
@@ -119,68 +127,33 @@ partial class ProcessesForm : Form {
 	void RefreshProcessList() {
 		lvwProcesses.SuspendLayout();
 		lvwProcesses.Items.Clear();
-		uint[] processIds = NativeProcess.GetAllProcessIds();
-		if (processIds is null)
-			return;
 
-		foreach (uint processId in processIds) {
-			if (processId == 0)
-				continue;
-			if (!GetProcessInfo(processId, out var name, out var path, out bool is64Bit, out bool isDotNet))
-				continue;
-			if (mnuOnlyDotNetProcess.Checked && !isDotNet)
+		int c = 0;
+		foreach (var process in ProcessesProviderFactory.Create().EnumerateProcesses()) {
+			if (mnuOnlyDotNetProcess.Checked && process is not DotNetProcessInfo)
 				continue;
 
-			var listViewItem = new ListViewItem(name);
-			listViewItem.SubItems.Add(processId.ToString());
-			listViewItem.SubItems.Add(path);
-			if (Utils.Is64BitProcess && !is64Bit)
-				listViewItem.Text += " (32 Bit)";
-			if (isDotNet)
-				listViewItem.BackColor = Utils.DotNetColor;
-			lvwProcesses.Items.Add(listViewItem);
+			lvwProcesses.Items.Add(CreateListViewItem(process));
+			if (c++ % 10 == 0)
+				lvwProcesses.PerformLayout();
 		}
+
 		lvwProcesses.ResumeLayout();
 		lvwProcesses.AutoResizeColumns(false);
 	}
 
-	static bool GetProcessInfo(uint processId, out string name, out string path, out bool is64Bit, out bool isDotNet) {
-		name = string.Empty;
-		path = string.Empty;
-		is64Bit = false;
-		isDotNet = false;
-
-		var modulesProvider = ModulesProviderFactory.Create(processId, ModulesProviderType.Unmanaged);
-		var mainModule = modulesProvider.EnumerateModules().FirstOrDefault();
-		if (mainModule is null)
-			return false;
-		// insufficient privileges
-
-		name = mainModule.Name;
-		path = mainModule.FilePath;
-		var clrModule = modulesProvider.EnumerateModules().FirstOrDefault(t => t.Name.ToUpperInvariant() is "MSCORWKS.DLL" or "CLR.DLL" or "CORECLR.DLL");
-		isDotNet = clrModule is not null;
-		Is64BitPE(isDotNet ? clrModule!.FilePath : mainModule.FilePath, out is64Bit);
-		return true;
-	}
-
-	static bool Is64BitPE(string filePath, out bool is64Bit) {
-		try {
-			using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-			using var reader = new BinaryReader(stream);
-			reader.BaseStream.Position = 0x3C;
-			uint peOffset = reader.ReadUInt32();
-			reader.BaseStream.Position = peOffset + 0x18;
-			ushort magic = reader.ReadUInt16();
-			if (magic != 0x010B && magic != 0x020B)
-				throw new InvalidDataException();
-			is64Bit = magic == 0x020B;
-			return true;
-		}
-		catch {
-			is64Bit = false;
-			return false;
-		}
+	static ListViewItem CreateListViewItem(ProcessInfo process) {
+		var listViewItem = new ListViewItem(process.Name);
+		// Name
+		listViewItem.SubItems.Add(process.Id.ToString());
+		// Id
+		listViewItem.SubItems.Add(process.FilePath);
+		// Path
+		if (Utils.Is64BitProcess && !process.Is64Bit)
+			listViewItem.Text += " (32 Bit)";
+		if (process is DotNetProcessInfo dnProcess)
+			listViewItem.BackColor = Utils.DotNetColor;
+		return listViewItem;
 	}
 
 	void DumpProcess(uint processId, string directoryPath) {

@@ -19,8 +19,7 @@ partial class InjectingForm : Form {
 		process = NativeProcess.Open(processId);
 		if (process == NativeProcess.InvalidProcess)
 			throw new InvalidOperationException();
-		Text = $"Injector - {process.Name}(ID={process.Id})";
-		Text = Utils.ObfuscateTitle(Text);
+		Text = TitleComposer.Compose(true, "Injector", process.Name, null, $"ID={process.Id}");
 	}
 
 	#region Events

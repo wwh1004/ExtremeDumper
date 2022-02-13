@@ -6,7 +6,7 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<TargetFramework>net462</TargetFramework>
-		<OutputType>WinExe</OutputType>
+		<OutputType>Exe</OutputType>
 		<OutputPath>..\bin\$(Configuration)</OutputPath>
 	</PropertyGroup>
 	<ItemGroup>

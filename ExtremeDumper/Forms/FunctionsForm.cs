@@ -13,8 +13,7 @@ unsafe partial class FunctionsForm : Form {
 
 		InitializeComponent();
 		this.module = module;
-		Text = $"Export Functions {this.module.Name}({Utils.FormatPointer(this.module.Handle)})";
-		Text = Utils.ObfuscateTitle(Text);
+		Text = TitleComposer.Compose(true, "Export Functions", module.Name, null);
 		Utils.EnableDoubleBuffer(lvwFunctions);
 		lvwFunctions.ListViewItemSorter = new ListViewItemSorter(lvwFunctions, new[] { TypeCode.String, TypeCode.UInt64, TypeCode.Int16 }) { AllowHexLeading = true };
 		RefreshFunctionList();

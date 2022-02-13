@@ -27,8 +27,7 @@ partial class ModulesForm : Form {
 			throw new InvalidOperationException();
 		this.isDotNet = isDotNet;
 		this.dumperType = dumperType;
-		Text = $"Modules {processName}(ID={processId})";
-		Text = Utils.ObfuscateTitle(Text);
+		Text = TitleComposer.Compose(true, "Modules", processName, null, $"ID={processId}");
 		Utils.EnableDoubleBuffer(lvwModules);
 		lvwModules.ListViewItemSorter = new ListViewItemSorter(lvwModules, new[] { TypeCode.String, TypeCode.String, TypeCode.String, TypeCode.UInt64, TypeCode.Int32, TypeCode.String }) { AllowHexLeading = true };
 		RefreshModuleList();
@@ -94,8 +93,7 @@ partial class ModulesForm : Form {
 			catch {
 				MessageBoxStub.Show("Fail to get .NET modules", MessageBoxIcon.Error);
 			}
-			if (dnModules is not null)
-				lvwModules.Items.AddRange(dnModules.Select(t => CreateListViewItem(t)).ToArray());
+			lvwModules.Items.AddRange(dnModules.Select(t => CreateListViewItem(t)).ToArray());
 		}
 
 		if (!mnuOnlyDotNetModule.Checked) {
@@ -147,7 +145,10 @@ partial class ModulesForm : Form {
 	void DumpModule(nuint moduleHandle, ImageLayout imageLayout, string filePath) {
 		using var dumper = DumperFactory.GetDumper(process.Id, dumperType.Value);
 		bool result = dumper.DumpModule(moduleHandle, imageLayout, filePath);
-		MessageBoxStub.Show(result ? $"Dump module successfully. Image was saved in:{Environment.NewLine}{filePath}" : "Fail to dump module.", result ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+		if (result)
+			MessageBoxStub.Show($"Dump module successfully. Image was saved in:{Environment.NewLine}{filePath}", MessageBoxIcon.Information);
+		else
+			MessageBoxStub.Show("Fail to dump module.", MessageBoxIcon.Error);
 	}
 
 	static string PathInsertPostfix(string path, string postfix) {
