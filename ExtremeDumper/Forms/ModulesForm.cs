@@ -82,27 +82,32 @@ partial class ModulesForm : Form {
 	#endregion
 
 	void RefreshModuleList() {
-		lvwModules.SuspendLayout();
-		lvwModules.Items.Clear();
+		var modules = GetModules();
+		var dnModules = GetDotNetModules();
+		Utils.RefreshListView(lvwModules,
+			dnModules.Concat(modules.Where(x => !dnModules.Any(y => x.ImageBase == y.ImageBase))),
+			t => CreateListViewItem(t), -1);
+	}
 
-		var dnModules = Array.Empty<ModuleInfo>();
-		if (isDotNet) {
-			try {
-				dnModules = ModulesProviderFactory.Create(process.Id, ModulesProviderType.Managed).EnumerateModules().ToArray();
-			}
-			catch {
-				MessageBoxStub.Show("Fail to get .NET modules", MessageBoxIcon.Error);
-			}
-			lvwModules.Items.AddRange(dnModules.Select(t => CreateListViewItem(t)).ToArray());
+	ModuleInfo[] GetModules() {
+		if (mnuOnlyDotNetModule.Checked)
+			return Array2.Empty<ModuleInfo>();
+
+		return ModulesProviderFactory.Create(process.Id, ModulesProviderType.Unmanaged).EnumerateModules().ToArray();
+	}
+
+	ModuleInfo[] GetDotNetModules() {
+		if (!isDotNet)
+			return Array2.Empty<ModuleInfo>();
+
+		try {
+			return ModulesProviderFactory.Create(process.Id, ModulesProviderType.Managed).EnumerateModules().ToArray();
 		}
-
-		if (!mnuOnlyDotNetModule.Checked) {
-			var modules = ModulesProviderFactory.Create(process.Id, ModulesProviderType.Unmanaged).EnumerateModules().Where(x => !dnModules.Any(y => x.Name == y.Name && x.ImageBase == y.ImageBase)).ToArray();
-			lvwModules.Items.AddRange(modules.Select(t => CreateListViewItem(t)).ToArray());
+		catch {
+			//MessageBoxStub.Show("Fail to get .NET modules", MessageBoxIcon.Error);
+			// TODO: add logger
+			return Array2.Empty<ModuleInfo>();
 		}
-
-		lvwModules.ResumeLayout();
-		lvwModules.AutoResizeColumns(false);
 	}
 
 	static ListViewItem CreateListViewItem(ModuleInfo module) {

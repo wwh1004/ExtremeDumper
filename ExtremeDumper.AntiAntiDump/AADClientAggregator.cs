@@ -18,6 +18,18 @@ public sealed class AADClientAggregator {
 	/// <summary>
 	/// Constructor
 	/// </summary>
+	/// <param name="client"></param>
+	/// <exception cref="ArgumentNullException"></exception>
+	public AADClientAggregator(AADClient client) {
+		if (client is null)
+			throw new ArgumentNullException(nameof(client));
+
+		clients.Add(client);
+	}
+
+	/// <summary>
+	/// Constructor
+	/// </summary>
 	/// <param name="mainClient"></param>
 	/// <param name="otherClients"></param>
 	/// <exception cref="ArgumentNullException"></exception>

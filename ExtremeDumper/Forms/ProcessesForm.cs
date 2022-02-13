@@ -7,7 +7,6 @@ using System.Security.Principal;
 using System.Windows.Forms;
 using ExtremeDumper.Diagnostics;
 using ExtremeDumper.Dumping;
-using NativeSharp;
 
 namespace ExtremeDumper.Forms;
 
@@ -72,8 +71,8 @@ partial class ProcessesForm : Form {
 			return;
 
 		uint processId = uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text);
-		using var process = NativeProcess.Open(processId);
-		fbdlgDumped.SelectedPath = Path.GetDirectoryName(process.ImagePath) + "\\";
+		var processPath = lvwProcesses.GetFirstSelectedSubItem(chProcessPath.Index).Text;
+		fbdlgDumped.SelectedPath = Path.GetDirectoryName(processPath) + "\\";
 		if (fbdlgDumped.ShowDialog() != DialogResult.OK)
 			return;
 		DumpProcess(processId, Path.Combine(fbdlgDumped.SelectedPath, "Dumps"));
@@ -125,21 +124,9 @@ partial class ProcessesForm : Form {
 	}
 
 	void RefreshProcessList() {
-		lvwProcesses.SuspendLayout();
-		lvwProcesses.Items.Clear();
-
-		int c = 0;
-		foreach (var process in ProcessesProviderFactory.Create().EnumerateProcesses()) {
-			if (mnuOnlyDotNetProcess.Checked && process is not DotNetProcessInfo)
-				continue;
-
-			lvwProcesses.Items.Add(CreateListViewItem(process));
-			if (c++ % 10 == 0)
-				lvwProcesses.PerformLayout();
-		}
-
-		lvwProcesses.ResumeLayout();
-		lvwProcesses.AutoResizeColumns(false);
+		Utils.RefreshListView(lvwProcesses,
+			ProcessesProviderFactory.Create().EnumerateProcesses().Where(t => !mnuOnlyDotNetProcess.Checked || t is DotNetProcessInfo),
+			t => CreateListViewItem(t), 10);
 	}
 
 	static ListViewItem CreateListViewItem(ProcessInfo process) {
