@@ -7,24 +7,50 @@ namespace ExtremeDumper.AntiAntiDump;
 /// <summary>
 /// <see cref="AADClient"/> aggregator
 /// </summary>
-public sealed class AADClientAggregator {
-	readonly List<AADClient> clients = new();
+public sealed class AADClients : List<AADClient> {
+	/// <summary>
+	/// Are all client connected
+	/// </summary>
+	public bool IsConnected {
+		get {
+			if (Count == 0)
+				return false;
+			foreach (var client in this) {
+				if (!client.IsConnected)
+					return false;
+			}
+			return true;
+		}
+	}
 
 	/// <summary>
-	/// All aggregated <see cref="AADClient"/>
+	/// Constructor
 	/// </summary>
-	public IEnumerable<AADClient> Clients => clients;
+	public AADClients() {
+	}
 
 	/// <summary>
 	/// Constructor
 	/// </summary>
 	/// <param name="client"></param>
 	/// <exception cref="ArgumentNullException"></exception>
-	public AADClientAggregator(AADClient client) {
+	public AADClients(AADClient client) {
 		if (client is null)
 			throw new ArgumentNullException(nameof(client));
 
-		clients.Add(client);
+		Add(client);
+	}
+
+	/// <summary>
+	/// Constructor
+	/// </summary>
+	/// <param name="clients"></param>
+	/// <exception cref="ArgumentNullException"></exception>
+	public AADClients(IEnumerable<AADClient> clients) {
+		if (clients is null)
+			throw new ArgumentNullException(nameof(clients));
+
+		AddRange(clients);
 	}
 
 	/// <summary>
@@ -33,26 +59,14 @@ public sealed class AADClientAggregator {
 	/// <param name="mainClient"></param>
 	/// <param name="otherClients"></param>
 	/// <exception cref="ArgumentNullException"></exception>
-	public AADClientAggregator(AADClient mainClient, AADClient[] otherClients) {
+	public AADClients(AADClient mainClient, IEnumerable<AADClient> otherClients) {
 		if (mainClient is null)
 			throw new ArgumentNullException(nameof(mainClient));
 		if (otherClients is null)
 			throw new ArgumentNullException(nameof(otherClients));
 
-		clients.Add(mainClient);
-		clients.AddRange(otherClients);
-	}
-
-	/// <summary>
-	/// Constructor
-	/// </summary>
-	/// <param name="clients"></param>
-	/// <exception cref="ArgumentNullException"></exception>
-	public AADClientAggregator(IEnumerable<AADClient> clients) {
-		if (clients is null)
-			throw new ArgumentNullException(nameof(clients));
-
-		this.clients.AddRange(clients);
+		Add(mainClient);
+		AddRange(otherClients);
 	}
 
 	/// <summary>
@@ -62,7 +76,7 @@ public sealed class AADClientAggregator {
 	/// <returns></returns>
 	public bool GetModules([NotNullWhen(true)] out ModuleInfos? modules) {
 		modules = new ModuleInfos();
-		foreach (var client in clients) {
+		foreach (var client in this) {
 			if (!client.GetModules(out var t))
 				return false;
 			modules.AddRange(t);
@@ -78,7 +92,9 @@ public sealed class AADClientAggregator {
 	/// <returns></returns>
 	public bool GetMetadata(ModuleInfo module, [NotNullWhen(true)] out MetadataInfo? metadata) {
 		metadata = null;
-		foreach (var client in clients) {
+		if (Count == 0)
+			return false;
+		foreach (var client in this) {
 			if (client.GetMetadata(module, out metadata))
 				return true;
 		}
@@ -93,7 +109,9 @@ public sealed class AADClientAggregator {
 	/// <returns></returns>
 	public bool GetPEInfo(ModuleInfo module, [NotNullWhen(true)] out PEInfo? peInfo) {
 		peInfo = null;
-		foreach (var client in clients) {
+		if (Count == 0)
+			return false;
+		foreach (var client in this) {
 			if (client.GetPEInfo(module, out peInfo))
 				return true;
 		}
@@ -101,10 +119,12 @@ public sealed class AADClientAggregator {
 	}
 
 	/// <summary>
-	/// Call <see cref="AADClient.Disconnect"/> for all <see cref="AADClient"/> in <see cref="Clients"/>
+	/// Call <see cref="AADClient.Disconnect"/> for all <see cref="AADClient"/>
 	/// </summary>
 	public void DisconnectAll() {
-		foreach (var client in clients)
+		if (Count == 0)
+			return;
+		foreach (var client in this)
 			client.Disconnect();
 	}
 }

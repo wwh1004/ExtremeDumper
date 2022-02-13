@@ -10,6 +10,8 @@ namespace ExtremeDumper.AntiAntiDump;
 /// Anti anti dump client
 /// </summary>
 public sealed class AADClient : AADPipe {
+	AADClient[]? multiDomainClients;
+
 	AADClient(NamedPipeClientStream stream) : base(stream) {
 	}
 
@@ -65,10 +67,16 @@ public sealed class AADClient : AADPipe {
 	/// <summary>
 	/// Create <see cref="AADServer"/>s in other application domains and get corresponding <see cref="AADClient"/>s
 	/// </summary>
-	/// <param name="timeout">Timeout to wait <see cref="AADClient"/> connection</param>
 	/// <param name="clients"></param>
 	/// <returns></returns>
-	public bool EnableMultiDomain(int timeout, out AADClient[] clients) {
+	public bool EnableMultiDomain(out AADClient[] clients) {
+		if (multiDomainClients is not null) {
+			foreach (var client in multiDomainClients)
+				Debug2.Assert(client.IsConnected);
+			clients = multiDomainClients;
+			return true;
+		}
+
 		clients = Array2.Empty<AADClient>();
 		if (!Invoke<Handlers.EnableMultiDomainHandler.PipeNames>(AADCommand.EnableMultiDomain, EmptySerializable.Instance, out var pipeNames))
 			return false;
@@ -77,10 +85,9 @@ public sealed class AADClient : AADPipe {
 			var client = Create(pipeNames.Values[i]);
 			if (client is null)
 				return false;
-			if (!client.Connect(timeout))
-				return false;
 			clients[i] = client;
 		}
+		multiDomainClients = clients;
 		return true;
 	}
 
@@ -118,10 +125,9 @@ public sealed class AADClient : AADPipe {
 		if (!IsConnected)
 			return false;
 		var r = InvokeOne(command, parameters, out var result2);
-		Debug2.Assert(r != ExecutionResult.UnknownCommand && r != ExecutionResult.UnhandledException);
+		Debug2.Assert(r != ExecutionResult.UnknownCommand);
 		// internal error, we should fix it
 		switch (r) {
-		case ExecutionResult.UnhandledException:
 		case ExecutionResult.IOError:
 		case ExecutionResult.Disconnect:
 			Disconnect();
@@ -175,16 +181,13 @@ public sealed class AADClient : AADPipe {
 
 			return ExecutionResult.Success;
 		}
-		catch (IOException) {
-			return ExecutionResult.IOError;
-		}
 		catch (AADServerInvocationException) {
 			throw;
 		}
 		catch (Exception ex) {
-			Debug2.Assert(false);
-			OnUnhandledException(ex);
-			return ExecutionResult.UnhandledException;
+			Debug2.Assert(ex is IOException);
+			// regard all unhandable exceptions as IO error
+			return ExecutionResult.IOError;
 		}
 	}
 }

@@ -7,6 +7,19 @@ namespace ExtremeDumper.Forms
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -31,6 +44,8 @@ namespace ExtremeDumper.Forms
             this.mnuOnlyDotNetModule = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuGotoLocation = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.mnuEnableAntiAntiDump = new System.Windows.Forms.ToolStripMenuItem();
             this.sfdlgDumped = new System.Windows.Forms.SaveFileDialog();
             this.mnuModulesContext.SuspendLayout();
             this.SuspendLayout();
@@ -91,9 +106,11 @@ namespace ExtremeDumper.Forms
             this.toolStripSeparator1,
             this.mnuOnlyDotNetModule,
             this.toolStripSeparator2,
-            this.mnuGotoLocation});
+            this.mnuGotoLocation,
+            this.toolStripSeparator3,
+            this.mnuEnableAntiAntiDump});
             this.mnuModulesContext.Name = "mnuModulesContext";
-            this.mnuModulesContext.Size = new System.Drawing.Size(214, 126);
+            this.mnuModulesContext.Size = new System.Drawing.Size(214, 176);
             // 
             // mnuDumpModule
             // 
@@ -141,6 +158,18 @@ namespace ExtremeDumper.Forms
             this.mnuGotoLocation.Text = "Goto Location";
             this.mnuGotoLocation.Click += new System.EventHandler(this.mnuGotoLocation_Click);
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(210, 6);
+            // 
+            // mnuEnableAntiAntiDump
+            // 
+            this.mnuEnableAntiAntiDump.Name = "mnuEnableAntiAntiDump";
+            this.mnuEnableAntiAntiDump.Size = new System.Drawing.Size(213, 22);
+            this.mnuEnableAntiAntiDump.Text = "Enable AntiAntiDump";
+            this.mnuEnableAntiAntiDump.Click += new System.EventHandler(this.mnuEnableAntiAntiDump_Click);
+            // 
             // ModulesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -159,6 +188,8 @@ namespace ExtremeDumper.Forms
 
         private System.Windows.Forms.ListView lvwModules;
         private System.Windows.Forms.ColumnHeader chModuleName;
+        private System.Windows.Forms.ColumnHeader chDomainName;
+        private System.Windows.Forms.ColumnHeader chCLRVersion;
         private System.Windows.Forms.ColumnHeader chModuleHandle;
         private System.Windows.Forms.ColumnHeader chModuleSize;
         private System.Windows.Forms.ColumnHeader chModulePath;
@@ -171,7 +202,7 @@ namespace ExtremeDumper.Forms
         private System.Windows.Forms.ToolStripMenuItem mnuOnlyDotNetModule;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem mnuGotoLocation;
-		private System.Windows.Forms.ColumnHeader chDomainName;
-		private System.Windows.Forms.ColumnHeader chCLRVersion;
-	}
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem mnuEnableAntiAntiDump;
+    }
 }

@@ -21,11 +21,6 @@ public abstract class AADPipe : IDisposable {
 	bool isDisposed;
 
 	/// <summary>
-	/// Triggered when internal exception is unhandled
-	/// </summary>
-	public event UnhandledExceptionEventHandler? UnhandledException;
-
-	/// <summary>
 	/// Is connected
 	/// </summary>
 	public bool IsConnected => stream.IsConnected;
@@ -144,11 +139,6 @@ public abstract class AADPipe : IDisposable {
 		if (!b && throwing)
 			throw new IOException("Can't write data to internal pipe stream.");
 		return b;
-	}
-
-	internal void OnUnhandledException(Exception exception) {
-		var callback = UnhandledException;
-		callback?.Invoke(this, new UnhandledExceptionEventArgs(exception, false));
 	}
 
 	/// <inheritdoc/>

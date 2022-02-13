@@ -1,41 +1,14 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using dnlib.DotNet;
 using ExtremeDumper.AntiAntiDump;
 using ExtremeDumper.Forms;
 using NativeSharp;
 
 namespace ExtremeDumper;
-
-static class AADCoreManager {
-	static string dllPath = string.Empty;
-
-	public static string GetAADCorePath() {
-		if (!string.IsNullOrEmpty(dllPath))
-			return dllPath;
-
-		var data = GetAADCore(true, out var name);
-		dllPath = Path.Combine(Path.GetTempPath(), name);
-		File.WriteAllBytes(dllPath, data);
-		return dllPath;
-	}
-
-	static byte[] GetAADCore(bool obfuscate, out string fileName) {
-		using var module = ModuleDefMD.Load(typeof(AADServer).Module);
-		if (obfuscate) {
-			var t = Guid.NewGuid().ToString();
-			module.Name = $"{t}.dll";
-			module.Assembly.Name = t;
-		}
-		fileName = $"{module.Assembly.Name}.dll";
-		using var stream = new MemoryStream();
-		module.Write(stream);
-		return stream.ToArray();
-	}
-}
 
 public static class Program {
 	[STAThread]
@@ -49,9 +22,11 @@ public static class Program {
 			Debug2.Assert(client is not null);
 			bool b = client.Connect(1000);
 			Debug2.Assert(b);
-			b = client.EnableMultiDomain(1000, out var otherClients);
+			b = client.EnableMultiDomain(out var otherClients);
 			Debug2.Assert(b && (!REMOTE || otherClients.Length == 1));
-			var aggregator = new AADClientAggregator(client, otherClients);
+			b = otherClients.All(t => t.Connect(1000));
+			Debug2.Assert(b);
+			var aggregator = new AADClients(client, otherClients);
 			b = aggregator.GetModules(out var modules);
 			Debug2.Assert(b);
 			foreach (var module in modules!) {
@@ -96,7 +71,7 @@ public static class Program {
 		if (remote) {
 			var process = NativeProcess.Open(CreateProcess("MetadataLocator.Test.CLR40.x86.cex.exe"));
 			bool b = process.InjectManaged(
-				AADCoreManager.GetAADCorePath(),
+				AADCoreInjector.GetAADCorePath(),
 				"ExtremeDumper.AntiAntiDump.Injection",
 				"Main",
 				pipeName,

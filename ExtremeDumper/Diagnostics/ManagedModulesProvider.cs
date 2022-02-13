@@ -53,20 +53,18 @@ sealed unsafe class ManagedModulesProvider : IModulesProvider {
 	static void GetModuleFileInfo(ClrModule module, out string name, out string path) {
 		if (string.IsNullOrEmpty(module.Name)) {
 			// In memory and obfuscated
-			name = "<<EmptyName>>";
-			path = "InMemory";
-			return;
+			name = string.Empty;
+			path = string.Empty;
 		}
-
-		if (!module.Name.Contains(",")) {
+		else if (module.Name.Contains(",")) {
+			// In memory, module.Name is reflection assembly name.
+			name = module.Name.Split(',')[0];
+			path = string.Empty;
+		}
+		else {
 			// In disk
 			name = Path.GetFileName(module.Name);
 			path = module.Name;
-		}
-		else {
-			// In memory, module.Name is reflection assembly name.
-			name = module.Name.Split(',')[0];
-			path = "InMemory";
 		}
 	}
 

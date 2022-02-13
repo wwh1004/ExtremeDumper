@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -13,10 +15,11 @@ namespace ExtremeDumper.Forms;
 
 partial class ProcessesForm : Form {
 	static readonly bool IsAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
-
-	readonly TitleComposer title;
-	readonly StrongBox<DumperType> dumperType = new();
 	static bool hasSeDebugPrivilege;
+
+	readonly StrongBox<DumperType> dumperType = new();
+	readonly List<ProcessInfo> processes = new();
+	readonly TitleComposer title;
 
 	public ProcessesForm() {
 		InitializeComponent();
@@ -33,7 +36,7 @@ partial class ProcessesForm : Form {
 		for (var dumperType = DumperType.Normal; dumperType <= DumperType.Normal; dumperType++) {
 			var item = new ToolStripMenuItem(dumperType.ToString());
 			var currentDumperType = dumperType;
-			item.Click += (object sender, EventArgs e) => SwitchDumperType(currentDumperType);
+			item.Click += (_, _) => SwitchDumperType(currentDumperType);
 			mnuDumperType.DropDownItems.Add(item);
 		}
 		SwitchDumperType(DumperType.Normal);
@@ -68,56 +71,86 @@ partial class ProcessesForm : Form {
 	}
 
 	async void mnuDumpProcess_Click(object sender, EventArgs e) {
-		if (lvwProcesses.SelectedIndices.Count == 0)
+		if (!TryGetSelectedProcess(out var process))
 			return;
 
-		uint processId = uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text);
-		var processPath = lvwProcesses.GetFirstSelectedSubItem(chProcessPath.Index).Text;
-		fbdlgDumped.SelectedPath = Path.GetDirectoryName(processPath) + "\\";
-		if (fbdlgDumped.ShowDialog() != DialogResult.OK)
-			return;
-		int count = await Task.Run(() => DumpProcess(processId, Path.Combine(fbdlgDumped.SelectedPath, "Dumps")));
-		MessageBoxStub.Show($"{count} images have been dumped to:{Environment.NewLine}{fbdlgDumped.SelectedPath}", MessageBoxIcon.Information);
+		try {
+			mnuDumpProcess.Enabled = false;
+			title.Annotations["DUMP"] = "Dumping";
+			Text = title.Compose(true);
+
+			fbdlgDumped.SelectedPath = Path.GetDirectoryName(process.FilePath) + "\\";
+			if (fbdlgDumped.ShowDialog() != DialogResult.OK)
+				return;
+
+			int count = await Task.Run(() => DumpProcess(process.Id, Path.Combine(fbdlgDumped.SelectedPath, "Dumps")));
+			MessageBoxStub.Show($"{count} images have been dumped to:{Environment.NewLine}{fbdlgDumped.SelectedPath}", MessageBoxIcon.Information);
+		}
+		finally {
+			title.Annotations["DUMP"] = null;
+			Text = title.Compose(true);
+			mnuDumpProcess.Enabled = true;
+		}
 	}
 
 	void mnuViewModules_Click(object sender, EventArgs e) {
-		if (lvwProcesses.SelectedIndices.Count == 0)
+		if (!TryGetSelectedProcess(out var process))
 			return;
 
-		var processNameItem = lvwProcesses.GetFirstSelectedSubItem(chProcessName.Index);
-		if (Environment.Is64BitProcess && processNameItem.BackColor == Utils.DotNetColor && processNameItem.Text.EndsWith(" (32 Bit)", StringComparison.Ordinal)) {
+		if (Utils.Is64BitProcess && process is DotNetProcessInfo && !process.Is64Bit) {
 			MessageBoxStub.Show("Please run x86 version", MessageBoxIcon.Error);
 			return;
 		}
 
-		var modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Utils.DotNetColor, dumperType);
-		modulesForm.Show();
-		modulesForm.FormClosed += (sender, e) => (sender as IDisposable)?.Dispose();
+		var form = ModulesForm.Create(process, dumperType);
+		if (form is not null)
+			form.Show();
+		else
+			MessageBoxStub.Show($"Can't create {nameof(ModulesForm)}", MessageBoxIcon.Error);
 	}
 
 	void mnuRefreshProcessList_Click(object sender, EventArgs e) {
-		RefreshProcessList();
+		try {
+			title.Annotations["REFRESH"] = "Refreshing";
+			Text = title.Compose(true);
+			RefreshProcessList();
+		}
+		finally {
+			title.Annotations["REFRESH"] = null;
+			Text = title.Compose(true);
+		}
 	}
 
 	void mnuOnlyDotNetProcess_Click(object sender, EventArgs e) {
-		RefreshProcessList();
+		mnuRefreshProcessList_Click(sender, e);
 	}
 
 	void mnuInjectDll_Click(object sender, EventArgs e) {
-		if (lvwProcesses.SelectedIndices.Count == 0)
+		if (!TryGetSelectedProcess(out var process))
 			return;
 
-		var injectingForm = new InjectingForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text));
+		var injectingForm = new InjectingForm(process.Id);
 		injectingForm.Show();
 	}
 
 	void mnuGotoLocation_Click(object sender, EventArgs e) {
-		if (lvwProcesses.SelectedIndices.Count == 0)
+		if (!TryGetSelectedProcess(out var process))
 			return;
 
-		Process.Start("explorer.exe", @"/select, " + lvwProcesses.GetFirstSelectedSubItem(chProcessPath.Index).Text);
+		Process.Start("explorer.exe", $"/select,{process.FilePath}");
 	}
 	#endregion
+
+	bool TryGetSelectedProcess([NotNullWhen(true)] out ProcessInfo? process) {
+		process = null;
+		if (lvwProcesses.SelectedIndices.Count == 0)
+			return false;
+
+		uint processId = uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text);
+		process = processes.Find(t => t.Id == processId);
+		Debug2.Assert(process is not null);
+		return true;
+	}
 
 	void SwitchDumperType(DumperType dumperType) {
 		string name = dumperType.ToString();
@@ -127,9 +160,17 @@ partial class ProcessesForm : Form {
 	}
 
 	void RefreshProcessList() {
-		Utils.RefreshListView(lvwProcesses,
-			ProcessesProviderFactory.Create().EnumerateProcesses().Where(t => !mnuOnlyDotNetProcess.Checked || t is DotNetProcessInfo),
-			t => CreateListViewItem(t), 10);
+		Utils.RefreshListView(lvwProcesses, GetProcesses(), t => CreateListViewItem(t), 10);
+	}
+
+	IEnumerable<ProcessInfo> GetProcesses() {
+		processes.Clear();
+		foreach (var process in ProcessesProviderFactory.Create().EnumerateProcesses()) {
+			if (mnuOnlyDotNetProcess.Checked && process is not DotNetProcessInfo)
+				continue;
+			processes.Add(process);
+			yield return process;
+		}
 	}
 
 	static ListViewItem CreateListViewItem(ProcessInfo process) {

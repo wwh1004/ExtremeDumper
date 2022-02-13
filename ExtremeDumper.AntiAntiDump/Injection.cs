@@ -29,9 +29,7 @@ public static class Injection {
 				return InvalidArgument;
 			}
 
-			server.UnhandledException += Server_UnhandledException;
 			server.Listen();
-			server.UnhandledException -= Server_UnhandledException;
 			return Success;
 		}
 		catch (Exception ex) {

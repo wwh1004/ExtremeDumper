@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ExtremeDumper.AntiAntiDump;
 
 namespace ExtremeDumper.Diagnostics;
@@ -45,6 +46,18 @@ public static class ModulesProviderFactory {
 		if (client is null)
 			throw new ArgumentNullException(nameof(client));
 
-		throw new NotImplementedException();
+		return new AADModulesProvider(client);
+	}
+
+	/// <summary>
+	/// Create managed module infos provider with <see cref="AADClient"/>
+	/// </summary>
+	/// <param name="clients"></param>
+	/// <returns></returns>
+	public static IModulesProvider CreateWithAADClient(IEnumerable<AADClient> clients) {
+		if (clients is null)
+			throw new ArgumentNullException(nameof(clients));
+
+		return new AADModulesProvider(new AADClients(clients));
 	}
 }

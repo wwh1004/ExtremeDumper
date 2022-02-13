@@ -83,6 +83,15 @@ public sealed class AADServer : AADPipe {
 		return IsConnected;
 	}
 
+	void Disconnect() {
+		try {
+			var stream = (NamedPipeServerStream)base.stream;
+			stream.Disconnect();
+		}
+		catch {
+		}
+	}
+
 	/// <summary>
 	/// Start listening
 	/// </summary>
@@ -110,18 +119,12 @@ public sealed class AADServer : AADPipe {
 	bool Execute() {
 		while (true) {
 			var r = ExecuteOne();
-			Debug2.Assert(r != ExecutionResult.UnknownCommand && r != ExecutionResult.UnhandledException);
+			Debug2.Assert(r != ExecutionResult.UnknownCommand);
 			// internal error, we should fix it
 			switch (r) {
-			case ExecutionResult.UnhandledException:
 			case ExecutionResult.IOError:
 			case ExecutionResult.Disconnect:
-				try {
-					var stream = (NamedPipeServerStream)base.stream;
-					stream.Disconnect();
-				}
-				catch {
-				}
+				Disconnect();
 				return r == ExecutionResult.Disconnect;
 			}
 		}
@@ -152,26 +155,32 @@ public sealed class AADServer : AADPipe {
 			Read(parameters);
 			// phase 3: read parameters from stream
 
-			if (!handler.Execute(parameters, out var result)) {
+			bool b;
+			ISerializable? result;
+			try {
+				b = handler.Execute(parameters, out result);
+			}
+			catch (Exception ex) {
+				WriteCommand(AADCommand.UnhandledException);
+				Write(new AADServerInvocationException(ex.ToFullString()));
+				return ExecutionResult.UnhandledException;
+			}
+			if (!b) {
 				WriteCommand(AADCommand.Failure);
 				return ExecutionResult.Failure;
 			}
 			// phase 4: execute command with parameters
 
 			WriteCommand(AADCommand.Success);
-			Write(result);
+			Write(result!);
 			// phase 5: write result to stream
 
 			return ExecutionResult.Success;
 		}
-		catch (IOException) {
-			return ExecutionResult.IOError;
-		}
 		catch (Exception ex) {
-			WriteCommand(AADCommand.UnhandledException, false);
-			Write(new AADServerInvocationException(ex.ToFullString()), false);
-			OnUnhandledException(ex);
-			return ExecutionResult.UnhandledException;
+			Debug2.Assert(ex is IOException);
+			// regard all unhandable exceptions as IO error
+			return ExecutionResult.IOError;
 		}
 	}
 }

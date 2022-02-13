@@ -5,18 +5,35 @@ using NativeSharp;
 namespace ExtremeDumper.Forms;
 
 unsafe partial class FunctionsForm : Form {
+	readonly NativeProcess process;
 	readonly NativeModule module;
 
-	public FunctionsForm(NativeModule module) {
-		if (module is null)
-			throw new ArgumentNullException(nameof(module));
-
+	FunctionsForm(uint processId, nuint moduleHandle) {
 		InitializeComponent();
-		this.module = module;
+		process = NativeProcess.Open(processId);
+		if (process.IsInvalid)
+			throw new InvalidOperationException();
+		module = process.UnsafeGetModule((void*)moduleHandle);
 		Text = TitleComposer.Compose(true, "Export Functions", module.Name, null);
 		Utils.EnableDoubleBuffer(lvwFunctions);
 		lvwFunctions.ListViewItemSorter = new ListViewItemSorter(lvwFunctions, new[] { TypeCode.String, TypeCode.UInt64, TypeCode.Int16 }) { AllowHexLeading = true };
 		RefreshFunctionList();
+	}
+
+	public static FunctionsForm? Create(uint processId, nuint moduleHandle) {
+		if (processId == 0)
+			throw new ArgumentNullException(nameof(processId));
+		if (moduleHandle == 0)
+			throw new ArgumentNullException(nameof(moduleHandle));
+
+		try {
+			var form = new FunctionsForm(processId, moduleHandle);
+			form.FormClosed += (_, _) => form.Dispose();
+			return form;
+		}
+		catch {
+			return null;
+		}
 	}
 
 	#region Events
@@ -38,5 +55,13 @@ unsafe partial class FunctionsForm : Form {
 			lvwFunctions.Items.Add(listViewItem);
 		}
 		lvwFunctions.AutoResizeColumns(false);
+	}
+
+	protected override void Dispose(bool disposing) {
+		if (disposing) {
+			components?.Dispose();
+			process.Dispose();
+		}
+		base.Dispose(disposing);
 	}
 }

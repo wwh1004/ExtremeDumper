@@ -27,6 +27,8 @@ public sealed class DotNetModuleInfo : ModuleInfo {
 
 	public string CLRVersion { get; }
 
+	public bool InMemory => string.IsNullOrEmpty(FilePath);
+
 	public DotNetModuleInfo() {
 		DomainName = string.Empty;
 		CLRVersion = string.Empty;
