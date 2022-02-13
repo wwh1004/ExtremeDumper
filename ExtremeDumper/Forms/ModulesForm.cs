@@ -148,7 +148,7 @@ partial class ModulesForm : Form {
 	}
 
 	void DumpModule(nuint moduleHandle, ImageLayout imageLayout, string filePath) {
-		using var dumper = DumperFactory.GetDumper(process.Id, dumperType.Value);
+		using var dumper = DumperFactory.Create(process.Id, dumperType.Value);
 		bool result = dumper.DumpModule(moduleHandle, imageLayout, filePath);
 		if (result)
 			MessageBoxStub.Show($"Dump module successfully. Image was saved in:{Environment.NewLine}{filePath}", MessageBoxIcon.Information);

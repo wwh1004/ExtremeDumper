@@ -1,7 +1,8 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 using dnlib.DotNet;
 using dnlib.PE;
 using NativeSharp;
@@ -34,14 +35,14 @@ sealed unsafe class NormalDumper : DumperBase {
 
 	public override int DumpProcess(string directoryPath) {
 		int count = 0;
-		var originalFileCache = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
-		foreach (var pageInfo in process.EnumeratePageInfos()) {
+		var originalFileCache = new ConcurrentDictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+		Parallel.ForEach(process.EnumeratePageInfos(), pageInfo => {
 			if (!IsValidPage(pageInfo))
-				continue;
+				return;
 			var page = new byte[Math.Min((int)pageInfo.Size, 0x40000000)];
 			// 0x40000000 bytes = 1 giga bytes
 			if (!process.TryReadBytes(pageInfo.Address, page))
-				continue;
+				return;
 
 			for (int i = 0; i < page.Length - 0x200; i++) {
 				fixed (byte* p = page) {
@@ -78,7 +79,8 @@ sealed unsafe class NormalDumper : DumperBase {
 				File.WriteAllBytes(filePath, peImage);
 				count++;
 			}
-		}
+		});
+		GC.Collect();
 		return count;
 	}
 

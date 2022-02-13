@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,7 +32,7 @@ abstract class DumperBase : IDumper {
 		return newFileName.ToString();
 	}
 
-	protected static bool IsSameFile(string directoryPath, string fileName, byte[] data, Dictionary<string, byte[]> originalFileCache) {
+	protected static bool IsSameFile(string directoryPath, string fileName, byte[] data, ConcurrentDictionary<string, byte[]> originalFileCache) {
 		string filePath = Path.Combine(directoryPath, fileName);
 		if (!File.Exists(filePath)) {
 			originalFileCache[fileName] = data;
@@ -41,7 +41,7 @@ abstract class DumperBase : IDumper {
 
 		if (!originalFileCache.TryGetValue(fileName, out byte[] originalData)) {
 			originalData = File.ReadAllBytes(filePath);
-			originalFileCache.Add(fileName, originalData);
+			originalFileCache.TryAdd(fileName, originalData);
 		}
 
 		if (data.Length != originalData.Length)

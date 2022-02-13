@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExtremeDumper.Diagnostics;
 using ExtremeDumper.Dumping;
@@ -66,7 +67,7 @@ partial class ProcessesForm : Form {
 		lvwProcesses.AutoResizeColumns(true);
 	}
 
-	void mnuDumpProcess_Click(object sender, EventArgs e) {
+	async void mnuDumpProcess_Click(object sender, EventArgs e) {
 		if (lvwProcesses.SelectedIndices.Count == 0)
 			return;
 
@@ -75,7 +76,8 @@ partial class ProcessesForm : Form {
 		fbdlgDumped.SelectedPath = Path.GetDirectoryName(processPath) + "\\";
 		if (fbdlgDumped.ShowDialog() != DialogResult.OK)
 			return;
-		DumpProcess(processId, Path.Combine(fbdlgDumped.SelectedPath, "Dumps"));
+		int count = await Task.Run(() => DumpProcess(processId, Path.Combine(fbdlgDumped.SelectedPath, "Dumps")));
+		MessageBoxStub.Show($"{count} images have been dumped to:{Environment.NewLine}{fbdlgDumped.SelectedPath}", MessageBoxIcon.Information);
 	}
 
 	void mnuViewModules_Click(object sender, EventArgs e) {
@@ -85,11 +87,12 @@ partial class ProcessesForm : Form {
 		var processNameItem = lvwProcesses.GetFirstSelectedSubItem(chProcessName.Index);
 		if (Environment.Is64BitProcess && processNameItem.BackColor == Utils.DotNetColor && processNameItem.Text.EndsWith(" (32 Bit)", StringComparison.Ordinal)) {
 			MessageBoxStub.Show("Please run x86 version", MessageBoxIcon.Error);
+			return;
 		}
-		else {
-			var modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Utils.DotNetColor, dumperType);
-			modulesForm.Show();
-		}
+
+		var modulesForm = new ModulesForm(uint.Parse(lvwProcesses.GetFirstSelectedSubItem(chProcessId.Index).Text), processNameItem.Text, processNameItem.BackColor == Utils.DotNetColor, dumperType);
+		modulesForm.Show();
+		modulesForm.FormClosed += (sender, e) => (sender as IDisposable)?.Dispose();
 	}
 
 	void mnuRefreshProcessList_Click(object sender, EventArgs e) {
@@ -148,11 +151,10 @@ partial class ProcessesForm : Form {
 		return listViewItem;
 	}
 
-	void DumpProcess(uint processId, string directoryPath) {
+	int DumpProcess(uint processId, string directoryPath) {
 		if (!Directory.Exists(directoryPath))
 			Directory.CreateDirectory(directoryPath);
-		using var dumper = DumperFactory.GetDumper(processId, dumperType.Value);
-		int count = dumper.DumpProcess(directoryPath);
-		MessageBoxStub.Show($"{count} images have been dumped to:{Environment.NewLine}{directoryPath}", MessageBoxIcon.Information);
+		using var dumper = DumperFactory.Create(processId, dumperType.Value);
+		return dumper.DumpProcess(directoryPath);
 	}
 }
