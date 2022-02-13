@@ -7,6 +7,7 @@ enum AADCommand : uint {
 	EnableMultiDomain,
 	GetModules,
 	GetMetadata,
+	GetPEInfo,
 	// Client -> Server
 
 	Success = ushort.MaxValue + 1,

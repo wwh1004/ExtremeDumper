@@ -10,7 +10,7 @@
 		<OutputPath>..\bin\$(Configuration)</OutputPath>
 	</PropertyGroup>
 	<ItemGroup>
-		<!--<PackageReference Include="Costura.Fody" Version="4.1.0" />-->
+		<PackageReference Include="Costura.Fody" Version="4.1.0" />
 		<PackageReference Include="dnlib" Version="3.4.0" />
 		<PackageReference Include="Microsoft.Diagnostics.Runtime" Version="1.1.142101" />
 		<PackageReference Include="NativeSharp-lib" Version="3.0.0.1" />

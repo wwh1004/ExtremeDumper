@@ -1,124 +1,16 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace ExtremeDumper.AntiAntiDump;
-
-/// <summary>
-/// CLR internal image layout
-/// </summary>
-public sealed class PEImageLayout : ISerializable {
-	/// <summary>
-	/// Empty instance
-	/// </summary>
-	public static readonly PEImageLayout Empty = new();
-
-	/// <summary>
-	/// Image base address
-	/// </summary>
-	public ulong ImageBase;
-
-	/// <summary>
-	/// Image size (size of file on disk, as opposed to OptionalHeaders.SizeOfImage)
-	/// </summary>
-	public uint ImageSize;
-
-	/// <summary>
-	/// RVA of <see cref="MetadataLocator.RuntimeDefinitions.IMAGE_COR20_HEADER"/>
-	/// </summary>
-	public uint CorHeaderRVA;
-
-	/// <summary>
-	/// Populate data from <see cref="MetadataLocator.PEImageLayout"/>
-	/// </summary>
-	/// <param name="imageLayout"></param>
-	/// <exception cref="ArgumentNullException"></exception>
-	public void Populate(MetadataLocator.PEImageLayout imageLayout) {
-		if (imageLayout is null)
-			throw new ArgumentNullException(nameof(imageLayout));
-
-		ImageBase = imageLayout.ImageBase;
-		ImageSize = imageLayout.ImageSize;
-		CorHeaderRVA = (uint)(imageLayout.CorHeaderAddress - imageLayout.ImageBase);
-	}
-
-	bool ISerializable.Serialize(Stream destination) {
-		return SimpleSerializer.Write(destination, this);
-	}
-
-	bool ISerializable.Deserialize(Stream source) {
-		return SimpleSerializer.Read(source, this);
-	}
-}
-
-/// <summary>
-/// .NET PE Info
-/// </summary>
-public sealed class PEInfo : ISerializable {
-	/// <summary>
-	/// Empty instance
-	/// </summary>
-	public static readonly PEInfo Empty = new();
-
-	/// <summary>
-	/// Image file path
-	/// </summary>
-	public string FilePath = string.Empty;
-
-	/// <summary>
-	/// If image is loaded in memory
-	/// </summary>
-	public bool InMemory => string.IsNullOrEmpty(FilePath);
-
-	/// <summary>
-	/// Flat image layout, maybe empty (Assembly.Load(byte[]))
-	/// </summary>
-	public PEImageLayout FlatLayout = PEImageLayout.Empty;
-
-	/// <summary>
-	/// Mapped image layout, maybe empty (Assembly.LoadFile)
-	/// </summary>
-	public PEImageLayout MappedLayout = PEImageLayout.Empty;
-
-	/// <summary>
-	/// Loaded image layout, not empty (Assembly.LoadFile)
-	/// </summary>
-	public PEImageLayout LoadedLayout = PEImageLayout.Empty;
-
-	/// <summary>
-	/// Populate data from <see cref="MetadataLocator.PEInfo"/>
-	/// </summary>
-	/// <param name="peInfo"></param>
-	/// <exception cref="ArgumentNullException"></exception>
-	public void Populate(MetadataLocator.PEInfo peInfo) {
-		if (peInfo is null)
-			throw new ArgumentNullException(nameof(peInfo));
-		if (peInfo.IsInvalid)
-			throw new ArgumentException($"Invalid {nameof(peInfo)}");
-
-		FilePath = peInfo.FilePath;
-		FlatLayout.Populate(peInfo.FlatLayout);
-		MappedLayout.Populate(peInfo.MappedLayout);
-		LoadedLayout.Populate(peInfo.LoadedLayout);
-	}
-
-	bool ISerializable.Serialize(Stream destination) {
-		return SimpleSerializer.Write(destination, this);
-	}
-
-	bool ISerializable.Deserialize(Stream source) {
-		return SimpleSerializer.Read(source, this);
-	}
-}
 
 /// <summary>
 /// Metadata schema
 /// </summary>
 public sealed class MetadataSchema : ISerializable {
 	/// <summary>
-	/// Empty instance
+	/// Determine if current instance is invalid
 	/// </summary>
-	public static readonly MetadataSchema Empty = new();
+	public bool IsInvalid => ValidMask == 0;
 
 	/// <summary/>
 	public uint Reserved1;
@@ -149,11 +41,17 @@ public sealed class MetadataSchema : ISerializable {
 	public uint ExtraData;
 
 	/// <summary>
+	/// Default constructor
+	/// </summary>
+	public MetadataSchema() {
+	}
+
+	/// <summary>
 	/// Populate data from <see cref="MetadataLocator.MetadataSchema"/>
 	/// </summary>
 	/// <param name="schema"></param>
 	/// <exception cref="ArgumentNullException"></exception>
-	public void Populate(MetadataLocator.MetadataSchema schema) {
+	public MetadataSchema(MetadataLocator.MetadataSchema schema) {
 		if (schema is null)
 			throw new ArgumentNullException(nameof(schema));
 
@@ -182,9 +80,14 @@ public sealed class MetadataSchema : ISerializable {
 /// </summary>
 public abstract class MetadataStreamInfo : ISerializable {
 	/// <summary>
-	/// RVA of stream
+	/// Determine if current instance is invalid
 	/// </summary>
-	public uint RVA;
+	public bool IsInvalid => Address == 0;
+
+	/// <summary>
+	/// Address of stream
+	/// </summary>
+	public ulong Address;
 
 	/// <summary>
 	/// Length of stream
@@ -192,17 +95,21 @@ public abstract class MetadataStreamInfo : ISerializable {
 	public uint Length;
 
 	/// <summary>
+	/// Default constructor
+	/// </summary>
+	protected MetadataStreamInfo() {
+	}
+
+	/// <summary>
 	/// Populate data from <see cref="MetadataLocator.MetadataStreamInfo"/>
 	/// </summary>
 	/// <param name="stream"></param>
-	/// <param name="imageBase"></param>
 	/// <exception cref="ArgumentNullException"></exception>
-	protected void Populate(MetadataLocator.MetadataStreamInfo stream, nuint imageBase) {
+	protected MetadataStreamInfo(MetadataLocator.MetadataStreamInfo stream) {
 		if (stream is null)
 			throw new ArgumentNullException(nameof(stream));
 
-		RVA = (uint)(stream.Address - imageBase);
-		Debug2.Assert((int)RVA > 0);
+		Address = stream.Address;
 		Length = stream.Length;
 	}
 
@@ -220,11 +127,6 @@ public abstract class MetadataStreamInfo : ISerializable {
 /// </summary>
 public sealed class MetadataTableInfo : MetadataStreamInfo {
 	/// <summary>
-	/// Empty instance
-	/// </summary>
-	public static readonly MetadataTableInfo Empty = new();
-
-	/// <summary>
 	/// Is compressed table stream (#~)
 	/// </summary>
 	public bool IsCompressed;
@@ -241,16 +143,20 @@ public sealed class MetadataTableInfo : MetadataStreamInfo {
 	public uint[] RowSizes = Array2.Empty<uint>();
 
 	/// <summary>
+	/// Default constructor
+	/// </summary>
+	public MetadataTableInfo() {
+	}
+
+	/// <summary>
 	/// Populate data from <see cref="MetadataLocator.MetadataTableInfo"/>
 	/// </summary>
 	/// <param name="table"></param>
-	/// <param name="imageBase"></param>
 	/// <exception cref="ArgumentNullException"></exception>
-	public void Populate(MetadataLocator.MetadataTableInfo table, nuint imageBase) {
+	public MetadataTableInfo(MetadataLocator.MetadataTableInfo table) : base(table) {
 		if (table is null)
 			throw new ArgumentNullException(nameof(table));
 
-		Populate((MetadataLocator.MetadataStreamInfo)table, imageBase);
 		IsCompressed = table.IsCompressed;
 		TableCount = table.TableCount;
 		RowSizes = table.RowSizes;
@@ -262,21 +168,17 @@ public sealed class MetadataTableInfo : MetadataStreamInfo {
 /// </summary>
 public sealed class MetadataHeapInfo : MetadataStreamInfo {
 	/// <summary>
-	/// Empty instance
+	/// Default constructor
 	/// </summary>
-	public static readonly MetadataHeapInfo Empty = new();
+	public MetadataHeapInfo() {
+	}
 
 	/// <summary>
-	/// Populate data from <see cref="MetadataLocator.MetadataHeapInfo"/>
+	/// Populate data from <see cref="MetadataLocator.MetadataTableInfo"/>
 	/// </summary>
 	/// <param name="heap"></param>
-	/// <param name="imageBase"></param>
 	/// <exception cref="ArgumentNullException"></exception>
-	public void Populate(MetadataLocator.MetadataHeapInfo heap, nuint imageBase) {
-		if (heap is null)
-			throw new ArgumentNullException(nameof(heap));
-
-		Populate((MetadataLocator.MetadataStreamInfo)heap, imageBase);
+	public MetadataHeapInfo(MetadataLocator.MetadataHeapInfo heap) : base(heap) {
 	}
 }
 
@@ -285,19 +187,14 @@ public sealed class MetadataHeapInfo : MetadataStreamInfo {
 /// </summary>
 public sealed class MetadataInfo : ISerializable {
 	/// <summary>
-	/// Empty instance
+	/// Determine if current instance is invalid
 	/// </summary>
-	public static readonly MetadataInfo Empty = new();
+	public bool IsInvalid => MetadataAddress == 0;
 
 	/// <summary>
-	/// PEInfo
+	/// Address of metadata
 	/// </summary>
-	public PEInfo PEInfo = PEInfo.Empty;
-
-	/// <summary>
-	/// RVA of metadata
-	/// </summary>
-	public uint MetadataRVA;
+	public ulong MetadataAddress;
 
 	/// <summary>
 	/// Size of metadata
@@ -308,78 +205,56 @@ public sealed class MetadataInfo : ISerializable {
 	/// <summary>
 	/// Metadata schema
 	/// </summary>
-	public MetadataSchema Schema = MetadataSchema.Empty;
+	public MetadataSchema Schema = new();
 
 	/// <summary>
 	/// #~ or #- info
 	/// </summary>
-	public MetadataTableInfo TableStream = MetadataTableInfo.Empty;
+	public MetadataTableInfo TableStream = new();
 
 	/// <summary>
 	/// #Strings heap info
 	/// </summary>
-	public MetadataHeapInfo StringHeap = MetadataHeapInfo.Empty;
+	public MetadataHeapInfo StringHeap = new();
 
 	/// <summary>
 	/// #US heap info
 	/// </summary>
-	public MetadataHeapInfo UserStringHeap = MetadataHeapInfo.Empty;
+	public MetadataHeapInfo UserStringHeap = new();
 
 	/// <summary>
 	/// #GUID heap info
 	/// </summary>
-	public MetadataHeapInfo GuidHeap = MetadataHeapInfo.Empty;
+	public MetadataHeapInfo GuidHeap = new();
 
 	/// <summary>
 	/// #Blob heap info
 	/// </summary>
-	public MetadataHeapInfo BlobHeap = MetadataHeapInfo.Empty;
+	public MetadataHeapInfo BlobHeap = new();
+
+	/// <summary>
+	/// Default constructor
+	/// </summary>
+	public MetadataInfo() {
+	}
 
 	/// <summary>
 	/// Populate data from <see cref="MetadataLocator.MetadataInfo"/>
 	/// </summary>
 	/// <param name="metadata"></param>
-	/// <param name="peInfo"></param>
 	/// <exception cref="ArgumentNullException"></exception>
-	public void Populate(MetadataLocator.MetadataInfo metadata, MetadataLocator.PEInfo peInfo) {
+	public MetadataInfo(MetadataLocator.MetadataInfo metadata) {
 		if (metadata is null)
 			throw new ArgumentNullException(nameof(metadata));
-		if (peInfo is null)
-			throw new ArgumentNullException(nameof(peInfo));
-		if (metadata.IsInvalid)
-			throw new ArgumentException($"Invalid {nameof(metadata)}");
-		if (peInfo.IsInvalid)
-			throw new ArgumentException($"Invalid {nameof(peInfo)}");
 
-		var imageLayout = FindMetadataImageLayout(peInfo, metadata.MetadataAddress);
-		if (imageLayout is null)
-			throw new InvalidOperationException("Can't find the PEImageLayout where the metadata is located");
-		PEInfo.Populate(peInfo);
-		MetadataRVA = (uint)(metadata.MetadataAddress - imageLayout.ImageBase);
-		Debug2.Assert((int)MetadataRVA > 0);
+		MetadataAddress = metadata.MetadataAddress;
 		MetadataSize = metadata.MetadataSize;
-		Schema.Populate(metadata.Schema);
-		TableStream.Populate(metadata.TableStream, imageLayout.ImageBase);
-		StringHeap.Populate(metadata.StringHeap, imageLayout.ImageBase);
-		UserStringHeap.Populate(metadata.UserStringHeap, imageLayout.ImageBase);
-		GuidHeap.Populate(metadata.GuidHeap, imageLayout.ImageBase);
-		BlobHeap.Populate(metadata.BlobHeap, imageLayout.ImageBase);
-	}
-
-	static MetadataLocator.PEImageLayout? FindMetadataImageLayout(MetadataLocator.PEInfo peInfo, nuint metadataAddress) {
-		if (Check(peInfo.FlatLayout, metadataAddress))
-			return peInfo.FlatLayout;
-		if (Check(peInfo.MappedLayout, metadataAddress))
-			return peInfo.MappedLayout;
-		if (Check(peInfo.LoadedLayout, metadataAddress))
-			return peInfo.LoadedLayout;
-		return null;
-
-		static bool Check(MetadataLocator.PEImageLayout imageLayout, nuint metadataAddress) {
-			if (imageLayout.IsInvalid)
-				return false;
-			return imageLayout.ImageBase <= metadataAddress && metadataAddress < imageLayout.ImageBase + imageLayout.ImageSize;
-		}
+		Schema = new MetadataSchema(metadata.Schema);
+		TableStream = new MetadataTableInfo(metadata.TableStream);
+		StringHeap = new MetadataHeapInfo(metadata.StringHeap);
+		UserStringHeap = new MetadataHeapInfo(metadata.UserStringHeap);
+		GuidHeap = new MetadataHeapInfo(metadata.GuidHeap);
+		BlobHeap = new MetadataHeapInfo(metadata.BlobHeap);
 	}
 
 	bool ISerializable.Serialize(Stream destination) {

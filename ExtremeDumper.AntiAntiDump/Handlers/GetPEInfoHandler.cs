@@ -4,12 +4,12 @@ using System.Reflection;
 
 namespace ExtremeDumper.AntiAntiDump.Handlers;
 
-sealed class GetMetadataHandler : ICommandHandler {
-	public AADCommand Command => AADCommand.GetMetadata;
+sealed class GetPEInfoHandler : ICommandHandler {
+	public AADCommand Command => AADCommand.GetPEInfo;
 
 	public Type ParametersType => typeof(ModuleInfo);
 
-	public Type ResultType => typeof(MetadataInfo);
+	public Type ResultType => typeof(PEInfo);
 
 	public bool Execute(ISerializable parameters_, [NotNullWhen(true)] out ISerializable? result_) {
 		result_ = null;
@@ -20,9 +20,9 @@ sealed class GetMetadataHandler : ICommandHandler {
 		if (module is null)
 			return false;
 
-		var metadataProvider = MetadataLocator.MetadataInfo.Create(module);
-		var metadata = new MetadataInfo(metadataProvider);
-		result_ = metadata;
+		var peInfoProvider = MetadataLocator.PEInfo.Create(module);
+		var peInfo = new PEInfo(peInfoProvider);
+		result_ = peInfo;
 		return true;
 	}
 

@@ -41,19 +41,29 @@ sealed class EnableMultiDomainHandler : ICommandHandler {
 		if (string.IsNullOrEmpty(assemblyLocation))
 			return false;
 
-		var pipeNames = new List<string>();
-		foreach (var domain in MultiDomainHelper.EnumerateDomains()) {
-			if (domain == AppDomain.CurrentDomain)
-				continue;
-			var creator = (AADServerCreator)domain.CreateInstanceFromAndUnwrap(assemblyLocation, typeof(AADServerCreator).FullName);
-			var name = Guid.NewGuid().ToString();
-			if (!creator.Create(name))
-				return false;
-			// TODO: cleanup
-			pipeNames.Add(name);
+		AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
+		try {
+			var pipeNames = new List<string>();
+			foreach (var domain in MultiDomainHelper.EnumerateDomains()) {
+				if (domain == AppDomain.CurrentDomain)
+					continue;
+				var creator = (AADServerCreator)domain.CreateInstanceFromAndUnwrap(assemblyLocation, typeof(AADServerCreator).FullName);
+				var name = Guid.NewGuid().ToString();
+				if (!creator.Create(name))
+					return false;
+				// TODO: cleanup
+				pipeNames.Add(name);
+			}
+			result = new PipeNames { Values = pipeNames.ToArray() };
 		}
-		result = new PipeNames { Values = pipeNames.ToArray() };
+		finally {
+			AppDomain.CurrentDomain.AssemblyResolve -= AssemblyResolve;
+		}
 		return true;
+
+		static System.Reflection.Assembly? AssemblyResolve(object sender, ResolveEventArgs args) {
+			return args.Name == typeof(AADServer).Assembly.FullName ? typeof(AADServer).Assembly : null;
+		}
 	}
 
 	static class MultiDomainHelper {

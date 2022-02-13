@@ -103,6 +103,16 @@ public sealed class AADClient : AADPipe {
 		return Invoke(AADCommand.GetMetadata, module, out metadata);
 	}
 
+	/// <summary>
+	/// Get PE info of <paramref name="module"/>
+	/// </summary>
+	/// <param name="module"></param>
+	/// <param name="peInfo"></param>
+	/// <returns></returns>
+	public bool GetPEInfo(ModuleInfo module, [NotNullWhen(true)] out PEInfo? peInfo) {
+		return Invoke(AADCommand.GetPEInfo, module, out peInfo);
+	}
+
 	bool Invoke<T>(AADCommand command, ISerializable parameters, [NotNullWhen(true)] out T? result) where T : class, ISerializable {
 		result = null;
 		if (!IsConnected)

@@ -74,6 +74,21 @@ public sealed class AADClientAggregator {
 	}
 
 	/// <summary>
+	/// Get PE info of <paramref name="module"/>
+	/// </summary>
+	/// <param name="module"></param>
+	/// <param name="peInfo"></param>
+	/// <returns></returns>
+	public bool GetPEInfo(ModuleInfo module, [NotNullWhen(true)] out PEInfo? peInfo) {
+		peInfo = null;
+		foreach (var client in clients) {
+			if (client.GetPEInfo(module, out peInfo))
+				return true;
+		}
+		return false;
+	}
+
+	/// <summary>
 	/// Call <see cref="AADClient.Disconnect"/> for all <see cref="AADClient"/> in <see cref="Clients"/>
 	/// </summary>
 	public void DisconnectAll() {
