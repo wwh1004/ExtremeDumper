@@ -32,6 +32,7 @@ namespace ExtremeDumper.Forms
             this.lvwProcesses = new System.Windows.Forms.ListView();
             this.chProcessName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chProcessId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chCLRModule = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chProcessPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.mnuProcessContext = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnuDumpProcess = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,6 +60,7 @@ namespace ExtremeDumper.Forms
             this.lvwProcesses.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chProcessName,
             this.chProcessId,
+            this.chCLRModule,
             this.chProcessPath});
             this.lvwProcesses.ContextMenuStrip = this.mnuProcessContext;
             this.lvwProcesses.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -80,6 +82,10 @@ namespace ExtremeDumper.Forms
             // chProcessId
             // 
             this.chProcessId.Text = "PID";
+            // 
+            // chCLRModule
+            // 
+            this.chCLRModule.Text = "CLR";
             // 
             // chProcessPath
             // 
@@ -232,6 +238,7 @@ namespace ExtremeDumper.Forms
         private System.Windows.Forms.ToolStripMenuItem mnuDumperType;
         private System.Windows.Forms.ColumnHeader chProcessName;
         private System.Windows.Forms.ColumnHeader chProcessId;
+        private System.Windows.Forms.ColumnHeader chCLRModule;
         private System.Windows.Forms.ColumnHeader chProcessPath;
         private System.Windows.Forms.ContextMenuStrip mnuProcessContext;
         private System.Windows.Forms.ToolStripMenuItem mnuDumpProcess;

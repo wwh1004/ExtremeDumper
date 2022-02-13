@@ -147,11 +147,16 @@ partial class ProcessesForm : Form {
 		// Name
 		listViewItem.SubItems.Add(process.Id.ToString());
 		// Id
+		if (process is DotNetProcessInfo dnProcess)
+			listViewItem.SubItems.Add(string.Join(", ", dnProcess.CLRModules.Select(t => t.Name)));
+		else
+			listViewItem.SubItems.Add(string.Empty);
+		// CLR
 		listViewItem.SubItems.Add(process.FilePath);
 		// Path
 		if (Utils.Is64BitProcess && !process.Is64Bit)
 			listViewItem.Text += " (32 Bit)";
-		if (process is DotNetProcessInfo dnProcess)
+		if (process is DotNetProcessInfo)
 			listViewItem.BackColor = Utils.DotNetColor;
 		return listViewItem;
 	}

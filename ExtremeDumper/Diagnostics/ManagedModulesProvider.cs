@@ -23,18 +23,22 @@ sealed unsafe class ManagedModulesProvider : IModulesProvider {
 			throw new InvalidOperationException();
 		using var dataTarget = DataTarget.AttachToProcess((int)processId, 1000, AttachFlag.Passive);
 		dataTarget.SymbolLocator = DummySymbolLocator.Instance;
-		foreach (var clrModule in dataTarget.ClrVersions.Select(t => t.CreateRuntime()).SelectMany(t => t.AppDomains).SelectMany(t => t.Modules)) {
-			if (clrModule.ImageBase == 0)
-				continue;
-			if (!IsValidPEMagic(clrModule, process))
-				continue;
-			// .NET 3.5有nlp文件，但是被认为是.NET模块
+		foreach (var runtime in dataTarget.ClrVersions.Select(t => t.CreateRuntime())) {
+			var clrVersion = runtime.ClrInfo.Version.ToString();
+			foreach (var domain in runtime.AppDomains) {
+				var domainName = domain.Name;
+				foreach (var module in domain.Modules) {
+					if (module.ImageBase == 0)
+						continue;
+					if (!IsValidPEMagic(module, process))
+						continue;
+					// .NET 3.5有nlp文件，但是被认为是.NET模块
 
-			GetModuleFileInfo(clrModule, out var name, out var path);
-			uint size = GetModuleSize(clrModule, process);
-			var domainName = string.Join(", ", clrModule.AppDomains.Select(t => t.Name));
-			var clrVersion = clrModule.Runtime.ClrInfo.Version.ToString();
-			yield return new DotNetModuleInfo(name, (nuint)clrModule.ImageBase, size, path, domainName, clrVersion);
+					GetModuleFileInfo(module, out var name, out var path);
+					uint size = GetModuleSize(module, process);
+					yield return new DotNetModuleInfo(name, (nuint)module.ImageBase, size, path, domainName, clrVersion);
+				}
+			}
 		}
 	}
 

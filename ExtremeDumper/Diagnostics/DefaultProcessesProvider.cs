@@ -29,9 +29,9 @@ sealed class DefaultProcessesProvider : IProcessesProvider {
 
 		var name = mainModule.Name;
 		var path = mainModule.FilePath;
-		var clrModule = modulesProvider.EnumerateModules().FirstOrDefault(t => t.Name.ToUpperInvariant() is "MSCORWKS.DLL" or "CLR.DLL" or "CORECLR.DLL");
-		if (clrModule is not null)
-			return new DotNetProcessInfo(processId, name, path, Is64BitPE(clrModule.FilePath), clrModule);
+		var clrModules = modulesProvider.EnumerateModules().Where(t => t.Name.ToUpperInvariant() is "MSCORWKS.DLL" or "CLR.DLL" or "CORECLR.DLL").ToArray();
+		if (clrModules.Length != 0)
+			return new DotNetProcessInfo(processId, name, path, Is64BitPE(clrModules[0].FilePath), clrModules);
 		else
 			return new ProcessInfo(processId, name, path, Is64BitPE(mainModule.FilePath));
 	}

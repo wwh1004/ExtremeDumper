@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ExtremeDumper.Diagnostics;
 
@@ -25,19 +27,19 @@ public class ProcessInfo {
 }
 
 public sealed class DotNetProcessInfo : ProcessInfo {
-	public ModuleInfo ClrModule { get; }
+	public IReadOnlyList<ModuleInfo> CLRModules { get; }
 
-	public bool IsCLR2 => string.Equals(ClrModule.Name, "mscorwks.dll", StringComparison.OrdinalIgnoreCase);
+	public bool HasCLR2 => CLRModules.Any(t => string.Equals(t.Name, "mscorwks.dll", StringComparison.OrdinalIgnoreCase));
 
-	public bool IsCLR4 => string.Equals(ClrModule.Name, "clr.dll", StringComparison.OrdinalIgnoreCase);
+	public bool HasCLR4 => CLRModules.Any(t => string.Equals(t.Name, "clr.dll", StringComparison.OrdinalIgnoreCase));
 
-	public bool IsCoreCLR => string.Equals(ClrModule.Name, "coreclr.dll", StringComparison.OrdinalIgnoreCase);
+	public bool HasCoreCLR => CLRModules.Any(t => string.Equals(t.Name, "coreclr.dll", StringComparison.OrdinalIgnoreCase));
 
 	public DotNetProcessInfo() {
-		ClrModule = new ModuleInfo();
+		CLRModules = Array2.Empty<ModuleInfo>();
 	}
 
-	public DotNetProcessInfo(uint id, string name, string filePath, bool is64Bit, ModuleInfo clrModule) : base(id, name, filePath, is64Bit) {
-		ClrModule = clrModule ?? new ModuleInfo();
+	public DotNetProcessInfo(uint id, string name, string filePath, bool is64Bit, IEnumerable<ModuleInfo> clrModules) : base(id, name, filePath, is64Bit) {
+		CLRModules = new List<ModuleInfo>(clrModules);
 	}
 }
