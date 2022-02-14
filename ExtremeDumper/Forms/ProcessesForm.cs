@@ -78,12 +78,14 @@ partial class ProcessesForm : Form {
 			mnuDumpProcess.Enabled = false;
 			title.Annotations["DUMP"] = "Dumping";
 			Text = title.Compose(true);
-
-			fbdlgDumped.SelectedPath = Path.GetDirectoryName(process.FilePath) + "\\";
-			if (fbdlgDumped.ShowDialog() != DialogResult.OK)
-				return;
-
-			int count = await Task.Run(() => DumpProcess(process.Id, Path.Combine(fbdlgDumped.SelectedPath, "Dumps")));
+			string path = Path.GetDirectoryName(process.FilePath) + "\\";
+			if (!mnuFastDump.Checked) {
+				fbdlgDumped.SelectedPath = path;
+				if (fbdlgDumped.ShowDialog() != DialogResult.OK)
+					return;
+				path = fbdlgDumped.SelectedPath;
+			}
+			int count = await Task.Run(() => DumpProcess(process.Id, Path.Combine(path, "Dumps")));
 			MessageBoxStub.Show($"{count} images have been dumped to:{Environment.NewLine}{fbdlgDumped.SelectedPath}", MessageBoxIcon.Information);
 		}
 		finally {
