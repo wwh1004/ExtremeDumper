@@ -33,7 +33,7 @@ partial class ProcessesForm : Form {
 		Text = title.Compose(true);
 		Utils.EnableDoubleBuffer(lvwProcesses);
 		lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new[] { TypeCode.String, TypeCode.Int32, TypeCode.String });
-		for (var dumperType = DumperType.Normal; dumperType <= DumperType.Normal; dumperType++) {
+		for (var dumperType = DumperType.Normal; dumperType <= DumperType.AntiAntiDump; dumperType++) {
 			var item = new ToolStripMenuItem(dumperType.ToString());
 			var currentDumperType = dumperType;
 			item.Click += (_, _) => SwitchDumperType(currentDumperType);

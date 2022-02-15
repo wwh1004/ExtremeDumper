@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExtremeDumper.Diagnostics;
 using ExtremeDumper.Dumping;
-using ExtremeDumper.Injecting;
-using AAD = ExtremeDumper.AntiAntiDump;
 using ImageLayout = dnlib.PE.ImageLayout;
 
 namespace ExtremeDumper.Forms;
@@ -24,7 +22,6 @@ partial class ModulesForm : Form {
 	readonly StrongBox<DumperType> dumperType;
 	readonly TitleComposer title;
 	readonly List<ModuleInfo> modules = new();
-	List<AAD.AADClients>? clientsList;
 
 	ModulesForm(ProcessInfo process, StrongBox<DumperType> dumperType) {
 		InitializeComponent();
@@ -149,7 +146,7 @@ partial class ModulesForm : Form {
 			title.Annotations["ENABLE_AAD"] = "Enabling AntiAntiDump";
 			Text = title.Compose(true);
 
-			var clients = await Task.Run(() => GetOrCreateAADClientsList());
+			await Task.Run(() => AntiAntiDump.AADExtensions.EnumerateAADClients(process.Id));
 			mnuEnableAntiAntiDump.Checked = true;
 		}
 		finally {
@@ -215,7 +212,7 @@ partial class ModulesForm : Form {
 
 	IEnumerable<ModuleInfo> GetModulesAAD() {
 		modules.Clear();
-		foreach (var module in ModulesProviderFactory.CreateWithAADClient(GetOrCreateAADClientsList()).EnumerateModules()) {
+		foreach (var module in ModulesProviderFactory.Create(process.Id, ModulesProviderType.ManagedAAD).EnumerateModules()) {
 			if (IsAntiAntiDumpModule(module))
 				continue;
 			modules.Add(module);
@@ -248,33 +245,6 @@ partial class ModulesForm : Form {
 		return listViewItem;
 	}
 
-	List<AAD.AADClients> GetOrCreateAADClientsList() {
-		if (clientsList is not null)
-			return clientsList;
-		if (process is not DotNetProcessInfo dnProcess)
-			throw new InvalidOperationException("AADClient can only be created on .NET process");
-
-		var list = new List<AAD.AADClients>();
-		if (dnProcess.HasCLR2)
-			list.Add(CreateAADClients(InjectionClrVersion.V2));
-		if (dnProcess.HasCLR4)
-			list.Add(CreateAADClients(InjectionClrVersion.V4));
-		if (dnProcess.HasCoreCLR)
-			MessageBoxStub.Show("NOT SUPPORTED", MessageBoxIcon.Warning);
-		clientsList = list;
-		return list;
-	}
-
-	AAD.AADClients CreateAADClients(InjectionClrVersion clrVersion) {
-		var mainClient = AAD.AADCoreInjector.Inject(process.Id, clrVersion);
-		if (!mainClient.Connect(1000))
-			throw new InvalidOperationException("Can't connect to AADServer.");
-		var clients = AAD.AADClients.AsMultiDomain(mainClient);
-		if (!clients.ConnectAll(1000))
-			throw new InvalidOperationException("Can't connect to AADServer in other application domain.");
-		return clients;
-	}
-
 	static string EnsureValidFileName(string fileName) {
 		if (string.IsNullOrEmpty(fileName))
 			return string.Empty;
@@ -297,6 +267,8 @@ partial class ModulesForm : Form {
 	}
 
 	static bool IsAntiAntiDumpModule(ModuleInfo module) {
+		if (string.IsNullOrEmpty(module.Name))
+			return false;
 		switch (Path.GetFileNameWithoutExtension(module.Name)) {
 		case "00000000":
 		case "00000001":
@@ -320,7 +292,7 @@ partial class ModulesForm : Form {
 		case "00000304":
 			return true;
 		default:
-			return module.Name == AAD.AADCoreInjector.GetAADCoreModuleNameIfLoaded();
+			return module.Name == AntiAntiDump.AADCoreInjector.GetAADCoreModuleNameIfLoaded();
 		}
 	}
 }

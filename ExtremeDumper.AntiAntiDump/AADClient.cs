@@ -11,7 +11,7 @@ namespace ExtremeDumper.AntiAntiDump;
 /// </summary>
 public sealed class AADClient : AADPipe {
 	AADClient[]? multiDomainClients;
-	AADClient? mainClient;
+	readonly AADClient? mainClient;
 	RuntimeInfo? runtimeInfoCache;
 	AppDomainInfo? domainInfoCache;
 
@@ -133,7 +133,7 @@ public sealed class AADClient : AADPipe {
 	/// </summary>
 	/// <param name="runtimeInfo"></param>
 	/// <returns></returns>
-	public bool GetRuntimeInfo([NotNullWhen(true)] out RuntimeInfo? runtimeInfo) {
+	bool GetRuntimeInfo([NotNullWhen(true)] out RuntimeInfo? runtimeInfo) {
 		if (mainClient is not null)
 			return mainClient.GetRuntimeInfo(out runtimeInfo);
 
@@ -151,7 +151,7 @@ public sealed class AADClient : AADPipe {
 	/// </summary>
 	/// <param name="runtimeInfo"></param>
 	/// <returns></returns>
-	public bool GetAppDomainInfo([NotNullWhen(true)] out AppDomainInfo? domainInfo) {
+	bool GetAppDomainInfo([NotNullWhen(true)] out AppDomainInfo? domainInfo) {
 		domainInfo = null;
 		if (domainInfoCache is null) {
 			if (!Invoke(AADCommand.GetAppDomainInfo, EmptySerializable.Instance, out domainInfoCache))

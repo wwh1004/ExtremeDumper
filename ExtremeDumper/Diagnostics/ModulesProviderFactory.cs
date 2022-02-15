@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using ExtremeDumper.AntiAntiDump;
 
 namespace ExtremeDumper.Diagnostics;
 
@@ -31,45 +29,9 @@ public static class ModulesProviderFactory {
 		case ModulesProviderType.Managed:
 			return new ManagedModulesProvider(processId);
 		case ModulesProviderType.ManagedAAD:
-			throw new InvalidOperationException($"Please call '{nameof(CreateWithAADClient)}' instead.");
+			return new AADModulesProvider(processId);
 		default:
 			throw new ArgumentOutOfRangeException(nameof(type));
 		}
-	}
-
-	/// <summary>
-	/// Create managed module infos provider with <see cref="AADClient"/>
-	/// </summary>
-	/// <param name="client"></param>
-	/// <returns></returns>
-	public static IModulesProvider CreateWithAADClient(AADClient client) {
-		if (client is null)
-			throw new ArgumentNullException(nameof(client));
-
-		return new AADModulesProvider(client);
-	}
-
-	/// <summary>
-	/// Create managed module infos provider with <see cref="AADClient"/>
-	/// </summary>
-	/// <param name="clients"></param>
-	/// <returns></returns>
-	public static IModulesProvider CreateWithAADClient(AADClients clients) {
-		if (clients is null)
-			throw new ArgumentNullException(nameof(clients));
-
-		return new AADModulesProvider(clients);
-	}
-
-	/// <summary>
-	/// Create managed module infos provider with <see cref="AADClient"/>
-	/// </summary>
-	/// <param name="clientsList"></param>
-	/// <returns></returns>
-	public static IModulesProvider CreateWithAADClient(IEnumerable<AADClients> clientsList) {
-		if (clientsList is null)
-			throw new ArgumentNullException(nameof(clientsList));
-
-		return new AADModulesProvider(clientsList);
 	}
 }

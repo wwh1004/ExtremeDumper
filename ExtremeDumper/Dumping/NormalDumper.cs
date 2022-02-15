@@ -13,10 +13,6 @@ sealed unsafe class NormalDumper : DumperBase {
 	public NormalDumper(uint processId) : base(processId) {
 	}
 
-	public static IDumper Create(uint processId) {
-		return new NormalDumper(processId);
-	}
-
 	[HandleProcessCorruptedStateExceptions]
 	public override bool DumpModule(nuint moduleHandle, ImageLayout imageLayout, string filePath) {
 		try {

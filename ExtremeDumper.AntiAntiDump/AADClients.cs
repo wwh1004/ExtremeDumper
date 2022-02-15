@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -8,13 +9,8 @@ namespace ExtremeDumper.AntiAntiDump;
 /// <summary>
 /// <see cref="AADClient"/> aggregator used for <see cref="AADCommand.EnableMultiDomain"/>
 /// </summary>
-public sealed class AADClients : IDisposable {
+public sealed class AADClients : IEnumerable<AADClient>, IDisposable {
 	readonly List<AADClient> clients = new();
-
-	/// <summary>
-	/// All aggregated <see cref="AADClient"/>
-	/// </summary>
-	public IEnumerable<AADClient> Clients => clients;
 
 	/// <summary>
 	/// Are all client connected
@@ -34,13 +30,7 @@ public sealed class AADClients : IDisposable {
 	/// <summary>
 	/// Current runtime info
 	/// </summary>
-	public RuntimeInfo Runtime {
-		get {
-			if (!GetRuntimeInfo(out var result))
-				throw new InvalidOperationException();
-			return result;
-		}
-	}
+	public RuntimeInfo Runtime => clients.Count != 0 ? clients[0].Runtime : throw new InvalidOperationException();
 
 	/// <summary>
 	/// All application domain infos
@@ -133,16 +123,6 @@ public sealed class AADClients : IDisposable {
 	}
 
 	/// <summary>
-	/// Get runtime info
-	/// </summary>
-	/// <param name="runtimeInfo"></param>
-	/// <returns></returns>
-	public bool GetRuntimeInfo([NotNullWhen(true)] out RuntimeInfo? runtimeInfo) {
-		runtimeInfo = null;
-		return clients.Count != 0 && clients[0].GetRuntimeInfo(out runtimeInfo);
-	}
-
-	/// <summary>
 	/// Get all modules
 	/// </summary>
 	/// <param name="modules"></param>
@@ -193,6 +173,15 @@ public sealed class AADClients : IDisposable {
 		}
 		Debug2.Assert(false);
 		return null;
+	}
+
+	/// <inheritdoc/>
+	public IEnumerator<AADClient> GetEnumerator() {
+		return clients.GetEnumerator();
+	}
+
+	IEnumerator IEnumerable.GetEnumerator() {
+		return ((IEnumerable)clients).GetEnumerator();
 	}
 
 	/// <inheritdoc/>

@@ -3,14 +3,17 @@ using System;
 namespace ExtremeDumper.Dumping;
 
 public enum DumperType {
-	Normal
+	Normal,
+	AntiAntiDump
 }
 
 public static class DumperFactory {
 	public static IDumper Create(uint processId, DumperType dumperType) {
 		switch (dumperType) {
 		case DumperType.Normal:
-			return NormalDumper.Create(processId);
+			return new NormalDumper(processId);
+		case DumperType.AntiAntiDump:
+			return new AntiAntiDumper(processId);
 		default:
 			throw new ArgumentOutOfRangeException(nameof(dumperType));
 		}

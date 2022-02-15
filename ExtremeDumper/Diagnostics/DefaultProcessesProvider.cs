@@ -20,7 +20,7 @@ sealed class DefaultProcessesProvider : IProcessesProvider {
 		}
 	}
 
-	static ProcessInfo? GetProcessInfo(uint processId) {
+	public static ProcessInfo? GetProcessInfo(uint processId) {
 		var modulesProvider = ModulesProviderFactory.Create(processId, ModulesProviderType.Unmanaged);
 		var mainModule = modulesProvider.EnumerateModules().FirstOrDefault();
 		if (mainModule is null)
