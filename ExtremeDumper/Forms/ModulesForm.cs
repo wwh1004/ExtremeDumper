@@ -261,6 +261,7 @@ partial class ModulesForm : Form {
 			list.Add(CreateAADClients(InjectionClrVersion.V4));
 		if (dnProcess.HasCoreCLR)
 			MessageBoxStub.Show("NOT SUPPORTED", MessageBoxIcon.Warning);
+		clientsList = list;
 		return list;
 	}
 
