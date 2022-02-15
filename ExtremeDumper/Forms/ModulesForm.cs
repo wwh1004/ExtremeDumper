@@ -258,8 +258,14 @@ partial class ModulesForm : Form {
 	}
 
 	bool DumpModule(nuint moduleHandle, ImageLayout imageLayout, string filePath) {
-		using var dumper = DumperFactory.Create(process.Id, dumperType.Value);
+		using var dumper = DumperFactory.Create(process.Id, GetDumperType());
 		return dumper.DumpModule(moduleHandle, imageLayout, filePath);
+	}
+
+	DumperType GetDumperType() {
+		if (mnuEnableAntiAntiDump.Checked)
+			return DumperType.AntiAntiDump;
+		return dumperType.Value;
 	}
 
 	static string PathInsertPostfix(string path, string postfix) {
