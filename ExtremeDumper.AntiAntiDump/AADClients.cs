@@ -81,7 +81,6 @@ public sealed class AADClients : IEnumerable<AADClient>, IDisposable {
 
 		clients.Add(mainClient);
 		clients.AddRange(otherClients);
-		Debug2.Assert(clients.Count != 1);
 	}
 
 	/// <summary>

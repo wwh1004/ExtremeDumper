@@ -212,12 +212,18 @@ partial class ModulesForm : Form {
 
 	IEnumerable<ModuleInfo> GetModulesAAD() {
 		modules.Clear();
+		var dnModules = new List<ModuleInfo>();
 		foreach (var module in ModulesProviderFactory.Create(process.Id, ModulesProviderType.ManagedAAD).EnumerateModules()) {
 			if (IsAntiAntiDumpModule(module))
 				continue;
-			modules.Add(module);
+			dnModules.Add(module);
 			yield return module;
 		}
+		modules.AddRange(dnModules);
+		var umModules = GetModules().Where(x => !dnModules.Any(y => x.ImageBase == y.ImageBase)).ToArray();
+		foreach (var module in umModules)
+			yield return module;
+		modules.AddRange(modules);
 	}
 
 	static ListViewItem CreateListViewItem(ModuleInfo module) {
