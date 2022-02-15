@@ -137,6 +137,7 @@ partial class ModulesForm : Form {
 	async void mnuEnableAntiAntiDump_Click(object sender, EventArgs e) {
 		if (mnuEnableAntiAntiDump.Checked == true) {
 			mnuEnableAntiAntiDump.Checked = false;
+			title.Annotations["ENABLE_AAD"] = null;
 			mnuRefreshModuleList_Click(sender, e);
 			return;
 		}
@@ -150,7 +151,7 @@ partial class ModulesForm : Form {
 			mnuEnableAntiAntiDump.Checked = true;
 		}
 		finally {
-			title.Annotations["ENABLE_AAD"] = null;
+			title.Annotations["ENABLE_AAD"] = "AntiAntiDump";
 			Text = title.Compose(true);
 			mnuEnableAntiAntiDump.Enabled = true;
 		}
