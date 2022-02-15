@@ -11,7 +11,7 @@ static class AADCoreInjector {
 
 	public static string GetAADCoreModuleNameIfLoaded() {
 		if (!string.IsNullOrEmpty(dllPath))
-			moduleName = Path.GetFileName(dllPath);
+			moduleName = Path.GetFileNameWithoutExtension(dllPath);
 		return moduleName;
 	}
 
