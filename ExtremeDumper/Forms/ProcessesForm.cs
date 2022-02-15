@@ -131,8 +131,11 @@ partial class ProcessesForm : Form {
 		if (!TryGetSelectedProcess(out var process))
 			return;
 
-		var injectingForm = new InjectingForm(process.Id);
-		injectingForm.Show();
+		var form = InjectingForm.Create(process);
+		if (form is not null)
+			form.Show();
+		else
+			MessageBoxStub.Show($"Can't create {nameof(InjectingForm)}", MessageBoxIcon.Error);
 	}
 
 	void mnuGotoLocation_Click(object sender, EventArgs e) {

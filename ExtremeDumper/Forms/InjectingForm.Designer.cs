@@ -22,12 +22,13 @@ namespace ExtremeDumper.Forms
             this.tbAssemblyPath = new System.Windows.Forms.TextBox();
             this.tbArgument = new System.Windows.Forms.TextBox();
             this.odlgSelectAssembly = new System.Windows.Forms.OpenFileDialog();
+            this.cmbCLRVersion = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // chkWaitReturn
             // 
             this.chkWaitReturn.AutoSize = true;
-            this.chkWaitReturn.Location = new System.Drawing.Point(902, 45);
+            this.chkWaitReturn.Location = new System.Drawing.Point(1050, 45);
             this.chkWaitReturn.Name = "chkWaitReturn";
             this.chkWaitReturn.Size = new System.Drawing.Size(53, 21);
             this.chkWaitReturn.TabIndex = 11;
@@ -36,7 +37,7 @@ namespace ExtremeDumper.Forms
             // 
             // btInject
             // 
-            this.btInject.Location = new System.Drawing.Point(983, 41);
+            this.btInject.Location = new System.Drawing.Point(1109, 41);
             this.btInject.Name = "btInject";
             this.btInject.Size = new System.Drawing.Size(98, 27);
             this.btInject.TabIndex = 9;
@@ -50,13 +51,13 @@ namespace ExtremeDumper.Forms
             this.cmbEntryPoint.FormattingEnabled = true;
             this.cmbEntryPoint.Location = new System.Drawing.Point(12, 43);
             this.cmbEntryPoint.Name = "cmbEntryPoint";
-            this.cmbEntryPoint.Size = new System.Drawing.Size(718, 25);
+            this.cmbEntryPoint.Size = new System.Drawing.Size(766, 25);
             this.cmbEntryPoint.TabIndex = 8;
             this.cmbEntryPoint.SelectedIndexChanged += new System.EventHandler(this.cmbEntryPoint_SelectedIndexChanged);
             // 
             // btSelectAssembly
             // 
-            this.btSelectAssembly.Location = new System.Drawing.Point(983, 13);
+            this.btSelectAssembly.Location = new System.Drawing.Point(1109, 13);
             this.btSelectAssembly.Name = "btSelectAssembly";
             this.btSelectAssembly.Size = new System.Drawing.Size(98, 23);
             this.btSelectAssembly.TabIndex = 7;
@@ -69,13 +70,13 @@ namespace ExtremeDumper.Forms
             this.tbAssemblyPath.Location = new System.Drawing.Point(12, 13);
             this.tbAssemblyPath.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tbAssemblyPath.Name = "tbAssemblyPath";
-            this.tbAssemblyPath.Size = new System.Drawing.Size(965, 23);
+            this.tbAssemblyPath.Size = new System.Drawing.Size(1091, 23);
             this.tbAssemblyPath.TabIndex = 6;
             this.tbAssemblyPath.TextChanged += new System.EventHandler(this.tbAssemblyPath_TextChanged);
             // 
             // tbArgument
             // 
-            this.tbArgument.Location = new System.Drawing.Point(736, 43);
+            this.tbArgument.Location = new System.Drawing.Point(884, 43);
             this.tbArgument.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tbArgument.Name = "tbArgument";
             this.tbArgument.Size = new System.Drawing.Size(160, 23);
@@ -83,12 +84,25 @@ namespace ExtremeDumper.Forms
             this.tbArgument.Text = "<Optional Argument>";
             this.tbArgument.TextChanged += new System.EventHandler(this.tbArgument_TextChanged);
             // 
+            // cmbCLRVersion
+            // 
+            this.cmbCLRVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCLRVersion.FormattingEnabled = true;
+            this.cmbCLRVersion.Items.AddRange(new object[] {
+            "CLR 2.x",
+            "CLR 4.x"});
+            this.cmbCLRVersion.Location = new System.Drawing.Point(784, 43);
+            this.cmbCLRVersion.Name = "cmbCLRVersion";
+            this.cmbCLRVersion.Size = new System.Drawing.Size(94, 25);
+            this.cmbCLRVersion.TabIndex = 13;
+            // 
             // InjectingForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1093, 82);
+            this.ClientSize = new System.Drawing.Size(1219, 82);
+            this.Controls.Add(this.cmbCLRVersion);
             this.Controls.Add(this.tbArgument);
             this.Controls.Add(this.chkWaitReturn);
             this.Controls.Add(this.btInject);
@@ -114,5 +128,6 @@ namespace ExtremeDumper.Forms
         private System.Windows.Forms.TextBox tbAssemblyPath;
         private System.Windows.Forms.TextBox tbArgument;
         private System.Windows.Forms.OpenFileDialog odlgSelectAssembly;
-    }
+		private System.Windows.Forms.ComboBox cmbCLRVersion;
+	}
 }

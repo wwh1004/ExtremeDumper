@@ -3,23 +3,37 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using dnlib.DotNet;
-using NativeSharp;
+using ExtremeDumper.Diagnostics;
+using ExtremeDumper.Injecting;
 
 namespace ExtremeDumper.Forms;
 
 partial class InjectingForm : Form {
-	readonly NativeProcess process;
+	readonly ProcessInfo process;
 	string assemblyPath = string.Empty;
 	ModuleDef? module;
 	MethodDef? entryPoint;
 	string argument = string.Empty;
 
-	public InjectingForm(uint processId) {
+	public InjectingForm(ProcessInfo process) {
+		this.process = process;
 		InitializeComponent();
-		process = NativeProcess.Open(processId);
-		if (process == NativeProcess.InvalidProcess)
-			throw new InvalidOperationException();
 		Text = TitleComposer.Compose(true, "Injector", process.Name, null, $"ID={process.Id}");
+		cmbCLRVersion.SelectedIndex = 0;
+	}
+
+	public static InjectingForm? Create(ProcessInfo process) {
+		if (process is null)
+			throw new ArgumentNullException(nameof(process));
+
+		try {
+			var form = new InjectingForm(process);
+			form.FormClosed += (_, _) => form.Dispose();
+			return form;
+		}
+		catch {
+			return null;
+		}
 	}
 
 	#region Events
@@ -60,11 +74,16 @@ partial class InjectingForm : Form {
 
 		string typeName = entryPoint.FullName.Substring(entryPoint.FullName.IndexOf(' ') + 1);
 		typeName = typeName.Substring(0, typeName.IndexOf(':'));
+		var clrVersion = cmbCLRVersion.SelectedItem switch {
+			"CLR 2.x" => InjectionClrVersion.V2,
+			"CLR 4.x" => InjectionClrVersion.V4,
+			_ => throw new NotSupportedException()
+		};
 		if (chkWaitReturn.Checked) {
 			btInject.Enabled = false;
 			Text += "Waiting...";
 			new Thread(() => {
-				if (process.InjectManaged(assemblyPath, typeName, entryPoint.Name, argument, out int ret))
+				if (Injector.InjectManagedAndWait(process.Id, assemblyPath, typeName, entryPoint.Name, argument, clrVersion, out int ret))
 					Invoke(() => MessageBoxStub.Show($"Inject successfully and return value is {ret}", MessageBoxIcon.Information));
 				else
 					Invoke(() => MessageBoxStub.Show("Failed to inject", MessageBoxIcon.Error));
@@ -75,7 +94,7 @@ partial class InjectingForm : Form {
 			}) { IsBackground = true }.Start();
 		}
 		else {
-			if (process.InjectManaged(assemblyPath, typeName, entryPoint.Name, argument))
+			if (Injector.InjectManaged(process.Id, assemblyPath, typeName, entryPoint.Name, argument, clrVersion))
 				MessageBoxStub.Show("Inject successfully", MessageBoxIcon.Information);
 			else
 				MessageBoxStub.Show("Failed to inject", MessageBoxIcon.Error);
@@ -111,13 +130,13 @@ partial class InjectingForm : Form {
 		}
 		if (cmbEntryPoint.Items.Count == 1)
 			cmbEntryPoint.SelectedIndex = 0;
+		cmbCLRVersion.SelectedIndex = module.CorLibTypes.AssemblyRef.Version.Major == 4 ? 1 : 0;
 	}
 
 	protected override void Dispose(bool disposing) {
 		if (disposing) {
 			components?.Dispose();
 			module?.Dispose();
-			process.Dispose();
 		}
 		base.Dispose(disposing);
 	}
