@@ -24,7 +24,7 @@ partial class ModulesForm : Form {
 	readonly StrongBox<DumperType> dumperType;
 	readonly TitleComposer title;
 	readonly List<ModuleInfo> modules = new();
-	AAD.AADClients? clients;
+	List<AAD.AADClients>? clientsList;
 
 	ModulesForm(ProcessInfo process, StrongBox<DumperType> dumperType) {
 		InitializeComponent();
@@ -149,7 +149,7 @@ partial class ModulesForm : Form {
 			title.Annotations["ENABLE_AAD"] = "Enabling AntiAntiDump";
 			Text = title.Compose(true);
 
-			var clients = await Task.Run(() => GetOrCreateAADClients());
+			var clients = await Task.Run(() => GetOrCreateAADClientsList());
 			mnuEnableAntiAntiDump.Checked = true;
 		}
 		finally {
@@ -215,7 +215,7 @@ partial class ModulesForm : Form {
 
 	IEnumerable<ModuleInfo> GetModulesAAD() {
 		modules.Clear();
-		foreach (var module in ModulesProviderFactory.CreateWithAADClient(GetOrCreateAADClients()).EnumerateModules()) {
+		foreach (var module in ModulesProviderFactory.CreateWithAADClient(GetOrCreateAADClientsList()).EnumerateModules()) {
 			if (IsAntiAntiDumpModule(module))
 				continue;
 			modules.Add(module);
@@ -248,33 +248,29 @@ partial class ModulesForm : Form {
 		return listViewItem;
 	}
 
-	AAD.AADClients GetOrCreateAADClients() {
-		if (this.clients is not null)
-			return this.clients;
+	List<AAD.AADClients> GetOrCreateAADClientsList() {
+		if (clientsList is not null)
+			return clientsList;
 		if (process is not DotNetProcessInfo dnProcess)
 			throw new InvalidOperationException("AADClient can only be created on .NET process");
 
-		var clients = new AAD.AADClients();
+		var list = new List<AAD.AADClients>();
 		if (dnProcess.HasCLR2)
-			clients.Add(AAD.AADCoreInjector.Inject(process.Id, InjectionClrVersion.V2));
+			list.Add(CreateAADClients(InjectionClrVersion.V2));
 		if (dnProcess.HasCLR4)
-			clients.Add(AAD.AADCoreInjector.Inject(process.Id, InjectionClrVersion.V4));
+			list.Add(CreateAADClients(InjectionClrVersion.V4));
 		if (dnProcess.HasCoreCLR)
 			MessageBoxStub.Show("NOT SUPPORTED", MessageBoxIcon.Warning);
-		var multiDomainClients = new List<AAD.AADClient>();
-		foreach (var client in clients) {
-			if (!client.Connect(1000))
-				throw new InvalidOperationException("Can't connect to AADServer.");
-			if (!client.EnableMultiDomain(out var t))
-				throw new InvalidOperationException("Can't enable multi application domains mode");
-			multiDomainClients.AddRange(t);
-		}
-		foreach (var client in multiDomainClients) {
-			if (!client.Connect(1000))
-				throw new InvalidOperationException("Can't connect to AADServer in other application domain.");
-		}
-		clients.AddRange(multiDomainClients);
-		this.clients = clients;
+		return list;
+	}
+
+	AAD.AADClients CreateAADClients(InjectionClrVersion clrVersion) {
+		var mainClient = AAD.AADCoreInjector.Inject(process.Id, clrVersion);
+		if (!mainClient.Connect(1000))
+			throw new InvalidOperationException("Can't connect to AADServer.");
+		var clients = AAD.AADClients.AsMultiDomain(mainClient);
+		if (!clients.ConnectAll(1000))
+			throw new InvalidOperationException("Can't connect to AADServer in other application domain.");
 		return clients;
 	}
 

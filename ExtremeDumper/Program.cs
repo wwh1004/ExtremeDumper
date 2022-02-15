@@ -35,7 +35,7 @@ public static class Program {
 					continue;
 				// may be ngen image and corresponding IL image not loaded
 
-				b = aggregator.GetMetadata(module, out var metadata);
+				b = aggregator.GetMetadataInfo(module, out var metadata);
 				Debug2.Assert(b);
 
 				var imageLayout = FindMetadataImageLayout(peInfo, metadata!.MetadataAddress);

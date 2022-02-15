@@ -54,10 +54,22 @@ public static class ModulesProviderFactory {
 	/// </summary>
 	/// <param name="clients"></param>
 	/// <returns></returns>
-	public static IModulesProvider CreateWithAADClient(IEnumerable<AADClient> clients) {
+	public static IModulesProvider CreateWithAADClient(AADClients clients) {
 		if (clients is null)
 			throw new ArgumentNullException(nameof(clients));
 
-		return new AADModulesProvider(new AADClients(clients));
+		return new AADModulesProvider(clients);
+	}
+
+	/// <summary>
+	/// Create managed module infos provider with <see cref="AADClient"/>
+	/// </summary>
+	/// <param name="clientsList"></param>
+	/// <returns></returns>
+	public static IModulesProvider CreateWithAADClient(IEnumerable<AADClients> clientsList) {
+		if (clientsList is null)
+			throw new ArgumentNullException(nameof(clientsList));
+
+		return new AADModulesProvider(clientsList);
 	}
 }

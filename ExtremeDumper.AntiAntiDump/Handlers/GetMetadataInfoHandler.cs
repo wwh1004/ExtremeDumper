@@ -4,8 +4,8 @@ using System.Reflection;
 
 namespace ExtremeDumper.AntiAntiDump.Handlers;
 
-sealed class GetMetadataHandler : ICommandHandler {
-	public AADCommand Command => AADCommand.GetMetadata;
+sealed class GetMetadataInfoHandler : ICommandHandler {
+	public AADCommand Command => AADCommand.GetMetadataInfo;
 
 	public Type ParametersType => typeof(ModuleInfo);
 

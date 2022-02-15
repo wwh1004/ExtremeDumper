@@ -11,22 +11,52 @@ namespace ExtremeDumper.AntiAntiDump;
 /// </summary>
 public sealed class AADClient : AADPipe {
 	AADClient[]? multiDomainClients;
+	AADClient? mainClient;
+	RuntimeInfo? runtimeInfoCache;
+	AppDomainInfo? domainInfoCache;
 
-	AADClient(NamedPipeClientStream stream) : base(stream) {
+	/// <summary>
+	/// Current runtime info
+	/// </summary>
+	public RuntimeInfo Runtime {
+		get {
+			if (!GetRuntimeInfo(out var result))
+				throw new InvalidOperationException();
+			return result;
+		}
 	}
 
 	/// <summary>
-	/// Create a metadata client
+	/// Current application domain info
+	/// </summary>
+	public AppDomainInfo Domain {
+		get {
+			if (!GetAppDomainInfo(out var result))
+				throw new InvalidOperationException();
+			return result;
+		}
+	}
+
+	AADClient(NamedPipeClientStream stream, AADClient? mainClient) : base(stream) {
+		this.mainClient = mainClient;
+	}
+
+	/// <summary>
+	/// Create a anti anti dump client
 	/// </summary>
 	/// <param name="pipeName">Name of named pipe stream</param>
 	/// <returns></returns>
 	public static AADClient? Create(string pipeName) {
+		return Create(pipeName, null);
+	}
+
+	static AADClient? Create(string pipeName, AADClient? mainClient) {
 		if (string.IsNullOrEmpty(pipeName))
 			return null;
 
 		try {
 			var stream = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut);
-			return new AADClient(stream);
+			return new AADClient(stream, mainClient);
 		}
 		catch {
 			return null;
@@ -47,7 +77,8 @@ public sealed class AADClient : AADPipe {
 	/// <param name="timeout">The number of milliseconds to wait for the server to respond before the connection times out.</param>
 	/// <returns></returns>
 	public bool Connect(int timeout) {
-		Debug.Assert(!IsConnected);
+		if (IsConnected)
+			return true;
 		try {
 			var stream = (NamedPipeClientStream)base.stream;
 			stream.Connect(timeout);
@@ -70,6 +101,12 @@ public sealed class AADClient : AADPipe {
 	/// <param name="clients"></param>
 	/// <returns></returns>
 	public bool EnableMultiDomain(out AADClient[] clients) {
+		if (mainClient is not null) {
+			Debug2.Assert(false, "do NOT call EnableMultiDomain in sub AADClient");
+			clients = Array2.Empty<AADClient>();
+			return false;
+		}
+
 		if (multiDomainClients is not null) {
 			foreach (var client in multiDomainClients)
 				Debug2.Assert(client.IsConnected);
@@ -82,12 +119,45 @@ public sealed class AADClient : AADPipe {
 			return false;
 		clients = new AADClient[pipeNames.Values.Length];
 		for (int i = 0; i < clients.Length; i++) {
-			var client = Create(pipeNames.Values[i]);
+			var client = Create(pipeNames.Values[i], this);
 			if (client is null)
 				return false;
 			clients[i] = client;
 		}
 		multiDomainClients = clients;
+		return true;
+	}
+
+	/// <summary>
+	/// Get runtime info
+	/// </summary>
+	/// <param name="runtimeInfo"></param>
+	/// <returns></returns>
+	public bool GetRuntimeInfo([NotNullWhen(true)] out RuntimeInfo? runtimeInfo) {
+		if (mainClient is not null)
+			return mainClient.GetRuntimeInfo(out runtimeInfo);
+
+		runtimeInfo = null;
+		if (runtimeInfoCache is null) {
+			if (!Invoke(AADCommand.GetRuntimeInfo, EmptySerializable.Instance, out runtimeInfoCache))
+				return false;
+		}
+		runtimeInfo = runtimeInfoCache;
+		return true;
+	}
+
+	/// <summary>
+	/// Get application domain info
+	/// </summary>
+	/// <param name="runtimeInfo"></param>
+	/// <returns></returns>
+	public bool GetAppDomainInfo([NotNullWhen(true)] out AppDomainInfo? domainInfo) {
+		domainInfo = null;
+		if (domainInfoCache is null) {
+			if (!Invoke(AADCommand.GetAppDomainInfo, EmptySerializable.Instance, out domainInfoCache))
+				return false;
+		}
+		domainInfo = domainInfoCache;
 		return true;
 	}
 
@@ -104,10 +174,10 @@ public sealed class AADClient : AADPipe {
 	/// Get metadata of <paramref name="module"/>
 	/// </summary>
 	/// <param name="module"></param>
-	/// <param name="metadata"></param>
+	/// <param name="metadataInfo"></param>
 	/// <returns></returns>
-	public bool GetMetadata(ModuleInfo module, [NotNullWhen(true)] out MetadataInfo? metadata) {
-		return Invoke(AADCommand.GetMetadata, module, out metadata);
+	public bool GetMetadataInfo(ModuleInfo module, [NotNullWhen(true)] out MetadataInfo? metadataInfo) {
+		return Invoke(AADCommand.GetMetadataInfo, module, out metadataInfo);
 	}
 
 	/// <summary>

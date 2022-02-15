@@ -5,8 +5,10 @@ enum AADCommand : uint {
 
 	Disconnect,
 	EnableMultiDomain,
+	GetAppDomainInfo,
+	GetRuntimeInfo,
 	GetModules,
-	GetMetadata,
+	GetMetadataInfo,
 	GetPEInfo,
 	// Client -> Server
 

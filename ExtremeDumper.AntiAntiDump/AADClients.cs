@@ -1,21 +1,29 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace ExtremeDumper.AntiAntiDump;
 
 /// <summary>
-/// <see cref="AADClient"/> aggregator
+/// <see cref="AADClient"/> aggregator used for <see cref="AADCommand.EnableMultiDomain"/>
 /// </summary>
-public sealed class AADClients : List<AADClient> {
+public sealed class AADClients : IDisposable {
+	readonly List<AADClient> clients = new();
+
+	/// <summary>
+	/// All aggregated <see cref="AADClient"/>
+	/// </summary>
+	public IEnumerable<AADClient> Clients => clients;
+
 	/// <summary>
 	/// Are all client connected
 	/// </summary>
 	public bool IsConnected {
 		get {
-			if (Count == 0)
+			if (clients.Count == 0)
 				return false;
-			foreach (var client in this) {
+			foreach (var client in clients) {
 				if (!client.IsConnected)
 					return false;
 			}
@@ -24,9 +32,24 @@ public sealed class AADClients : List<AADClient> {
 	}
 
 	/// <summary>
-	/// Constructor
+	/// Current runtime info
 	/// </summary>
-	public AADClients() {
+	public RuntimeInfo Runtime {
+		get {
+			if (!GetRuntimeInfo(out var result))
+				throw new InvalidOperationException();
+			return result;
+		}
+	}
+
+	/// <summary>
+	/// All application domain infos
+	/// </summary>
+	public IEnumerable<AppDomainInfo> Domains {
+		get {
+			foreach (var client in clients)
+				yield return client.Domain;
+		}
 	}
 
 	/// <summary>
@@ -38,7 +61,7 @@ public sealed class AADClients : List<AADClient> {
 		if (client is null)
 			throw new ArgumentNullException(nameof(client));
 
-		Add(client);
+		clients.Add(client);
 	}
 
 	/// <summary>
@@ -50,7 +73,8 @@ public sealed class AADClients : List<AADClient> {
 		if (clients is null)
 			throw new ArgumentNullException(nameof(clients));
 
-		AddRange(clients);
+		this.clients.AddRange(clients);
+		Debug2.Assert(this.clients.Count != 0);
 	}
 
 	/// <summary>
@@ -65,8 +89,57 @@ public sealed class AADClients : List<AADClient> {
 		if (otherClients is null)
 			throw new ArgumentNullException(nameof(otherClients));
 
-		Add(mainClient);
-		AddRange(otherClients);
+		clients.Add(mainClient);
+		clients.AddRange(otherClients);
+		Debug2.Assert(clients.Count != 1);
+	}
+
+	/// <summary>
+	/// Use <paramref name="mainClient"/> as trampoline to enable multi domain mode
+	/// </summary>
+	/// <param name="mainClient"></param>
+	/// <returns></returns>
+	public static AADClients AsMultiDomain(AADClient mainClient) {
+		if (mainClient is null)
+			throw new ArgumentNullException(nameof(mainClient));
+
+		Debug2.Assert(mainClient.IsConnected);
+		if (mainClient.Runtime.Flavor != RuntimeFlavor.Framework)
+			return new AADClients(mainClient);
+		if (!mainClient.EnableMultiDomain(out var otherClients))
+			throw new InvalidOperationException("Can't enable multi application domains mode");
+		return new AADClients(mainClient, otherClients);
+	}
+
+	/// <summary>
+	/// Call <see cref="AADClient.Connect"/> for all <see cref="AADClient"/>s
+	/// </summary>
+	/// <param name="timeout"></param>
+	public bool ConnectAll(int timeout) {
+		if (clients.Count == 0)
+			return false;
+		foreach (var client in clients) {
+			if (!client.Connect(timeout))
+				return false;
+		}
+		return true;
+	}
+
+	/// <summary>
+	/// Call <see cref="AADClient.Disconnect"/> for all <see cref="AADClient"/>s
+	/// </summary>
+	public void DisconnectAll() {
+		Dispose();
+	}
+
+	/// <summary>
+	/// Get runtime info
+	/// </summary>
+	/// <param name="runtimeInfo"></param>
+	/// <returns></returns>
+	public bool GetRuntimeInfo([NotNullWhen(true)] out RuntimeInfo? runtimeInfo) {
+		runtimeInfo = null;
+		return clients.Count != 0 && clients[0].GetRuntimeInfo(out runtimeInfo);
 	}
 
 	/// <summary>
@@ -75,12 +148,14 @@ public sealed class AADClients : List<AADClient> {
 	/// <param name="modules"></param>
 	/// <returns></returns>
 	public bool GetModules([NotNullWhen(true)] out ModuleInfos? modules) {
-		modules = new ModuleInfos();
-		foreach (var client in this) {
+		modules = null;
+		var buffer = new ModuleInfos();
+		foreach (var client in clients) {
 			if (!client.GetModules(out var t))
 				return false;
-			modules.AddRange(t);
+			buffer.AddRange(t);
 		}
+		modules = buffer;
 		return true;
 	}
 
@@ -88,17 +163,12 @@ public sealed class AADClients : List<AADClient> {
 	/// Get metadata of <paramref name="module"/>
 	/// </summary>
 	/// <param name="module"></param>
-	/// <param name="metadata"></param>
+	/// <param name="metadataInfo"></param>
 	/// <returns></returns>
-	public bool GetMetadata(ModuleInfo module, [NotNullWhen(true)] out MetadataInfo? metadata) {
-		metadata = null;
-		if (Count == 0)
-			return false;
-		foreach (var client in this) {
-			if (client.GetMetadata(module, out metadata))
-				return true;
-		}
-		return false;
+	public bool GetMetadataInfo(ModuleInfo module, [NotNullWhen(true)] out MetadataInfo? metadataInfo) {
+		metadataInfo = null;
+		var client = FindClient(module.DomainId);
+		return client is not null && client.GetMetadataInfo(module, out metadataInfo);
 	}
 
 	/// <summary>
@@ -109,22 +179,25 @@ public sealed class AADClients : List<AADClient> {
 	/// <returns></returns>
 	public bool GetPEInfo(ModuleInfo module, [NotNullWhen(true)] out PEInfo? peInfo) {
 		peInfo = null;
-		if (Count == 0)
-			return false;
-		foreach (var client in this) {
-			if (client.GetPEInfo(module, out peInfo))
-				return true;
-		}
-		return false;
+		var client = FindClient(module.DomainId);
+		return client is not null && client.GetPEInfo(module, out peInfo);
 	}
 
-	/// <summary>
-	/// Call <see cref="AADClient.Disconnect"/> for all <see cref="AADClient"/>
-	/// </summary>
-	public void DisconnectAll() {
-		if (Count == 0)
-			return;
-		foreach (var client in this)
-			client.Disconnect();
+	AADClient? FindClient(uint domainId) {
+		if (clients.Count == 0)
+			return null;
+		foreach (var client in clients) {
+			Debug2.Assert(client.IsConnected);
+			if (client.Domain.Id == domainId)
+				return client;
+		}
+		Debug2.Assert(false);
+		return null;
+	}
+
+	/// <inheritdoc/>
+	public void Dispose() {
+		foreach (var client in clients)
+			client.Dispose();
 	}
 }
