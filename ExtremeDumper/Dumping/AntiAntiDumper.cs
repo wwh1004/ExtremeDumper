@@ -128,7 +128,7 @@ sealed class AntiAntiDumper : DumperBase {
 	}
 
 	static byte[]? DumpModule(uint processId, nuint moduleHandle, bool inMemory) {
-		var imageLayout = inMemory ? ImageLayout.Memory : ImageLayout.File;
+		var imageLayout = inMemory ? ImageLayout.File : ImageLayout.Memory;
 		var imageLayoutOld = imageLayout;
 		var data = PEImageDumper.Dump(processId, moduleHandle, ref imageLayout);
 		if (data is null)
