@@ -181,7 +181,7 @@ partial class ModulesForm : Form {
 
 	ModuleInfo[] GetAllModules() {
 		var modules = GetModules();
-		var dnModules = GetDotNetModules();
+		var dnModules = GetDotNetModules().Where(t => !IsAntiAntiDumpModule(t)).ToArray();
 		var allModules = dnModules.Concat(modules.Where(x => !dnModules.Any(y => x.ImageBase == y.ImageBase))).ToArray();
 		this.modules.Clear();
 		this.modules.AddRange(allModules);
@@ -216,6 +216,8 @@ partial class ModulesForm : Form {
 	IEnumerable<ModuleInfo> GetModulesAAD() {
 		modules.Clear();
 		foreach (var module in ModulesProviderFactory.CreateWithAADClient(GetOrCreateAADClients()).EnumerateModules()) {
+			if (IsAntiAntiDumpModule(module))
+				continue;
 			modules.Add(module);
 			yield return module;
 		}
@@ -295,5 +297,33 @@ partial class ModulesForm : Form {
 
 	static string PathInsertPostfix(string path, string postfix) {
 		return Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + postfix + Path.GetExtension(path));
+	}
+
+	static bool IsAntiAntiDumpModule(ModuleInfo module) {
+		switch (Path.GetFileNameWithoutExtension(module.Name)) {
+		case "00000000":
+		case "00000001":
+		case "00000002":
+		case "00000003":
+		case "00000004":
+		case "00000100":
+		case "00000101":
+		case "00000102":
+		case "00000103":
+		case "00000104":
+		case "00000200":
+		case "00000201":
+		case "00000202":
+		case "00000203":
+		case "00000204":
+		case "00000300":
+		case "00000301":
+		case "00000302":
+		case "00000303":
+		case "00000304":
+			return true;
+		default:
+			return module.Name == AAD.AADCoreInjector.GetAADCoreModuleNameIfLoaded();
+		}
 	}
 }

@@ -7,6 +7,13 @@ namespace ExtremeDumper.AntiAntiDump;
 
 static class AADCoreInjector {
 	static string dllPath = string.Empty;
+	static string moduleName = string.Empty;
+
+	public static string GetAADCoreModuleNameIfLoaded() {
+		if (!string.IsNullOrEmpty(dllPath))
+			moduleName = Path.GetFileName(dllPath);
+		return moduleName;
+	}
 
 	public static string GetAADCorePath() {
 		if (!string.IsNullOrEmpty(dllPath))

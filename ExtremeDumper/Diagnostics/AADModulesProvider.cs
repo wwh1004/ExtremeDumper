@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using AAD = ExtremeDumper.AntiAntiDump;
 
 namespace ExtremeDumper.Diagnostics;
 
 sealed class AADModulesProvider : IModulesProvider {
-	static readonly string coreFileName = Path.GetFileName(AAD.AADCoreInjector.GetAADCorePath());
 	readonly AAD.AADClients clients;
 
 	public AADModulesProvider(AAD.AADClient client) {
@@ -31,9 +29,6 @@ sealed class AADModulesProvider : IModulesProvider {
 				throw new InvalidOperationException("Can't get modules");
 
 			foreach (var module in modules) {
-				if (IsAntiAntiDumpModule(module))
-					continue;
-
 				if (!clients.GetPEInfo(module, out var peInfo))
 					throw new InvalidOperationException("Can't get PE info");
 
@@ -48,34 +43,6 @@ sealed class AADModulesProvider : IModulesProvider {
 				Debug2.Assert(!layout.IsInvalid);
 				yield return new DotNetModuleInfo(module.AssemblyName, (nuint)layout.ImageBase, layout.ImageSize, peInfo.FilePath, module.DomainName, "@TODO");
 			}
-		}
-	}
-
-	static bool IsAntiAntiDumpModule(AAD.ModuleInfo module) {
-		switch (module.Name) {
-		case "00000000.dll":
-		case "00000001.dll":
-		case "00000002.dll":
-		case "00000003.dll":
-		case "00000004.dll":
-		case "00000100.dll":
-		case "00000101.dll":
-		case "00000102.dll":
-		case "00000103.dll":
-		case "00000104.dll":
-		case "00000200.dll":
-		case "00000201.dll":
-		case "00000202.dll":
-		case "00000203.dll":
-		case "00000204.dll":
-		case "00000300.dll":
-		case "00000301.dll":
-		case "00000302.dll":
-		case "00000303.dll":
-		case "00000304.dll":
-			return true;
-		default:
-			return module.Name == coreFileName;
 		}
 	}
 }
