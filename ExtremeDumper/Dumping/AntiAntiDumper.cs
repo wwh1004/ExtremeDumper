@@ -175,10 +175,11 @@ sealed class AntiAntiDumper : DumperBase {
 		fixed (byte* p = data) {
 			var pOptionalHeader = p + (uint)peHeader.ImageNTHeaders.OptionalHeader.StartOffset;
 			*(uint*)(pOptionalHeader + 0x24) = *(uint*)(pOptionalHeader + 0x20);
+			uint alignmentMask = *(uint*)(pOptionalHeader + 0x24) - 1;
 			foreach (var sectionHeader in peHeader.ImageSectionHeaders) {
 				var pSectionHeader = (IMAGE_SECTION_HEADER*)(p + (uint)sectionHeader.StartOffset);
 				pSectionHeader->PointerToRawData = pSectionHeader->VirtualAddress;
-				pSectionHeader->SizeOfRawData = pSectionHeader->VirtualSize;
+				pSectionHeader->SizeOfRawData = (pSectionHeader->VirtualSize + alignmentMask) & ~alignmentMask;
 			}
 		}
 	}
@@ -187,7 +188,7 @@ sealed class AntiAntiDumper : DumperBase {
 		fixed (byte* p = data) {
 			var pNETDirectory = (IMAGE_DATA_DIRECTORY*)(p + GetDotNetDirectoryRVA(data));
 			pNETDirectory->VirtualAddress = (uint)imageLayout.CorHeaderAddress;
-			pNETDirectory->Size = (uint)sizeof(IMAGE_DATA_DIRECTORY);
+			pNETDirectory->Size = (uint)sizeof(IMAGE_COR20_HEADER);
 			// Set Data Directories
 			var pCor20Header = (IMAGE_COR20_HEADER*)(p + (uint)imageLayout.CorHeaderAddress);
 			pCor20Header->cb = (uint)sizeof(IMAGE_COR20_HEADER);

@@ -10,6 +10,9 @@
 		<OutputType>Exe</OutputType>
 		<OutputPath>..\bin\$(Configuration)</OutputPath>
 	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Costura.Fody" Version="4.1.0" />
+	</ItemGroup>
 	<Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
 		<ItemGroup>
 			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
