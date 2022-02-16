@@ -195,7 +195,7 @@ sealed class AntiAntiDumper : DumperBase {
 			pCor20Header->MajorRuntimeVersion = 0x2;
 			pCor20Header->MinorRuntimeVersion = 0x5;
 			pCor20Header->MetaData.VirtualAddress = (uint)metadataInfo.MetadataAddress;
-			pCor20Header->MetaData.Size = metadataInfo.MetadataSize;
+			pCor20Header->MetaData.Size = GetMetadataSize(metadataInfo);
 			// Set .NET Directory
 			var pStorageSignature = (STORAGESIGNATURE*)(p + (uint)metadataInfo.MetadataAddress);
 			pStorageSignature->lSignature = 0x424A5342;
@@ -296,6 +296,23 @@ sealed class AntiAntiDumper : DumperBase {
 	static uint GetDotNetDirectoryRVA(byte[] data) {
 		using var peHeader = new PEImage(data, false);
 		return (uint)peHeader.ImageNTHeaders.OptionalHeader.DataDirectories[14].StartOffset;
+	}
+
+	static uint GetMetadataSize(MetadataInfo metadataInfo) {
+		if (metadataInfo.TableStream.IsCompressed)
+			return metadataInfo.MetadataSize;
+
+		var last = (MetadataStreamInfo)metadataInfo.BlobHeap;
+		if (metadataInfo.GuidHeap.Address > last.Address)
+			last = metadataInfo.GuidHeap;
+		if (metadataInfo.UserStringHeap.Address > last.Address)
+			last = metadataInfo.UserStringHeap;
+		if (metadataInfo.StringHeap.Address > last.Address)
+			last = metadataInfo.StringHeap;
+		if (metadataInfo.TableStream.Address > last.Address)
+			last = metadataInfo.TableStream;
+		uint end = (uint)last.Address + last.Length;
+		return end - (uint)metadataInfo.MetadataAddress;
 	}
 
 	static Version GetCorLibVersion(byte[] data) {
