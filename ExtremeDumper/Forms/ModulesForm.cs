@@ -25,6 +25,7 @@ partial class ModulesForm : Form {
 
 	ModulesForm(ProcessInfo process, StrongBox<DumperType> dumperType) {
 		InitializeComponent();
+		Utils.ScaleByDpi(this);
 		this.process = process;
 		this.dumperType = dumperType;
 		title = new TitleComposer {

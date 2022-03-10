@@ -23,6 +23,7 @@ partial class ProcessesForm : Form {
 
 	public ProcessesForm() {
 		InitializeComponent();
+		Utils.ScaleByDpi(this);
 		title = new TitleComposer {
 			Title = Application.ProductName,
 			Version = $"v{Application.ProductVersion}"

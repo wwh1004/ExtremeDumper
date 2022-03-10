@@ -49,6 +49,14 @@ static class Utils {
 		listView.AutoResizeColumns(false);
 	}
 
+	public static void ScaleByDpi(Form form) {
+		using var g = Graphics.FromHwnd(IntPtr.Zero);
+		var size = form.ClientSize;
+		size.Width = (int)(size.Width * (g.DpiX / 96));
+		size.Height = (int)(size.Height * (g.DpiY / 96));
+		form.ClientSize = size;
+	}
+
 	public static string FormatHex(int value) {
 		return $"0x{value:X8}";
 	}

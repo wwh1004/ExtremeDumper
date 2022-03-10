@@ -8,6 +8,7 @@
 		<TargetFramework>net462</TargetFramework>
 		<OutputType>Exe</OutputType>
 		<OutputPath>..\bin\$(Configuration)</OutputPath>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Costura.Fody" Version="4.1.0" />
@@ -17,7 +18,7 @@
 		<PackageReference Include="Ookii.Dialogs.WinForms" Version="4.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\ExtremeDumper.AntiAntiDump\ExtremeDumper.AntiAntiDump.csproj" />
+		<ProjectReference Include="..\ExtremeDumper.AntiAntiDump\ExtremeDumper.AntiAntiDump.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Forms\Resources.Designer.cs">

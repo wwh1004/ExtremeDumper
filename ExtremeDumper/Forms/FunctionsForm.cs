@@ -10,6 +10,7 @@ unsafe partial class FunctionsForm : Form {
 
 	FunctionsForm(uint processId, nuint moduleHandle) {
 		InitializeComponent();
+		Utils.ScaleByDpi(this);
 		process = NativeProcess.Open(processId);
 		if (process.IsInvalid)
 			throw new InvalidOperationException();
