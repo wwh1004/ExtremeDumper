@@ -1,14 +1,16 @@
 version: '{build}'
 image: Visual Studio 2022
-configuration: Release
-platform: Any CPU
 install:
 - cmd: git submodule update --init --recursive
 before_build:
 - cmd: appveyor-retry nuget restore
-build:
-  project: ExtremeDumper.sln
-  verbosity: normal
+build_script:
+- cmd: >-
+    msbuild "C:\projects\extremedumper\ExtremeDumper.sln" /p:Configuration=Release /p:Platform=x86 /verbosity:normal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+
+    msbuild "C:\projects\extremedumper\ExtremeDumper.sln" /p:Configuration=Release /p:Platform=x64 /verbosity:normal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+
+    msbuild "C:\projects\extremedumper\ExtremeDumper.sln" /p:Configuration=Release /p:Platform="Any CPU" /verbosity:normal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 after_build:
 - cmd: 7z a bin\Release\ExtremeDumper.zip bin\Release\*.exe
 artifacts:

@@ -1,0 +1,88 @@
+
+;
+; created by AheadLib
+; github:https://github.com/strivexjun/AheadLib-x86-x64
+;
+
+.MODEL FLAT, C
+
+.DATA
+EXTERN pfnAheadLib_GetFileVersionInfoA:DWORD;
+EXTERN pfnAheadLib_GetFileVersionInfoByHandle:DWORD;
+EXTERN pfnAheadLib_GetFileVersionInfoExA:DWORD;
+EXTERN pfnAheadLib_GetFileVersionInfoExW:DWORD;
+EXTERN pfnAheadLib_GetFileVersionInfoSizeA:DWORD;
+EXTERN pfnAheadLib_GetFileVersionInfoSizeExA:DWORD;
+EXTERN pfnAheadLib_GetFileVersionInfoSizeExW:DWORD;
+EXTERN pfnAheadLib_GetFileVersionInfoSizeW:DWORD;
+EXTERN pfnAheadLib_GetFileVersionInfoW:DWORD;
+EXTERN pfnAheadLib_VerFindFileA:DWORD;
+EXTERN pfnAheadLib_VerFindFileW:DWORD;
+EXTERN pfnAheadLib_VerInstallFileA:DWORD;
+EXTERN pfnAheadLib_VerInstallFileW:DWORD;
+EXTERN pfnAheadLib_VerQueryValueA:DWORD;
+EXTERN pfnAheadLib_VerQueryValueW:DWORD;
+
+.CODE
+AheadLib_GetFileVersionInfoA PROC
+	jmp pfnAheadLib_GetFileVersionInfoA
+AheadLib_GetFileVersionInfoA ENDP
+
+AheadLib_GetFileVersionInfoByHandle PROC
+	jmp pfnAheadLib_GetFileVersionInfoByHandle
+AheadLib_GetFileVersionInfoByHandle ENDP
+
+AheadLib_GetFileVersionInfoExA PROC
+	jmp pfnAheadLib_GetFileVersionInfoExA
+AheadLib_GetFileVersionInfoExA ENDP
+
+AheadLib_GetFileVersionInfoExW PROC
+	jmp pfnAheadLib_GetFileVersionInfoExW
+AheadLib_GetFileVersionInfoExW ENDP
+
+AheadLib_GetFileVersionInfoSizeA PROC
+	jmp pfnAheadLib_GetFileVersionInfoSizeA
+AheadLib_GetFileVersionInfoSizeA ENDP
+
+AheadLib_GetFileVersionInfoSizeExA PROC
+	jmp pfnAheadLib_GetFileVersionInfoSizeExA
+AheadLib_GetFileVersionInfoSizeExA ENDP
+
+AheadLib_GetFileVersionInfoSizeExW PROC
+	jmp pfnAheadLib_GetFileVersionInfoSizeExW
+AheadLib_GetFileVersionInfoSizeExW ENDP
+
+AheadLib_GetFileVersionInfoSizeW PROC
+	jmp pfnAheadLib_GetFileVersionInfoSizeW
+AheadLib_GetFileVersionInfoSizeW ENDP
+
+AheadLib_GetFileVersionInfoW PROC
+	jmp pfnAheadLib_GetFileVersionInfoW
+AheadLib_GetFileVersionInfoW ENDP
+
+AheadLib_VerFindFileA PROC
+	jmp pfnAheadLib_VerFindFileA
+AheadLib_VerFindFileA ENDP
+
+AheadLib_VerFindFileW PROC
+	jmp pfnAheadLib_VerFindFileW
+AheadLib_VerFindFileW ENDP
+
+AheadLib_VerInstallFileA PROC
+	jmp pfnAheadLib_VerInstallFileA
+AheadLib_VerInstallFileA ENDP
+
+AheadLib_VerInstallFileW PROC
+	jmp pfnAheadLib_VerInstallFileW
+AheadLib_VerInstallFileW ENDP
+
+AheadLib_VerQueryValueA PROC
+	jmp pfnAheadLib_VerQueryValueA
+AheadLib_VerQueryValueA ENDP
+
+AheadLib_VerQueryValueW PROC
+	jmp pfnAheadLib_VerQueryValueW
+AheadLib_VerQueryValueW ENDP
+
+
+END
