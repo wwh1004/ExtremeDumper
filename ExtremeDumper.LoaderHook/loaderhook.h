@@ -21,4 +21,8 @@ EXTERN_C_START
 _Success_(SUCCEEDED(return))
 HRESULT WINAPI LoaderHookMonitorLoop(_In_ PLDHK_MONITOR_INFO pInfo);
 
+// Create process with loader hook
+_Success_(SUCCEEDED(return))
+HRESULT WINAPI LoaderHookCreateProcess(_In_ PCWSTR applicationName, _Inout_opt_ PWSTR commandLine);
+
 EXTERN_C_END

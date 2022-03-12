@@ -78,6 +78,13 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 		HijackDllMain(hModule, ul_reason_for_call, lpReserved);
 	switch (ul_reason_for_call) {
 	case DLL_PROCESS_ATTACH:
+		AllocConsole();
+		FILE* dummy = NULL;
+		freopen_s(&dummy, "CONIN$", "r", stdin);
+		freopen_s(&dummy, "CONOUT$", "w", stderr);
+		freopen_s(&dummy, "CONOUT$", "w", stdout);
+
+		wprintf_s(L"[LDHK] DllMain: Loaded\n");
 		DetourRestoreAfterWith();
 		CreateThread(NULL, 0, RunMonitorLoop, &g_info, 0, NULL);
 		// Create thread to run monitor loop

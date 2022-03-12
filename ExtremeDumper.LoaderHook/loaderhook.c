@@ -2,6 +2,7 @@
 #include "../Libraries/Detours/src/detours.h"
 #include <shlwapi.h>
 #include <stdio.h>
+#include "utils.h"
 
 PVOID LoadImageOriginal_Mscorwks = NULL;
 EXTERN_C VOID LoadImageStub_Mscorwks();
@@ -49,10 +50,6 @@ VOID DumpCallback(PBYTE peImage, UINT32 size) {
 	wprintf_s(L"[LDHK] DumpCallback: Saved to %s\n", path);
 }
 
-VOID SetHookMscorwks() {
-	DetourCreateProcessWithDll(NULL, NULL, NULL, NULL, FALSE, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-}
-
 PVOID FindBytes(PVOID startAddress, UINT32 size, PVOID pattern, UINT32 patternSize) {
 	for (PBYTE p = (PBYTE)startAddress, end = p + (INT32)(size - patternSize); p < end; p++) {
 		if (memcmp(p, pattern, patternSize) == 0)
@@ -61,7 +58,7 @@ PVOID FindBytes(PVOID startAddress, UINT32 size, PVOID pattern, UINT32 patternSi
 	return NULL;
 }
 
-PVOID FindECallFunction(HINSTANCE hModule, PCCH name) {
+PVOID FindECallFunction(HINSTANCE hModule, PCSTR name) {
 	if (hModule == NULL || name == NULL)
 		goto ErrExit;
 
@@ -96,6 +93,36 @@ BOOL InstallHook(PVOID* ppPointer, PVOID pDetour) {
 	BOOL b = DetourTransactionCommit() == NO_ERROR;
 	wprintf_s(L"[LDHK] InstallHook: %d\n", b);
 	return b;
+}
+
+_Success_(SUCCEEDED(return))
+HRESULT WINAPI LoaderHookCreateProcess(_In_ PCWSTR applicationName, _Inout_opt_ PWSTR commandLine) {
+	if (applicationName == NULL)
+		return E_INVALIDARG;
+
+	WCHAR szFullExe[MAX_PATH] = { 0 };
+	GetFullPathName(applicationName, MAX_PATH, szFullExe, NULL);
+	WCHAR currentDirectory[MAX_PATH] = { 0 };
+	wcscpy_s(currentDirectory, MAX_PATH, szFullExe);
+	PathRemoveFileSpec(currentDirectory);
+
+	//SECURITY_ATTRIBUTES securityAttributes = { 0 };
+	//securityAttributes.nLength = sizeof(SECURITY_ATTRIBUTES);
+	//securityAttributes.bInheritHandle = TRUE;
+	STARTUPINFO startupInfo = { 0 };
+	startupInfo.cb = sizeof(STARTUPINFO);
+	//HANDLE hStdOutputRead = NULL;
+	//CreatePipe(&hStdOutputRead, &startupInfo.hStdOutput, &securityAttributes, 0);
+	//startupInfo.dwFlags |= STARTF_USESTDHANDLES;
+	PROCESS_INFORMATION processInformation = { 0 };
+
+	CHAR dllPath[MAX_PATH];
+	HINSTANCE hLoaderHook = NULL;
+	GetCurrentModuleHandle(&hLoaderHook);
+	GetModuleFileNameA(hLoaderHook, dllPath, MAX_PATH);
+
+	BOOL b = DetourCreateProcessWithDll(applicationName, commandLine, NULL, NULL, TRUE, 0, NULL, currentDirectory, &startupInfo, &processInformation, dllPath, NULL);
+	return b ? S_OK : E_FAIL;
 }
 
 _Success_(SUCCEEDED(return))
@@ -143,5 +170,5 @@ HRESULT WINAPI LoaderHookMonitorLoop(_In_ PLDHK_MONITOR_INFO pInfo) {
 		Sleep(pInfo->Sleep);
 	}
 
-	return TRUE;
+	return S_OK;
 }
