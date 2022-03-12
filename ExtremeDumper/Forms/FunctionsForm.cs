@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using ExtremeDumper.Logging;
 using NativeSharp;
 
 namespace ExtremeDumper.Forms;
@@ -32,7 +33,8 @@ unsafe partial class FunctionsForm : Form {
 			form.FormClosed += (_, _) => form.Dispose();
 			return form;
 		}
-		catch {
+		catch (Exception ex) {
+			Logger.Exception(ex);
 			return null;
 		}
 	}

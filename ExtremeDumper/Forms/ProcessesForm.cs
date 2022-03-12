@@ -93,8 +93,13 @@ partial class ProcessesForm : Form {
 					return;
 				path = fbdlgDumped.SelectedPath;
 			}
-			int count = await Task.Run(() => DumpProcess(process.Id, Path.Combine(path, "Dumps")));
-			Logger.Info($"{count} images have been dumped to:{Environment.NewLine}{path}");
+			path = Path.Combine(path, "Dumps");
+			int count = await Task.Run(() => DumpProcess(process.Id, path));
+			Logger.Info($"{count} images have been dumped to: {path}");
+		}
+		catch (Exception ex) {
+			Logger.Error("Exception occurred while dumping process");
+			Logger.Exception(ex);
 		}
 		finally {
 			title.Annotations["DUMP"] = null;

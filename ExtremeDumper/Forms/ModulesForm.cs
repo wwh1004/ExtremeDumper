@@ -51,7 +51,8 @@ partial class ModulesForm : Form {
 			form.FormClosed += (_, _) => form.Dispose();
 			return form;
 		}
-		catch {
+		catch (Exception ex) {
+			Logger.Exception(ex);
 			return null;
 		}
 	}
@@ -83,9 +84,13 @@ partial class ModulesForm : Form {
 			var imageLayout = module is DotNetModuleInfo dnModule && dnModule.InMemory ? ImageLayout.File : ImageLayout.Memory;
 			bool result = await Task.Run(() => DumpModule(module.ImageBase, imageLayout, sfdlgDumped.FileName));
 			if (result)
-				Logger.Info($"Dump module successfully. Image was saved in:{Environment.NewLine}{sfdlgDumped.FileName}");
+				Logger.Info($"Dump module successfully. Image was saved to: {sfdlgDumped.FileName}");
 			else
 				Logger.Error("Fail to dump module.");
+		}
+		catch (Exception ex) {
+			Logger.Error("Exception occurred while dumping module");
+			Logger.Exception(ex);
 		}
 		finally {
 			title.Annotations["DUMP"] = null;

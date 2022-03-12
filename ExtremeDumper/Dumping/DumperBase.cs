@@ -57,18 +57,14 @@ abstract class DumperBase : IDumper {
 
 	protected static string EnsureNoRepeatFileName(string directoryPath, string fileName) {
 		int count = 1;
-		string fileNameWithoutExtension = string.Empty;
-		string extension = string.Empty;
+		string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+		string extension = Path.GetExtension(fileName);
 		string filePath;
 		while (File.Exists(filePath = Path.Combine(directoryPath, fileName))) {
-			if (fileNameWithoutExtension is null) {
-				fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-				extension = Path.GetExtension(fileName);
-			}
 			count++;
 			fileName = $"{fileNameWithoutExtension} ({count}){extension}";
 		}
-		return filePath;
+		return fileName;
 	}
 
 	public virtual void Dispose() {

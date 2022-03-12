@@ -32,7 +32,8 @@ partial class InjectingForm : Form {
 			form.FormClosed += (_, _) => form.Dispose();
 			return form;
 		}
-		catch {
+		catch (Exception ex) {
+			Logger.Exception(ex);
 			return null;
 		}
 	}

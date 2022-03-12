@@ -437,11 +437,17 @@ static class BuiltInAssemblyHelper {
 	};
 
 	public static bool IsBuiltInAssembly(byte[] data) {
+		if (data is null)
+			return false;
+
 		using var module = ModuleDefMD.Load(data);
 		return IsBuiltInAssembly(module.Assembly);
 	}
 
 	public static bool IsBuiltInAssembly(IAssembly assembly) {
+		if (assembly is null)
+			return false;
+
 		string name = assembly.Name;
 		if (name.EndsWith(".resources", StringComparison.Ordinal))
 			name = name.Substring(0, name.Length - 10);

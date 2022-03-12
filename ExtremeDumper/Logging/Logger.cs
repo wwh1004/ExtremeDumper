@@ -208,7 +208,7 @@ static partial class Logger {
 	static Type? GetUserType(Type? type) {
 		if (type is null)
 			return null;
-		return type.Name.StartsWith("<>", StringComparison.Ordinal) ? GetUserType(type.DeclaringType) : type;
+		return type.Name.StartsWith("<", StringComparison.Ordinal) ? GetUserType(type.DeclaringType) : type;
 	}
 
 	static string GetPrefix(string callerName) {

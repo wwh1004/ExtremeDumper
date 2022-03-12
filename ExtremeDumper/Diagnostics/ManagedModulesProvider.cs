@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ExtremeDumper.Dumping;
+using ExtremeDumper.Logging;
 using Microsoft.Diagnostics.Runtime;
 using Microsoft.Diagnostics.Runtime.Utilities;
 using NativeSharp;
@@ -80,7 +81,9 @@ sealed unsafe class ManagedModulesProvider : IModulesProvider {
 		try {
 			return PEImageDumper.GetImageSize(peHeader, dnlib.PE.ImageLayout.Memory);
 		}
-		catch {
+		catch (Exception ex) {
+			Logger.Error($"Can't get image size of module '{module.Name}' at 0x{module.ImageBase:X}");
+			Logger.Exception(ex);
 			return 0;
 		}
 	}

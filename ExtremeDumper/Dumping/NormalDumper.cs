@@ -5,6 +5,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using dnlib.DotNet;
 using dnlib.PE;
+using ExtremeDumper.Logging;
 using NativeSharp;
 
 namespace ExtremeDumper.Dumping;
@@ -24,7 +25,8 @@ sealed unsafe class NormalDumper : DumperBase {
 			File.WriteAllBytes(filePath, peImage);
 			return true;
 		}
-		catch {
+		catch (Exception ex) {
+			Logger.Exception(ex);
 			return false;
 		}
 	}
@@ -71,7 +73,10 @@ sealed unsafe class NormalDumper : DumperBase {
 				if (IsSameFile(directoryPath, fileName, peImage, originalFileCache))
 					continue;
 
-				var filePath = Path.Combine(directoryPath, EnsureNoRepeatFileName(directoryPath, fileName));
+				fileName = EnsureNoRepeatFileName(directoryPath, fileName);
+				if (fileName == " (2)")
+					Console.WriteLine();
+				var filePath = Path.Combine(directoryPath, fileName);
 				File.WriteAllBytes(filePath, peImage);
 				count++;
 			}
@@ -145,24 +150,24 @@ sealed unsafe class NormalDumper : DumperBase {
 				return null;
 
 			data = PEImageDumper.ConvertImageLayout(data, imageLayout, ImageLayout.File);
-			bool isDotNet;
 			using var peImage = new PEImage(data, true);
 			// 确保为有效PE文件
-			isDotNet = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14].VirtualAddress != 0;
-			if (isDotNet) {
-				try {
-					using var moduleDef = ModuleDefMD.Load(peImage);
-					// 再次验证是否为.NET程序集
-					if (string.IsNullOrEmpty(fileName))
-						fileName = moduleDef.Assembly.Name + (moduleDef.EntryPoint is null ? ".dll" : ".exe");
-				}
-				catch {
-					isDotNet = false;
-				}
+			if (peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14].VirtualAddress == 0)
+				return null;
+			try {
+				using var moduleDef = ModuleDefMD.Load(peImage);
+				// 再次验证是否为.NET程序集
+				if (moduleDef is null)
+					return null;
+				if (string.IsNullOrEmpty(fileName))
+					fileName = moduleDef.Assembly is not null ? (moduleDef.Assembly.Name + (moduleDef.EntryPoint is null ? ".dll" : ".exe")) : moduleDef.Name;
+			}
+			catch {
+				return null;
 			}
 			if (string.IsNullOrEmpty(fileName))
 				fileName = ((ulong)address).ToString((ulong)address > uint.MaxValue ? "X16" : "X8");
-			return isDotNet ? data : null;
+			return data;
 		}
 		catch {
 			return null;
