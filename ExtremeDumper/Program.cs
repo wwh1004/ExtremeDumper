@@ -10,6 +10,7 @@ public static class Program {
 		Environment.SetEnvironmentVariable("EXTREMEDUMPER_MAGIC", "C41F3A60");
 		CosturaUtility.Initialize();
 		Environment.SetEnvironmentVariable("EXTREMEDUMPER_MAGIC", null);
+		Console.Title = string.Empty;
 		GlobalExceptionCatcher.Catch();
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);

@@ -32,7 +32,7 @@ partial class ProcessesForm : Form {
 		title.Annotations["BITNESS"] = Environment.Is64BitProcess ? "x64" : "x86";
 		if (IsAdministrator)
 			title.Annotations["ADMIN"] = "Administrator";
-		Text = title.Compose(true);
+		Console.Title = Text = title.Compose(true);
 		Utils.EnableDoubleBuffer(lvwProcesses);
 		lvwProcesses.ListViewItemSorter = new ListViewItemSorter(lvwProcesses, new[] { TypeCode.String, TypeCode.Int32, TypeCode.String });
 		for (var dumperType = DumperType.Normal; dumperType <= DumperType.AntiAntiDump; dumperType++) {
