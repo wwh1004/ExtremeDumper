@@ -1,3 +1,6 @@
 [submodule "Libraries/MetadataLocator"]
 	path = Libraries/MetadataLocator
 	url = https://github.com/wwh1004/MetadataLocator
+[submodule "Libraries/Detours"]
+	path = Libraries/Detours
+	url = https://github.com/microsoft/Detours

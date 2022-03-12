@@ -14,6 +14,7 @@ using ExtremeDumper.Dumping;
 namespace ExtremeDumper.Forms;
 
 partial class ProcessesForm : Form {
+	static readonly LoaderHookForm loaderHookForm = new();
 	static readonly bool IsAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 	static bool hasSeDebugPrivilege;
 
@@ -65,6 +66,10 @@ partial class ProcessesForm : Form {
 		catch {
 			MessageBoxStub.Show("Failed", MessageBoxIcon.Error);
 		}
+	}
+
+	void mnuOpenLoaderHook_Click(object sender, EventArgs e) {
+		loaderHookForm.Show();
 	}
 
 	void lvwProcesses_Resize(object sender, EventArgs e) {

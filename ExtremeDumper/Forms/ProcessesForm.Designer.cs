@@ -52,6 +52,7 @@ namespace ExtremeDumper.Forms
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuFastDump = new System.Windows.Forms.ToolStripMenuItem();
             this.fbdlgDumped = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
+            this.mnuOpenLoaderHook = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuProcessContext.SuspendLayout();
             this.mnuMain.SuspendLayout();
             this.SuspendLayout();
@@ -68,9 +69,9 @@ namespace ExtremeDumper.Forms
             this.lvwProcesses.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvwProcesses.FullRowSelect = true;
             this.lvwProcesses.HideSelection = false;
-            this.lvwProcesses.Location = new System.Drawing.Point(0, 27);
+            this.lvwProcesses.Location = new System.Drawing.Point(0, 30);
             this.lvwProcesses.Name = "lvwProcesses";
-            this.lvwProcesses.Size = new System.Drawing.Size(933, 610);
+            this.lvwProcesses.Size = new System.Drawing.Size(933, 607);
             this.lvwProcesses.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvwProcesses.TabIndex = 0;
             this.lvwProcesses.UseCompatibleStateImageBehavior = false;
@@ -95,6 +96,7 @@ namespace ExtremeDumper.Forms
             // 
             // mnuProcessContext
             // 
+            this.mnuProcessContext.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mnuProcessContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuDumpProcess,
             this.mnuRefreshProcessList,
@@ -106,33 +108,33 @@ namespace ExtremeDumper.Forms
             this.toolStripSeparator4,
             this.mnuGotoLocation});
             this.mnuProcessContext.Name = "contextMenuStrip1";
-            this.mnuProcessContext.Size = new System.Drawing.Size(214, 154);
+            this.mnuProcessContext.Size = new System.Drawing.Size(251, 178);
             // 
             // mnuDumpProcess
             // 
             this.mnuDumpProcess.Name = "mnuDumpProcess";
-            this.mnuDumpProcess.Size = new System.Drawing.Size(213, 22);
+            this.mnuDumpProcess.Size = new System.Drawing.Size(250, 26);
             this.mnuDumpProcess.Text = "Dump Selected Process";
             this.mnuDumpProcess.Click += new System.EventHandler(this.mnuDumpProcess_Click);
             // 
             // mnuRefreshProcessList
             // 
             this.mnuRefreshProcessList.Name = "mnuRefreshProcessList";
-            this.mnuRefreshProcessList.Size = new System.Drawing.Size(213, 22);
+            this.mnuRefreshProcessList.Size = new System.Drawing.Size(250, 26);
             this.mnuRefreshProcessList.Text = "Refresh";
             this.mnuRefreshProcessList.Click += new System.EventHandler(this.mnuRefreshProcessList_Click);
             // 
             // mnuViewModules
             // 
             this.mnuViewModules.Name = "mnuViewModules";
-            this.mnuViewModules.Size = new System.Drawing.Size(213, 22);
+            this.mnuViewModules.Size = new System.Drawing.Size(250, 26);
             this.mnuViewModules.Text = "View Modules";
             this.mnuViewModules.Click += new System.EventHandler(this.mnuViewModules_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(210, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(247, 6);
             // 
             // mnuOnlyDotNetProcess
             // 
@@ -140,42 +142,44 @@ namespace ExtremeDumper.Forms
             this.mnuOnlyDotNetProcess.CheckOnClick = true;
             this.mnuOnlyDotNetProcess.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuOnlyDotNetProcess.Name = "mnuOnlyDotNetProcess";
-            this.mnuOnlyDotNetProcess.Size = new System.Drawing.Size(213, 22);
+            this.mnuOnlyDotNetProcess.Size = new System.Drawing.Size(250, 26);
             this.mnuOnlyDotNetProcess.Text = "Only .NET Processes";
             this.mnuOnlyDotNetProcess.Click += new System.EventHandler(this.mnuOnlyDotNetProcess_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(210, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(247, 6);
             // 
             // mnuInjectDll
             // 
             this.mnuInjectDll.Name = "mnuInjectDll";
-            this.mnuInjectDll.Size = new System.Drawing.Size(213, 22);
+            this.mnuInjectDll.Size = new System.Drawing.Size(250, 26);
             this.mnuInjectDll.Text = "Inject Dll";
             this.mnuInjectDll.Click += new System.EventHandler(this.mnuInjectDll_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(210, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(247, 6);
             // 
             // mnuGotoLocation
             // 
             this.mnuGotoLocation.Name = "mnuGotoLocation";
-            this.mnuGotoLocation.Size = new System.Drawing.Size(213, 22);
+            this.mnuGotoLocation.Size = new System.Drawing.Size(250, 26);
             this.mnuGotoLocation.Text = "Goto Location";
             this.mnuGotoLocation.Click += new System.EventHandler(this.mnuGotoLocation_Click);
             // 
             // mnuMain
             // 
+            this.mnuMain.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mnuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuOptions});
+            this.mnuOptions,
+            this.mnuOpenLoaderHook});
             this.mnuMain.Location = new System.Drawing.Point(0, 0);
             this.mnuMain.Name = "mnuMain";
             this.mnuMain.Padding = new System.Windows.Forms.Padding(7, 3, 0, 3);
-            this.mnuMain.Size = new System.Drawing.Size(933, 27);
+            this.mnuMain.Size = new System.Drawing.Size(933, 30);
             this.mnuMain.TabIndex = 1;
             // 
             // mnuOptions
@@ -187,37 +191,37 @@ namespace ExtremeDumper.Forms
             this.toolStripSeparator5,
             this.mnuFastDump});
             this.mnuOptions.Name = "mnuOptions";
-            this.mnuOptions.Size = new System.Drawing.Size(66, 21);
+            this.mnuOptions.Size = new System.Drawing.Size(81, 24);
             this.mnuOptions.Text = "Options";
             // 
             // mnuDebugPrivilege
             // 
             this.mnuDebugPrivilege.Name = "mnuDebugPrivilege";
-            this.mnuDebugPrivilege.Size = new System.Drawing.Size(211, 22);
+            this.mnuDebugPrivilege.Size = new System.Drawing.Size(260, 26);
             this.mnuDebugPrivilege.Text = "Enable Debug Privilege";
             this.mnuDebugPrivilege.Click += new System.EventHandler(this.mnuDebugPrivilege_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(208, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(257, 6);
             // 
             // mnuDumperType
             // 
             this.mnuDumperType.Name = "mnuDumperType";
-            this.mnuDumperType.Size = new System.Drawing.Size(211, 22);
+            this.mnuDumperType.Size = new System.Drawing.Size(260, 26);
             this.mnuDumperType.Text = "DumperType";
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(208, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(257, 6);
             // 
             // mnuFastDump
             // 
             this.mnuFastDump.CheckOnClick = true;
             this.mnuFastDump.Name = "mnuFastDump";
-            this.mnuFastDump.Size = new System.Drawing.Size(211, 22);
+            this.mnuFastDump.Size = new System.Drawing.Size(260, 26);
             this.mnuFastDump.Text = "Fast Dump";
             // 
             // fbdlgDumped
@@ -225,9 +229,16 @@ namespace ExtremeDumper.Forms
             this.fbdlgDumped.Description = "Select a directory to save dumps";
             this.fbdlgDumped.UseDescriptionForTitle = true;
             // 
+            // mnuOpenLoaderHook
+            // 
+            this.mnuOpenLoaderHook.Name = "mnuOpenLoaderHook";
+            this.mnuOpenLoaderHook.Size = new System.Drawing.Size(162, 24);
+            this.mnuOpenLoaderHook.Text = "Open Loader Hook";
+            this.mnuOpenLoaderHook.Click += new System.EventHandler(this.mnuOpenLoaderHook_Click);
+            // 
             // ProcessesForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(933, 637);
             this.Controls.Add(this.lvwProcesses);
@@ -270,6 +281,7 @@ namespace ExtremeDumper.Forms
         private System.Windows.Forms.ToolStripMenuItem mnuGotoLocation;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem mnuFastDump;
-    }
+		private System.Windows.Forms.ToolStripMenuItem mnuOpenLoaderHook;
+	}
 }
 
