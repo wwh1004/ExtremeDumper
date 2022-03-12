@@ -74,8 +74,6 @@ sealed unsafe class NormalDumper : DumperBase {
 					continue;
 
 				fileName = EnsureNoRepeatFileName(directoryPath, fileName);
-				if (fileName == " (2)")
-					Console.WriteLine();
 				var filePath = Path.Combine(directoryPath, fileName);
 				File.WriteAllBytes(filePath, peImage);
 				count++;
