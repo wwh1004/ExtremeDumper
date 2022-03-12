@@ -12,7 +12,7 @@ build_script:
 
     msbuild "C:\projects\extremedumper\ExtremeDumper.sln" /p:Configuration=Release /p:Platform="Any CPU" /verbosity:normal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 after_build:
-- cmd: 7z a bin\Release\ExtremeDumper.zip bin\Release\*.exe
+- cmd: 7z a bin\Release\ExtremeDumper.zip .\bin\Release\*.exe
 artifacts:
 - path: bin\Release\ExtremeDumper.zip
   name: ExtremeDumper

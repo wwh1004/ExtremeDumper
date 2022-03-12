@@ -121,7 +121,7 @@ HRESULT WINAPI LoaderHookCreateProcess(_In_ PCWSTR applicationName, _Inout_opt_ 
 	GetCurrentModuleHandle(&hLoaderHook);
 	GetModuleFileNameA(hLoaderHook, dllPath, MAX_PATH);
 
-	BOOL b = DetourCreateProcessWithDll(applicationName, commandLine, NULL, NULL, TRUE, 0, NULL, currentDirectory, &startupInfo, &processInformation, dllPath, NULL);
+	BOOL b = DetourCreateProcessWithDll(applicationName, commandLine, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, currentDirectory, &startupInfo, &processInformation, dllPath, NULL);
 	return b ? S_OK : E_FAIL;
 }
 

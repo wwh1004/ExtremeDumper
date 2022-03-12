@@ -19,7 +19,7 @@ static partial class Logger {
 	static readonly InternalGetCurrentMethodDelegate internalGetCurrentMethod = CreateInternalGetCurrentMethod();
 	static readonly Dictionary<Type, string> typeAliases = GetTypeAliases();
 
-	public static readonly bool CallerNameWithType = true;
+	public static readonly bool CallerNameWithType = false; // Release下由于tailcall的优化，调用堆栈可能是错误的（call xxx变成了jmp xxx）
 
 #if DEBUG
 	public const bool BreakOnError = true;
