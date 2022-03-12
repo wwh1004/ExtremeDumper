@@ -18,7 +18,7 @@ partial class InjectingForm : Form {
 	public InjectingForm(ProcessInfo process) {
 		this.process = process;
 		InitializeComponent();
-		Utils.ScaleByDpi(this);
+		//Utils.ScaleByDpi(this);
 		Text = TitleComposer.Compose(true, "Injector", process.Name, null, $"ID={process.Id}");
 		cmbCLRVersion.SelectedIndex = 0;
 	}
