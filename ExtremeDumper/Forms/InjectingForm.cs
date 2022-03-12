@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using dnlib.DotNet;
 using ExtremeDumper.Diagnostics;
 using ExtremeDumper.Injecting;
+using ExtremeDumper.Logging;
 
 namespace ExtremeDumper.Forms;
 
@@ -18,7 +19,6 @@ partial class InjectingForm : Form {
 	public InjectingForm(ProcessInfo process) {
 		this.process = process;
 		InitializeComponent();
-		//Utils.ScaleByDpi(this);
 		Text = TitleComposer.Compose(true, "Injector", process.Name, null, $"ID={process.Id}");
 		cmbCLRVersion.SelectedIndex = 0;
 	}
@@ -85,9 +85,9 @@ partial class InjectingForm : Form {
 			Text += "Waiting...";
 			new Thread(() => {
 				if (Injector.InjectManagedAndWait(process.Id, assemblyPath, typeName, entryPoint.Name, argument, clrVersion, out int ret))
-					Invoke(() => MessageBoxStub.Show($"Inject successfully and return value is {ret}", MessageBoxIcon.Information));
+					Logger.Info($"Inject successfully and return value is 0x{ret:X8}");
 				else
-					Invoke(() => MessageBoxStub.Show("Failed to inject", MessageBoxIcon.Error));
+					Logger.Error("Failed to inject");
 				Invoke(() => {
 					btInject.Enabled = true;
 					Text = Text.Substring(0, Text.Length - 6);
@@ -96,9 +96,9 @@ partial class InjectingForm : Form {
 		}
 		else {
 			if (Injector.InjectManaged(process.Id, assemblyPath, typeName, entryPoint.Name, argument, clrVersion))
-				MessageBoxStub.Show("Inject successfully", MessageBoxIcon.Information);
+				Logger.Info("Inject successfully");
 			else
-				MessageBoxStub.Show("Failed to inject", MessageBoxIcon.Error);
+				Logger.Error("Failed to inject");
 		}
 	}
 	#endregion
@@ -108,7 +108,7 @@ partial class InjectingForm : Form {
 			module = ModuleDefMD.Load(File.ReadAllBytes(assemblyPath));
 		}
 		catch {
-			MessageBoxStub.Show("Invalid assembly", MessageBoxIcon.Error);
+			Logger.Error("Invalid assembly");
 			module = null;
 			return;
 		}

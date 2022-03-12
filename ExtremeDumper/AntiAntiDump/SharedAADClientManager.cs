@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using ExtremeDumper.Diagnostics;
 using ExtremeDumper.Injecting;
+using ExtremeDumper.Logging;
 
 namespace ExtremeDumper.AntiAntiDump;
 
@@ -41,8 +42,8 @@ static class SharedAADClientManager {
 			clients.Add(SetupAADClients(processId, timeout, InjectionClrVersion.V2));
 		if (dotNetProcessInfo.HasCLR4)
 			clients.Add(SetupAADClients(processId, timeout, InjectionClrVersion.V4));
-		//if (dotNetProcessInfo.HasCoreCLR)
-		// TODO: warning "NOT SUPPORTED"
+		if (dotNetProcessInfo.HasCoreCLR)
+			Logger.Warning("Currently AntiAntiDump mode doesn't support CoreCLR");
 		cache.Add(processId, clients);
 		return clients;
 	}

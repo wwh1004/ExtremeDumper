@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using ExtremeDumper.Logging;
 
 namespace ExtremeDumper.Forms;
 
@@ -40,7 +41,10 @@ partial class LoaderHookForm : Form {
 			return;
 
 		uint hr = LoaderHookCreateProcess(assemblyPath, null);
-		MessageBoxStub.Show(hr == 0 ? "Succeed" : $"Failed, try ExtremeDumper{(IntPtr.Size == 4 ? string.Empty : "-x86")}.exe", hr == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+		if (hr == 0)
+			Logger.Info("Succeed");
+		else
+			Logger.Info($"Failed, please try using ExtremeDumper{(IntPtr.Size == 4 ? string.Empty : "-x86")}.exe");
 	}
 	#endregion
 }

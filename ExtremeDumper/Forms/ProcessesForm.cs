@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExtremeDumper.Diagnostics;
 using ExtremeDumper.Dumping;
+using ExtremeDumper.Logging;
 
 namespace ExtremeDumper.Forms;
 
@@ -51,7 +52,7 @@ partial class ProcessesForm : Form {
 			return;
 
 		if (!IsAdministrator) {
-			MessageBoxStub.Show("Please run as administator", MessageBoxIcon.Error);
+			Logger.Error("Please run as administator");
 			return;
 		}
 		try {
@@ -61,10 +62,11 @@ partial class ProcessesForm : Form {
 			mnuDebugPrivilege.Enabled = false;
 			title.Annotations["SE_DEBUG"] = "SeDebugPrivilege";
 			Text = title.Compose(true);
-			MessageBoxStub.Show("Succeed", MessageBoxIcon.Information);
+			Logger.Info("Succeed");
 		}
-		catch {
-			MessageBoxStub.Show("Failed", MessageBoxIcon.Error);
+		catch (Exception ex) {
+			Logger.Error("Failed");
+			Logger.Exception(ex);
 		}
 	}
 
@@ -92,7 +94,7 @@ partial class ProcessesForm : Form {
 				path = fbdlgDumped.SelectedPath;
 			}
 			int count = await Task.Run(() => DumpProcess(process.Id, Path.Combine(path, "Dumps")));
-			MessageBoxStub.Show($"{count} images have been dumped to:{Environment.NewLine}{path}", MessageBoxIcon.Information);
+			Logger.Info($"{count} images have been dumped to:{Environment.NewLine}{path}");
 		}
 		finally {
 			title.Annotations["DUMP"] = null;
@@ -106,7 +108,7 @@ partial class ProcessesForm : Form {
 			return;
 
 		if (Utils.Is64BitProcess && process is DotNetProcessInfo && !process.Is64Bit) {
-			MessageBoxStub.Show("Please run x86 version", MessageBoxIcon.Error);
+			Logger.Error("Please run x86 version");
 			return;
 		}
 
@@ -114,7 +116,7 @@ partial class ProcessesForm : Form {
 		if (form is not null)
 			form.Show();
 		else
-			MessageBoxStub.Show($"Can't create {nameof(ModulesForm)}", MessageBoxIcon.Error);
+			Logger.Error($"Can't create {nameof(ModulesForm)}");
 	}
 
 	void mnuRefreshProcessList_Click(object sender, EventArgs e) {
@@ -141,7 +143,7 @@ partial class ProcessesForm : Form {
 		if (form is not null)
 			form.Show();
 		else
-			MessageBoxStub.Show($"Can't create {nameof(InjectingForm)}", MessageBoxIcon.Error);
+			Logger.Error($"Can't create {nameof(InjectingForm)}");
 	}
 
 	void mnuGotoLocation_Click(object sender, EventArgs e) {

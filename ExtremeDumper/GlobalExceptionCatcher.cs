@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using ExtremeDumper.Forms;
+using ExtremeDumper.Logging;
 
 namespace ExtremeDumper;
 
@@ -17,8 +17,8 @@ static class GlobalExceptionCatcher {
 	/// </summary>
 	public static void Catch() {
 		if (!isStarted) {
-			Application.ThreadException += (object sender, System.Threading.ThreadExceptionEventArgs e) => ShowDetailException(e.Exception);
-			AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => ShowDetailException((Exception)e.ExceptionObject);
+			Application.ThreadException += (sender, e) => ShowDetailException(e.Exception);
+			AppDomain.CurrentDomain.UnhandledException += (sender, e) => ShowDetailException((Exception)e.ExceptionObject);
 			isStarted = true;
 		}
 	}
@@ -26,7 +26,7 @@ static class GlobalExceptionCatcher {
 	static void ShowDetailException(Exception exception) {
 		var sb = new StringBuilder();
 		DumpException(exception, sb);
-		MessageBoxStub.Show(sb.ToString(), MessageBoxIcon.Error);
+		Logger.Error(sb.ToString());
 	}
 
 	static void DumpException(Exception exception, StringBuilder sb) {

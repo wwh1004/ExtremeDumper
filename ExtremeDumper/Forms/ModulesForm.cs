@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExtremeDumper.Diagnostics;
 using ExtremeDumper.Dumping;
+using ExtremeDumper.Logging;
 using ImageLayout = dnlib.PE.ImageLayout;
 
 namespace ExtremeDumper.Forms;
@@ -82,9 +83,9 @@ partial class ModulesForm : Form {
 			var imageLayout = module is DotNetModuleInfo dnModule && dnModule.InMemory ? ImageLayout.File : ImageLayout.Memory;
 			bool result = await Task.Run(() => DumpModule(module.ImageBase, imageLayout, sfdlgDumped.FileName));
 			if (result)
-				MessageBoxStub.Show($"Dump module successfully. Image was saved in:{Environment.NewLine}{sfdlgDumped.FileName}", MessageBoxIcon.Information);
+				Logger.Info($"Dump module successfully. Image was saved in:{Environment.NewLine}{sfdlgDumped.FileName}");
 			else
-				MessageBoxStub.Show("Fail to dump module.", MessageBoxIcon.Error);
+				Logger.Error("Fail to dump module.");
 		}
 		finally {
 			title.Annotations["DUMP"] = null;
@@ -120,7 +121,7 @@ partial class ModulesForm : Form {
 		if (form is not null)
 			form.Show();
 		else
-			MessageBoxStub.Show($"Can't create {nameof(FunctionsForm)}", MessageBoxIcon.Error);
+			Logger.Error($"Can't create {nameof(FunctionsForm)}");
 	}
 
 	void mnuOnlyDotNetModule_Click(object sender, EventArgs e) {
@@ -201,9 +202,9 @@ partial class ModulesForm : Form {
 		try {
 			return ModulesProviderFactory.Create(process.Id, ModulesProviderType.Managed).EnumerateModules().ToArray();
 		}
-		catch {
-			//MessageBoxStub.Show("Fail to get .NET modules", MessageBoxIcon.Error);
-			// TODO: add logger
+		catch (Exception ex) {
+			Logger.Error("Fail to get .NET modules");
+			Logger.Exception(ex);
 			return Array2.Empty<ModuleInfo>();
 		}
 	}
