@@ -3,10 +3,10 @@
 #include <shlwapi.h>
 #include <stdio.h>
 
-LPVOID LoadImageOriginal_Mscorwks = NULL;
+PVOID LoadImageOriginal_Mscorwks = NULL;
 EXTERN_C VOID LoadImageStub_Mscorwks();
 
-LPVOID LoadImageOriginal_CLR = NULL;
+PVOID LoadImageOriginal_CLR = NULL;
 EXTERN_C VOID LoadImageStub_CLR();
 
 static INT32 g_index = 0;
@@ -53,6 +53,42 @@ VOID SetHookMscorwks() {
 	DetourCreateProcessWithDll(NULL, NULL, NULL, NULL, FALSE, 0, NULL, NULL, NULL, NULL, NULL, NULL);
 }
 
+PVOID FindBytes(PVOID startAddress, UINT32 size, PVOID pattern, UINT32 patternSize) {
+	for (PBYTE p = (PBYTE)startAddress, end = p + (INT32)(size - patternSize); p < end; p++) {
+		if (memcmp(p, pattern, patternSize) == 0)
+			return p;
+	}
+	return NULL;
+}
+
+PVOID FindECallFunction(HINSTANCE hModule, PCCH name) {
+	if (hModule == NULL || name == NULL)
+		goto ErrExit;
+
+	PIMAGE_DOS_HEADER dosHeader = (PIMAGE_DOS_HEADER)hModule;
+	PIMAGE_NT_HEADERS ntHeaders = (PIMAGE_NT_HEADERS)((PBYTE)hModule + dosHeader->e_lfanew);
+	PIMAGE_SECTION_HEADER sectionHeaders = (PIMAGE_SECTION_HEADER)((PBYTE)&ntHeaders->OptionalHeader + ntHeaders->FileHeader.SizeOfOptionalHeader);
+	PIMAGE_SECTION_HEADER textSectionHeader = sectionHeaders;
+	if (strcmp(textSectionHeader->Name, ".text") != 0)
+		goto ErrExit;
+
+	PVOID startAddress = (PBYTE)hModule;
+	UINT32 size = ntHeaders->OptionalHeader.SizeOfImage;
+	PVOID pFuncName = FindBytes(startAddress, size, (PVOID)name, (UINT32)strlen(name) + 1);
+	if (pFuncName == NULL)
+		goto ErrExit;
+	PVOID ppFuncName = FindBytes(startAddress, size, &pFuncName, 4);
+	if (ppFuncName == NULL)
+		goto ErrExit;
+	PVOID funcAddr = ((PVOID*)ppFuncName)[-1];
+	if ((PBYTE)funcAddr <= (PBYTE)hModule + textSectionHeader->VirtualAddress || (PBYTE)funcAddr >= (PBYTE)hModule + textSectionHeader->VirtualAddress + size)
+		goto ErrExit;
+	return funcAddr;
+
+ErrExit:
+	return NULL;
+}
+
 BOOL InstallHook(PVOID* ppPointer, PVOID pDetour) {
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
@@ -71,18 +107,38 @@ HRESULT WINAPI LoaderHookMonitorLoop(_In_ PLDHK_MONITOR_INFO pInfo) {
 	while (foundModules != (pInfo->Flags & LDHK_MONITOR_MODULE_MASK)) {
 		HINSTANCE hModule;
 		if ((pInfo->Flags & LDHK_MONITOR_MSCORWKS) && !(foundModules & LDHK_MONITOR_MSCORWKS) && (hModule = GetModuleHandle(L"mscorwks.dll"))) {
-			LPVOID pLoadImage = (PBYTE)hModule + pInfo->LoadImageRVA_Mscorwks;
-			InstallHook(&pLoadImage, LoadImageStub_Mscorwks);
-			LoadImageOriginal_Mscorwks = pLoadImage;
+			PVOID pLoadImage = NULL;
+			if (pInfo->LoadImageRVA_Mscorwks) {
+				pLoadImage = (PBYTE)hModule + pInfo->LoadImageRVA_Mscorwks;
+				wprintf_s(L"[LDHK] LoaderHookMonitorLoop: Found nLoadImage at %p by config\n", pLoadImage);
+			}
+			if (!pLoadImage) {
+				pLoadImage = FindECallFunction(hModule, "nLoadImage");
+				wprintf_s(L"[LDHK] LoaderHookMonitorLoop: Found nLoadImage at %p by ECall\n", pLoadImage);
+			}
+			if (pLoadImage) {
+				LoadImageOriginal_Mscorwks = pLoadImage;
+				InstallHook(&LoadImageOriginal_Mscorwks, LoadImageStub_Mscorwks);
+			}
 			foundModules |= LDHK_MONITOR_MSCORWKS;
-			wprintf_s(L"[LDHK] LoaderHookMonitorLoop: LDHK_MONITOR_MSCORWKS at %p\n", (PBYTE)hModule + pInfo->LoadImageRVA_CLR);
+			wprintf_s(L"[LDHK] LoaderHookMonitorLoop: LDHK_MONITOR_MSCORWKS at %p\n", pLoadImage);
 		}
 		if ((pInfo->Flags & LDHK_MONITOR_CLR) && !(foundModules & LDHK_MONITOR_CLR) && (hModule = GetModuleHandle(L"clr.dll"))) {
-			LPVOID pLoadImage = (PBYTE)hModule + pInfo->LoadImageRVA_CLR;
-			InstallHook(&pLoadImage, LoadImageStub_CLR);
-			LoadImageOriginal_CLR = pLoadImage;
+			PVOID pLoadImage = NULL;
+			if (pInfo->LoadImageRVA_CLR) {
+				pLoadImage = (PBYTE)hModule + pInfo->LoadImageRVA_CLR;
+				wprintf_s(L"[LDHK] LoaderHookMonitorLoop: Found nLoadImage at %p by config\n", pLoadImage);
+			}
+			if (!pLoadImage) {
+				pLoadImage = FindECallFunction(hModule, "nLoadImage");
+				wprintf_s(L"[LDHK] LoaderHookMonitorLoop: Found nLoadImage at %p by ECall\n", pLoadImage);
+			}
+			if (pLoadImage) {
+				LoadImageOriginal_CLR = pLoadImage;
+				InstallHook(&LoadImageOriginal_CLR, LoadImageStub_CLR);
+			}
 			foundModules |= LDHK_MONITOR_CLR;
-			wprintf_s(L"[LDHK] LoaderHookMonitorLoop: LDHK_MONITOR_CLR at %p\n", (PBYTE)hModule + pInfo->LoadImageRVA_CLR);
+			wprintf_s(L"[LDHK] LoaderHookMonitorLoop: LDHK_MONITOR_CLR at %p\n", pLoadImage);
 		}
 		Sleep(pInfo->Sleep);
 	}

@@ -16,6 +16,19 @@ DWORD WINAPI RunMonitorLoop(LPVOID lpThreadParameter) {
 	return LoaderHookMonitorLoop((PLDHK_MONITOR_INFO)lpThreadParameter);
 }
 
+BOOL ReadMonitorInfo(WCHAR* path, LDHK_MONITOR_INFO* info) {
+	if (path == NULL || info == NULL)
+		return FALSE;
+
+	FILE* file = NULL;
+	if (_wfopen_s(&file, path, L"rb+") != 0 || file == NULL)
+		return FALSE;
+	if (fread_s(&g_info, sizeof(LDHK_MONITOR_INFO), sizeof(LDHK_MONITOR_INFO), 1, file) != 1)
+		return FALSE;
+	fclose(file);
+	return TRUE;
+}
+
 VOID Initialize() {
 	if (g_isInitialized)
 		return;
@@ -36,12 +49,13 @@ VOID Initialize() {
 	PathAppend(configPath, L"LoaderHook.dat");
 	// Get config path
 
-	FILE* file = NULL;
-	if (_wfopen_s(&file, configPath, L"rb+") != 0 || file == NULL)
-		goto Exit;
-	if (fread_s(&g_info, sizeof(LDHK_MONITOR_INFO), sizeof(LDHK_MONITOR_INFO), 1, file) != 1)
-		goto Exit;
-	fclose(file);
+	if (!ReadMonitorInfo(configPath, &g_info)) {
+		LDHK_MONITOR_INFO info = {
+			.Sleep = 1,
+			.Flags = LDHK_MONITOR_MSCORWKS | LDHK_MONITOR_CLR | LDHK_MONITOR_CORECLR
+		};
+		g_info = info;
+	}
 	// Read config
 
 	WCHAR fileName[MAX_PATH] = { 0 };
