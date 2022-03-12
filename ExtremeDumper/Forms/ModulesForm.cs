@@ -250,9 +250,9 @@ partial class ModulesForm : Form {
 			listViewItem.SubItems.Add(string.Empty);
 			// CLR Version
 		}
-		listViewItem.SubItems.Add(Utils.FormatPointer(module.ImageBase));
+		listViewItem.SubItems.Add(Formatter.FormatHex(module.ImageBase));
 		// Address
-		listViewItem.SubItems.Add(Utils.FormatHex(module.ImageSize));
+		listViewItem.SubItems.Add(Formatter.FormatHex(module.ImageSize));
 		// Size
 		listViewItem.SubItems.Add(string.IsNullOrEmpty(module.FilePath) ? "InMemory" : module.FilePath);
 		// Path

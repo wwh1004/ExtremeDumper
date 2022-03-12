@@ -49,13 +49,12 @@ sealed unsafe class NormalDumper : DumperBase {
 				}
 
 				var imageLayout = i == 0 ? GetProbableImageLayout(page) : ImageLayout.File;
-				var peImage = DumpDotNetModule(process, (nuint)pageInfo.Address + (uint)i, imageLayout, out var fileName);
+				nuint address = (nuint)pageInfo.Address + (uint)i;
+				var peImage = DumpDotNetModule(process, address, imageLayout, out var fileName);
 				if (peImage is null && i == 0) {
-					// 也许判断有误，尝试一下另一种格式
-					if (imageLayout == ImageLayout.Memory)
-						peImage = DumpDotNetModule(process, (nuint)pageInfo.Address + (uint)i, ImageLayout.File, out fileName);
-					else
-						peImage = DumpDotNetModule(process, (nuint)pageInfo.Address + (uint)i, ImageLayout.Memory, out fileName);
+					// 也许判断有误，尝试一下另一种格式。如果不是页面起始位置，必须是文件布局。
+					imageLayout = imageLayout == ImageLayout.File ? ImageLayout.Memory : ImageLayout.File;
+					peImage = DumpDotNetModule(process, address, ImageLayout.File, out fileName);
 				}
 
 				if (peImage is null)
@@ -68,6 +67,8 @@ sealed unsafe class NormalDumper : DumperBase {
 				catch {
 					continue;
 				}
+
+				Logger.Info($"Found assembly '{fileName}' at {Formatter.FormatHex(address)} and image layout is {imageLayout}");
 
 				fileName = EnsureValidFileName(fileName);
 				if (IsSameFile(directoryPath, fileName, peImage, originalFileCache))
@@ -157,6 +158,8 @@ sealed unsafe class NormalDumper : DumperBase {
 				// 再次验证是否为.NET程序集
 				if (moduleDef is null)
 					return null;
+				if (moduleDef.Assembly is not null ? moduleDef.Assembly.Name.Length == 0 : moduleDef.Name.Length == 0)
+					return null;
 				if (string.IsNullOrEmpty(fileName))
 					fileName = moduleDef.Assembly is not null ? (moduleDef.Assembly.Name + (moduleDef.EntryPoint is null ? ".dll" : ".exe")) : moduleDef.Name;
 			}
@@ -164,7 +167,7 @@ sealed unsafe class NormalDumper : DumperBase {
 				return null;
 			}
 			if (string.IsNullOrEmpty(fileName))
-				fileName = ((ulong)address).ToString((ulong)address > uint.MaxValue ? "X16" : "X8");
+				fileName = Formatter.FormatHex(address);
 			return data;
 		}
 		catch {

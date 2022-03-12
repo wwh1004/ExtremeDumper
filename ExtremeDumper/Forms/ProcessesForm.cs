@@ -112,7 +112,7 @@ partial class ProcessesForm : Form {
 		if (!TryGetSelectedProcess(out var process))
 			return;
 
-		if (Utils.Is64BitProcess && process is DotNetProcessInfo && !process.Is64Bit) {
+		if (IntPtr.Size == 8 && process is DotNetProcessInfo && !process.Is64Bit) {
 			Logger.Error("Please run x86 version");
 			return;
 		}
@@ -203,7 +203,7 @@ partial class ProcessesForm : Form {
 		// CLR
 		listViewItem.SubItems.Add(process.FilePath);
 		// Path
-		if (Utils.Is64BitProcess && !process.Is64Bit)
+		if (IntPtr.Size == 8 && !process.Is64Bit)
 			listViewItem.Text += " (32 Bit)";
 		if (process is DotNetProcessInfo)
 			listViewItem.BackColor = Utils.DotNetColor;

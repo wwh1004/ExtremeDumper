@@ -82,7 +82,7 @@ sealed unsafe class ManagedModulesProvider : IModulesProvider {
 			return PEImageDumper.GetImageSize(peHeader, dnlib.PE.ImageLayout.Memory);
 		}
 		catch (Exception ex) {
-			Logger.Error($"Can't get image size of module '{module.Name}' at 0x{module.ImageBase:X}");
+			Logger.Error($"Can't get image size of module '{module.Name}' at {Formatter.FormatHex((nuint)module.ImageBase)}");
 			Logger.Exception(ex);
 			return 0;
 		}

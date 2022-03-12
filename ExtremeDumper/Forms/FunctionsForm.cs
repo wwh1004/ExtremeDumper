@@ -53,7 +53,7 @@ unsafe partial class FunctionsForm : Form {
 		lvwFunctions.Items.Clear();
 		foreach (var functionInfo in module.EnumerateFunctionInfos()) {
 			var listViewItem = new ListViewItem(functionInfo.Name);
-			listViewItem.SubItems.Add(Utils.FormatPointer(functionInfo.Address));
+			listViewItem.SubItems.Add(Formatter.FormatHex((nuint)functionInfo.Address));
 			listViewItem.SubItems.Add(functionInfo.Ordinal.ToString());
 			lvwFunctions.Items.Add(listViewItem);
 		}

@@ -86,7 +86,7 @@ partial class InjectingForm : Form {
 			Text += "Waiting...";
 			new Thread(() => {
 				if (Injector.InjectManagedAndWait(process.Id, assemblyPath, typeName, entryPoint.Name, argument, clrVersion, out int ret))
-					Logger.Info($"Inject successfully and return value is 0x{ret:X8}");
+					Logger.Info($"Inject successfully and return value is {Formatter.FormatHex(ret)}");
 				else
 					Logger.Error("Failed to inject");
 				Invoke(() => {
