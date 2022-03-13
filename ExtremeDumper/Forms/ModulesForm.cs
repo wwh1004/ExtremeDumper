@@ -24,7 +24,7 @@ partial class ModulesForm : Form {
 	readonly TitleComposer title;
 	readonly List<ModuleInfo> modules = new();
 
-	ModulesForm(ProcessInfo process, StrongBox<DumperType> dumperType) {
+	public ModulesForm(ProcessInfo process, StrongBox<DumperType> dumperType) {
 		InitializeComponent();
 		Utils.ScaleByDpi(this);
 		this.process = process;
@@ -38,23 +38,6 @@ partial class ModulesForm : Form {
 		Utils.EnableDoubleBuffer(lvwModules);
 		lvwModules.ListViewItemSorter = new ListViewItemSorter(lvwModules, new[] { TypeCode.String, TypeCode.String, TypeCode.String, TypeCode.UInt64, TypeCode.Int32, TypeCode.String }) { AllowHexLeading = true };
 		RefreshModuleList();
-	}
-
-	public static ModulesForm? Create(ProcessInfo process, StrongBox<DumperType> dumperType) {
-		if (process is null)
-			throw new ArgumentNullException(nameof(process));
-		if (dumperType is null)
-			throw new ArgumentNullException(nameof(dumperType));
-
-		try {
-			var form = new ModulesForm(process, dumperType);
-			form.FormClosed += (_, _) => form.Dispose();
-			return form;
-		}
-		catch (Exception ex) {
-			Logger.Exception(ex);
-			return null;
-		}
 	}
 
 	#region Events
@@ -122,11 +105,7 @@ partial class ModulesForm : Form {
 		if (!TryGetSelectedModule(out var module))
 			return;
 
-		var form = FunctionsForm.Create(process.Id, module.ImageBase);
-		if (form is not null)
-			form.Show();
-		else
-			Logger.Error($"Can't create {nameof(FunctionsForm)}");
+		new FunctionsForm(process.Id, module.ImageBase).Show();
 	}
 
 	void mnuOnlyDotNetModule_Click(object sender, EventArgs e) {

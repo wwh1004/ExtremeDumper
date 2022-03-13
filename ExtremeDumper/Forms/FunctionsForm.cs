@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using ExtremeDumper.Logging;
 using NativeSharp;
 
 namespace ExtremeDumper.Forms;
@@ -9,7 +8,7 @@ unsafe partial class FunctionsForm : Form {
 	readonly NativeProcess process;
 	readonly NativeModule module;
 
-	FunctionsForm(uint processId, nuint moduleHandle) {
+	public FunctionsForm(uint processId, nuint moduleHandle) {
 		InitializeComponent();
 		Utils.ScaleByDpi(this);
 		process = NativeProcess.Open(processId);
@@ -20,23 +19,6 @@ unsafe partial class FunctionsForm : Form {
 		Utils.EnableDoubleBuffer(lvwFunctions);
 		lvwFunctions.ListViewItemSorter = new ListViewItemSorter(lvwFunctions, new[] { TypeCode.String, TypeCode.UInt64, TypeCode.Int16 }) { AllowHexLeading = true };
 		RefreshFunctionList();
-	}
-
-	public static FunctionsForm? Create(uint processId, nuint moduleHandle) {
-		if (processId == 0)
-			throw new ArgumentNullException(nameof(processId));
-		if (moduleHandle == 0)
-			throw new ArgumentNullException(nameof(moduleHandle));
-
-		try {
-			var form = new FunctionsForm(processId, moduleHandle);
-			form.FormClosed += (_, _) => form.Dispose();
-			return form;
-		}
-		catch (Exception ex) {
-			Logger.Exception(ex);
-			return null;
-		}
 	}
 
 	#region Events

@@ -23,21 +23,6 @@ partial class InjectingForm : Form {
 		cmbCLRVersion.SelectedIndex = 0;
 	}
 
-	public static InjectingForm? Create(ProcessInfo process) {
-		if (process is null)
-			throw new ArgumentNullException(nameof(process));
-
-		try {
-			var form = new InjectingForm(process);
-			form.FormClosed += (_, _) => form.Dispose();
-			return form;
-		}
-		catch (Exception ex) {
-			Logger.Exception(ex);
-			return null;
-		}
-	}
-
 	#region Events
 	void InjectingForm_DragEnter(object sender, DragEventArgs e) {
 		e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;

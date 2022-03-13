@@ -1,7 +1,7 @@
 <Project>
 	<PropertyGroup>
 		<Title>ExtremeDumper</Title>
-		<Version>4.0.0.0</Version>
+		<Version>4.0.0.1</Version>
 		<Copyright>Copyright © 2018-2022 Wwh</Copyright>
 	</PropertyGroup>
 	<PropertyGroup>

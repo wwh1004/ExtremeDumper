@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using dnlib.DotNet;
 using ExtremeDumper.Injecting;
+using ExtremeDumper.Logging;
 
 namespace ExtremeDumper.AntiAntiDump;
 
@@ -22,6 +23,7 @@ static class AADCoreInjector {
 		var data = GetAADCore(true, out var name);
 		dllPath = Path.Combine(Path.GetTempPath(), name);
 		File.WriteAllBytes(dllPath, data);
+		Logger.Info($"ExtremeDumper.AntiAntiDump.dll has been released to '{dllPath}'");
 		return dllPath;
 	}
 
@@ -51,10 +53,12 @@ static class AADCoreInjector {
 		bool b = Injector.InjectManaged(processId, GetAADCorePath(), "ExtremeDumper.AntiAntiDump.Injection", "Main", pipeName, clrVersion);
 		if (!b)
 			throw new InvalidOperationException("Can't inject ExtremeDumper.AntiAntiDump.dll to target process.");
+		Logger.Info($"ExtremeDumper.AntiAntiDump.dll has been injected into process {processId} and clr version is {clrVersion}");
 
 		var client = AADClient.Create(pipeName);
 		if (client is null)
 			throw new InvalidOperationException($"Can't create {nameof(AADClient)}.");
+		Logger.Info($"Create {nameof(AADClient)} of process {processId} successfully and clr version is {clrVersion}");
 
 		return client;
 	}

@@ -15,7 +15,6 @@ using ExtremeDumper.Logging;
 namespace ExtremeDumper.Forms;
 
 partial class ProcessesForm : Form {
-	static readonly LoaderHookForm loaderHookForm = new();
 	static readonly bool IsAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 	static bool hasSeDebugPrivilege;
 
@@ -71,7 +70,7 @@ partial class ProcessesForm : Form {
 	}
 
 	void mnuOpenLoaderHook_Click(object sender, EventArgs e) {
-		loaderHookForm.Show();
+		new LoaderHookForm().Show();
 	}
 
 	void lvwProcesses_Resize(object sender, EventArgs e) {
@@ -117,11 +116,7 @@ partial class ProcessesForm : Form {
 			return;
 		}
 
-		var form = ModulesForm.Create(process, dumperType);
-		if (form is not null)
-			form.Show();
-		else
-			Logger.Error($"Can't create {nameof(ModulesForm)}");
+		new ModulesForm(process, dumperType).Show();
 	}
 
 	void mnuRefreshProcessList_Click(object sender, EventArgs e) {
@@ -144,11 +139,7 @@ partial class ProcessesForm : Form {
 		if (!TryGetSelectedProcess(out var process))
 			return;
 
-		var form = InjectingForm.Create(process);
-		if (form is not null)
-			form.Show();
-		else
-			Logger.Error($"Can't create {nameof(InjectingForm)}");
+		new InjectingForm(process).Show();
 	}
 
 	void mnuGotoLocation_Click(object sender, EventArgs e) {
