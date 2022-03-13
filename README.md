@@ -2,8 +2,8 @@
 .NET Assembly Dumper
 
 ## Features
-* List all processes
-* List all modules in a process and highlight managed modules
+* List all processes and highlight .NET processes
+* List all modules in a process and highlight .NET modules
 * Walk memory pages and dump all valid .NET assemblies
 * Dump specified module in modules view
 * Inject .NET assembly into any process
