@@ -1,6 +1,8 @@
 # ExtremeDumper [![Build status](https://ci.appveyor.com/api/projects/status/f6kyx4yv68lwain0?svg=true)](https://ci.appveyor.com/project/wwh1004/extremedumper)
 .NET Assembly Dumper
 
+[中文README](./README.zh-CN.md)
+
 ## Features
 * List all processes and highlight .NET processes
 * List all modules in a process and highlight .NET modules
@@ -26,7 +28,7 @@ This page show all modules in select process and you can just view .NET modules 
 ### View Exported Functions
 ![](./Images/ExportFunctionView.png)
 
-This page shou exported functions for unmanaged dlls.
+This page show exported functions for unmanaged dlls.
 
 ### Inject .NET Assemblies
 ![](./Images/InjectManagedDll.png)
