@@ -26,7 +26,7 @@
 ### 查看导出函数
 ![](./Images/ExportFunctionView.png)
 
-这个页面显示了非托管模块的导出函数。
+这个页面显示了选中模块的导出函数。
 
 ### 注入.NET程序集
 ![](./Images/InjectManagedDll.png)
