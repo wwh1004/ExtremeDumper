@@ -28,7 +28,7 @@ This page show all modules in select process and you can just view .NET modules 
 ### View Exported Functions
 ![](./Images/ExportFunctionView.png)
 
-This page show exported functions for unmanaged dlls.
+This page show exported functions for given module.
 
 ### Inject .NET Assemblies
 ![](./Images/InjectManagedDll.png)
