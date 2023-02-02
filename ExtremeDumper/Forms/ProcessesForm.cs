@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,7 +22,16 @@ partial class ProcessesForm : Form {
 	readonly StrongBox<DumperType> dumperType = new();
 	readonly List<ProcessInfo> processes = new();
 	readonly TitleComposer title;
+	private string GetArg(string[] args, string name, bool justExists=false) {
+		var pos = Array.IndexOf(args, $"--{name}");
 
+		if (pos == -1)
+			return null;
+		var indexDesired = justExists ? pos : pos + 1;
+		if(args.Length < indexDesired)
+			return null;
+		return args[indexDesired];
+	}
 	public ProcessesForm() {
 		InitializeComponent();
 		Utils.ScaleByDpi(this);
@@ -42,11 +52,23 @@ partial class ProcessesForm : Form {
 			mnuDumperType.DropDownItems.Add(item);
 		}
 		SwitchDumperType(DumperType.Normal);
+		var proc = GetArg(Environment.GetCommandLineArgs(), "proc_name");
+		DumpToFolder = GetArg(Environment.GetCommandLineArgs(), "dump_folder");
+		sanitizeNames = ! String.IsNullOrWhiteSpace( GetArg(Environment.GetCommandLineArgs(), "sanitize",true));
+		if (!String.IsNullOrWhiteSpace(proc)) {
+			var procs = GetProcesses();
+			var found = procs.FirstOrDefault(a => a.Name.StartsWith(proc, StringComparison.CurrentCultureIgnoreCase));
+			if (found != null) {
+				doMnuDumpProcess(found);
+			}
+
+		}
 		RefreshProcessList();
 	}
-
-	#region Events
-	void mnuDebugPrivilege_Click(object sender, EventArgs e) {
+	private bool sanitizeNames;
+	private string DumpToFolder;	
+		#region Events
+		void mnuDebugPrivilege_Click(object sender, EventArgs e) {
 		if (hasSeDebugPrivilege)
 			return;
 
@@ -77,18 +99,23 @@ partial class ProcessesForm : Form {
 		lvwProcesses.AutoResizeColumns(true);
 	}
 
-	async void mnuDumpProcess_Click(object sender, EventArgs e) {
+	void mnuDumpProcess_Click(object sender, EventArgs e) {
 		if (!TryGetSelectedProcess(out var process))
 			return;
+		doMnuDumpProcess(process);
+	}
+	async void doMnuDumpProcess(ProcessInfo process) {
 
-		try {
+			try {
 			mnuDumpProcess.Enabled = false;
 			title.Annotations["DUMP"] = "Dumping";
 			Text = title.Compose(true);
 			var path = Path.GetDirectoryName(process.FilePath);
 			if (!mnuFastDump.Checked) {
 				fbdlgDumped.SelectedPath = path + "\\";
-				if (fbdlgDumped.ShowDialog() != DialogResult.OK)
+				if (!String.IsNullOrWhiteSpace(DumpToFolder))
+					fbdlgDumped.SelectedPath = DumpToFolder;
+				else if (fbdlgDumped.ShowDialog() != DialogResult.OK)
 					return;
 				path = fbdlgDumped.SelectedPath;
 			}
@@ -205,6 +232,7 @@ partial class ProcessesForm : Form {
 		if (!Directory.Exists(directoryPath))
 			Directory.CreateDirectory(directoryPath);
 		using var dumper = DumperFactory.Create(processId, dumperType.Value);
+		dumper.SanitizeNames = sanitizeNames;
 		return dumper.DumpProcess(directoryPath);
 	}
 }

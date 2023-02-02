@@ -22,4 +22,6 @@ public interface IDumper : IDisposable {
 	/// <param name="directoryPath">转储的文件保存到指定文件夹下</param>
 	/// <returns></returns>
 	int DumpProcess(string directoryPath);
+
+	bool SanitizeNames { get; set; }
 }
