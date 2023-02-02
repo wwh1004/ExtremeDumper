@@ -12,6 +12,8 @@ abstract class DumperBase : IDumper {
 
 	protected readonly NativeProcess process;
 
+	public bool SanitizeNames { get; set; }
+
 	protected DumperBase(uint processId) {
 		process = NativeProcess.Open(processId, ProcessAccess.MemoryRead | ProcessAccess.QueryInformation);
 	}

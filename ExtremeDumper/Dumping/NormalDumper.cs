@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Runtime.ExceptionServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using dnlib.DotNet;
 using dnlib.PE;
@@ -67,17 +68,29 @@ sealed unsafe class NormalDumper : DumperBase {
 				catch {
 					continue;
 				}
-
-				Logger.Info($"Found assembly '{fileName}' at {Formatter.FormatHex(address)} and image layout is {imageLayout}");
-
+				var showName = fileName;
+				if (SanitizeNames) {
+					fileName = Regex.Replace(fileName, @"[^a-zA-Z0-9_\-. ]+", string.Empty, RegexOptions.Singleline).Trim();
+					if (String.IsNullOrWhiteSpace(fileName))
+						fileName = "unknown";
+					if (fileName.StartsWith("."))
+						fileName = "unknown" + fileName;
+				}
 				fileName = EnsureValidFileName(fileName);
-				if (IsSameFile(directoryPath, fileName, peImage, originalFileCache))
-					continue;
+				try {
+					if (IsSameFile(directoryPath, fileName, peImage, originalFileCache))
+						continue;
 
-				fileName = EnsureNoRepeatFileName(directoryPath, fileName);
-				var filePath = Path.Combine(directoryPath, fileName);
-				File.WriteAllBytes(filePath, peImage);
-				count++;
+					fileName = EnsureNoRepeatFileName(directoryPath, fileName);
+					var filePath = Path.Combine(directoryPath, fileName);
+					File.WriteAllBytes(filePath, peImage);
+					count++;
+				}
+				finally {
+					if (showName != fileName)
+						showName += $"=>{fileName}";
+					Logger.Info($"Found assembly '{showName}' at {Formatter.FormatHex(address)} and image layout is {imageLayout}");
+				}
 			}
 		});
 		GC.Collect();
